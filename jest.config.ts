@@ -20,6 +20,7 @@ const config: Config = {
 	coveragePathIgnorePatterns: ["\\\\node_modules\\\\"],
 	coverageProvider: "v8",
 	transformIgnorePatterns: ["\\\\node_modules\\\\"],
+	collectCoverageFrom: ["<rootDir>/src/**/*.ts", "!<rootDir>/src/main/**"],
 };
 
 export default config;
