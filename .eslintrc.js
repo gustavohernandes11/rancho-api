@@ -7,9 +7,9 @@ module.exports = {
 
 	overrides: [
 		{
-			files: ["src/*.js", "src/*.ts"],
+			files: ["src/**"],
 			rules: {
-				quotes: ["error", "single"],
+				quotes: ["error", "double"],
 			},
 		},
 	],
