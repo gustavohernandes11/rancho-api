@@ -4,6 +4,7 @@
 	"description": "��#\u0000 \u0000r\u0000a\u0000n\u0000c\u0000h\u0000o\u0000-\u0000a\u0000p\u0000i\u0000\r\u0000 \u0000",
 	"main": "index.js",
 	"devDependencies": {
+		"@types/jest": "^29.5.4",
 		"@typescript-eslint/eslint-plugin": "^6.6.0",
 		"@typescript-eslint/parser": "^6.6.0",
 		"eslint": "^8.48.0",
