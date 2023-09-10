@@ -1,9 +1,11 @@
-import { IAccountModel } from "../../domain/models/account";
-import { IAddAccountModel } from "../../domain/usecases/add-account";
-import { IAddAccountRepository } from "../protocols/add-account-repository";
-import { IHasher } from "../protocols/hasher";
-import { ILoadAccountByEmailRepository } from "../protocols/load-account-by-email-repository";
 import { DbAddAccount } from "./db-add-account";
+import {
+	IAccountModel,
+	IAddAccountModel,
+	IAddAccountRepository,
+	IHasher,
+	ILoadAccountByEmailRepository,
+} from "./db-add-account-protocols";
 
 describe("DbAddAccount", () => {
 	class AddAccountRepositoryStub implements IAddAccountRepository {
