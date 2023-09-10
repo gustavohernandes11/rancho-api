@@ -1,17 +1,30 @@
-import { IAccount, IAddAccount } from "../../domain/usecases/add-account";
+import { IAccountModel } from "../../domain/models/account";
+import {
+	IAddAccountModel,
+	IAddAccount,
+} from "../../domain/usecases/add-account";
 import { IAddAccountRepository } from "../protocols/add-account-repository";
-import { IHasher } from "../protocols/hasher";
+import { IEncrypter } from "../protocols/encrypter";
 
 export class DbAddAccount implements IAddAccount {
 	constructor(
 		private readonly addAccountRepository: IAddAccountRepository,
-		private readonly hasher: IHasher
+		private readonly encrypter: IEncrypter
 	) {}
 
-	async add(account: IAccount): Promise<boolean> {
-		const success = await this.addAccountRepository.add(
-			Object.assign(account, { password: "hashed_password" })
+	async add(account: IAddAccountModel): Promise<IAccountModel> {
+		const encryptedPassword = await this.encrypter.encrypt(
+			account.password
 		);
-		return new Promise((resolve) => resolve(true));
+
+		const insertedAccount = await this.addAccountRepository.add(
+			Object.assign(account, { password: encryptedPassword })
+		);
+
+		if (!insertedAccount) {
+			return new Promise((_, reject) => reject(false));
+		}
+
+		return new Promise((resolve) => resolve(insertedAccount));
 	}
 }
