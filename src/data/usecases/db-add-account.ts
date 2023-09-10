@@ -14,9 +14,13 @@ export class DbAddAccount implements IAddAccount {
 		private readonly loadAccountByEmailRepository: ILoadAccountByEmailRepository
 	) {}
 
-	async add(account: IAddAccountModel): Promise<IAccountModel> {
-		const alreadyUsedAccount =
-			this.loadAccountByEmailRepository.loadByEmail(account.email);
+	async add(account: IAddAccountModel): Promise<IAccountModel | null> {
+		const alreadInUseAccount =
+			await this.loadAccountByEmailRepository.loadByEmail(account.email);
+
+		if (alreadInUseAccount !== null) {
+			return new Promise((resolve) => resolve(null));
+		}
 
 		const encryptedPassword = await this.encrypter.encrypt(
 			account.password
@@ -25,10 +29,6 @@ export class DbAddAccount implements IAddAccount {
 		const insertedAccount = await this.addAccountRepository.add(
 			Object.assign(account, { password: encryptedPassword })
 		);
-
-		if (!insertedAccount) {
-			return new Promise((_, reject) => reject(false));
-		}
 
 		return new Promise((resolve) => resolve(insertedAccount));
 	}

@@ -19,20 +19,13 @@ describe("DbAddAccount", () => {
 	class LoadAccountByEmailRepositoryStub
 		implements ILoadAccountByEmailRepository
 	{
-		async loadByEmail(email: string): Promise<IAccountModel> {
-			return new Promise((resolve) =>
-				resolve({
-					id: "any_id",
-					name: "valid_name",
-					email: "valid_email",
-					password: "encrypted_password",
-				})
-			);
+		async loadByEmail(email: string): Promise<IAccountModel | null> {
+			return new Promise((resolve) => resolve(null));
 		}
 	}
 	class EncrypterStub implements IEncrypter {
 		async encrypt(text: string): Promise<string> {
-			return new Promise((resolve) => resolve("encrypted_password"));
+			return new Promise((resolve) => resolve("hashed_password"));
 		}
 	}
 	type SutTypes = {
@@ -67,19 +60,18 @@ describe("DbAddAccount", () => {
 		};
 	};
 
-	it("should return an account if success", async () => {
-		const { sut } = makeSut();
-		const fakeAccount = makeFakeAccount();
-		const account = await sut.add(fakeAccount);
-		expect(account).toEqual({
-			id: "any_id",
-			name: "valid_name",
-			email: "valid_email",
-			password: "encrypted_password",
-		});
-	});
-
 	describe("addAccountRepository", () => {
+		it("should return an account if success", async () => {
+			const { sut } = makeSut();
+			const fakeAccount = makeFakeAccount();
+			const account = await sut.add(fakeAccount);
+			expect(account).toEqual({
+				id: "any_id",
+				name: "valid_name",
+				email: "valid_email",
+				password: "hashed_password",
+			});
+		});
 		it("should call the correct addAccountRepository", async () => {
 			const { sut, addAccountRepositoryStub } = makeSut();
 			const repoSpy = jest.spyOn(addAccountRepositoryStub, "add");
@@ -94,7 +86,7 @@ describe("DbAddAccount", () => {
 			await sut.add(fakeAccount);
 			expect(repoSpy).toHaveBeenCalledWith({
 				...fakeAccount,
-				password: "encrypted_password",
+				password: "hashed_password",
 			});
 		});
 		it("should return true on addAccountRepository sucess", async () => {
@@ -128,7 +120,7 @@ describe("DbAddAccount", () => {
 			await sut.add(fakeAccount);
 			expect(repoSpy).toHaveBeenCalledWith({
 				...fakeAccount,
-				password: "encrypted_password",
+				password: "hashed_password",
 			});
 		});
 		it("should throw if encrypter throws", async () => {
@@ -149,6 +141,48 @@ describe("DbAddAccount", () => {
 			);
 			await sut.add(makeFakeAccount());
 			expect(loadSpy).toHaveBeenCalled();
+		});
+		it("should return null if email is already in use", async () => {
+			const { sut, loadAccountByEmailRepositoryStub } = makeSut();
+			jest.spyOn(
+				loadAccountByEmailRepositoryStub,
+				"loadByEmail"
+			).mockImplementationOnce(() => {
+				return new Promise((resolve) =>
+					resolve({
+						id: "any_id_2",
+						name: "valid_name_2",
+						email: "valid_email_2",
+						password: "hashed_password_2",
+					})
+				);
+			});
+			const response = await sut.add(makeFakeAccount());
+			expect(response).toBeNull();
+		});
+		it("should not add an account if the email is already in use", async () => {
+			const {
+				sut,
+				loadAccountByEmailRepositoryStub,
+				addAccountRepositoryStub,
+			} = makeSut();
+
+			const addSpy = jest.spyOn(addAccountRepositoryStub, "add");
+			jest.spyOn(
+				loadAccountByEmailRepositoryStub,
+				"loadByEmail"
+			).mockImplementationOnce(() => {
+				return new Promise((resolve) =>
+					resolve({
+						id: "any_id_2",
+						name: "valid_name_2",
+						email: "valid_email_2",
+						password: "hashed_password_2",
+					})
+				);
+			});
+			await sut.add(makeFakeAccount());
+			expect(addSpy).toHaveBeenCalledTimes(0);
 		});
 	});
 });
