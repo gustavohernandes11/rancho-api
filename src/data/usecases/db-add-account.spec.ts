@@ -2,6 +2,7 @@ import { IAccountModel } from "../../domain/models/account";
 import { IAddAccountModel } from "../../domain/usecases/add-account";
 import { IAddAccountRepository } from "../protocols/add-account-repository";
 import { IEncrypter } from "../protocols/encrypter";
+import { ILoadAccountByEmailRepository } from "../protocols/load-account-by-email-repository";
 import { DbAddAccount } from "./db-add-account";
 
 describe("DbAddAccount", () => {
@@ -15,6 +16,20 @@ describe("DbAddAccount", () => {
 			);
 		}
 	}
+	class LoadAccountByEmailRepositoryStub
+		implements ILoadAccountByEmailRepository
+	{
+		async loadByEmail(email: string): Promise<IAccountModel> {
+			return new Promise((resolve) =>
+				resolve({
+					id: "any_id",
+					name: "valid_name",
+					email: "valid_email",
+					password: "encrypted_password",
+				})
+			);
+		}
+	}
 	class EncrypterStub implements IEncrypter {
 		async encrypt(text: string): Promise<string> {
 			return new Promise((resolve) => resolve("encrypted_password"));
@@ -22,8 +37,9 @@ describe("DbAddAccount", () => {
 	}
 	type SutTypes = {
 		sut: DbAddAccount;
-		addAccountRepositoryStub: AddAccountRepositoryStub;
-		encrypterStub: EncrypterStub;
+		addAccountRepositoryStub: IAddAccountRepository;
+		loadAccountByEmailRepositoryStub: ILoadAccountByEmailRepository;
+		encrypterStub: IEncrypter;
 	};
 
 	const makeFakeAccount = (): IAddAccountModel => ({
@@ -35,12 +51,19 @@ describe("DbAddAccount", () => {
 	const makeSut = (): SutTypes => {
 		const addAccountRepositoryStub = new AddAccountRepositoryStub();
 		const encrypterStub = new EncrypterStub();
-		const sut = new DbAddAccount(addAccountRepositoryStub, encrypterStub);
+		const loadAccountByEmailRepositoryStub =
+			new LoadAccountByEmailRepositoryStub();
+		const sut = new DbAddAccount(
+			addAccountRepositoryStub,
+			encrypterStub,
+			loadAccountByEmailRepositoryStub
+		);
 
 		return {
 			sut,
-			addAccountRepositoryStub,
 			encrypterStub,
+			loadAccountByEmailRepositoryStub,
+			addAccountRepositoryStub,
 		};
 	};
 
@@ -115,6 +138,17 @@ describe("DbAddAccount", () => {
 			);
 			const promise = sut.add(makeFakeAccount());
 			await expect(promise).rejects.toThrow();
+		});
+	});
+	describe("loadAccountByEmailRepository", () => {
+		it("should call the correct loadAccountByEmailRepository when adding an account", async () => {
+			const { sut, loadAccountByEmailRepositoryStub } = makeSut();
+			const loadSpy = jest.spyOn(
+				loadAccountByEmailRepositoryStub,
+				"loadByEmail"
+			);
+			await sut.add(makeFakeAccount());
+			expect(loadSpy).toHaveBeenCalled();
 		});
 	});
 });
