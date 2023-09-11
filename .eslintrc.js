@@ -19,6 +19,7 @@ module.exports = {
 	ignorePatterns: ".eslintrc.js",
 	rules: {
 		"@typescript-eslint/no-unused-vars": "off",
+		"@typescript-eslint/no-explicit-any": "off"
 	},
 	parserOptions: {
 		ecmaVersion: "latest",
