@@ -1,4 +1,4 @@
-import { RequiredFieldValidator } from "../../validation/required-field-validation";
+import { RequiredFieldValidation } from "../../validation/required-field-validation";
 import { ValidationComposite } from "../../validation/validation-composite";
 import { IHttpRequest } from "../protocols/http";
 import { SigunUpController } from "./signup";
@@ -7,15 +7,18 @@ describe("Signup Controller", () => {
 	interface ISutTypes {
 		sut: SigunUpController;
 	}
-	const makeSut = (): ISutTypes => {
+	const makeSignUpValidation = () => {
 		const validations = [
-			new RequiredFieldValidator("name"),
-			new RequiredFieldValidator("email"),
-			new RequiredFieldValidator("password"),
-			new RequiredFieldValidator("passwordConfirmation"),
+			new RequiredFieldValidation("name"),
+			new RequiredFieldValidation("email"),
+			new RequiredFieldValidation("password"),
+			new RequiredFieldValidation("passwordConfirmation"),
 		];
-		const singUpValidationComposite = new ValidationComposite(validations);
 
+		return new ValidationComposite(validations);
+	};
+	const makeSut = (): ISutTypes => {
+		const singUpValidationComposite = makeSignUpValidation();
 		const sut = new SigunUpController(singUpValidationComposite);
 		return { sut };
 	};

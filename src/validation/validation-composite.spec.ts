@@ -1,13 +1,13 @@
 import { MissingParamError } from "../presentation/errors/missing-param-error";
-import { RequiredFieldValidator } from "./required-field-validation";
+import { RequiredFieldValidation } from "./required-field-validation";
 import { ValidationComposite } from "./validation-composite";
 
 describe("Validation Composite", () => {
 	it("should return nothing if pass all the validations ", () => {
 		const validations = [
-			new RequiredFieldValidator("name"),
-			new RequiredFieldValidator("email"),
-			new RequiredFieldValidator("password"),
+			new RequiredFieldValidation("name"),
+			new RequiredFieldValidation("email"),
+			new RequiredFieldValidation("password"),
 		];
 		const sut = new ValidationComposite(validations);
 
@@ -20,9 +20,9 @@ describe("Validation Composite", () => {
 	});
 	it("should return the correct error if any validation throws", () => {
 		const validations = [
-			new RequiredFieldValidator("name"),
-			new RequiredFieldValidator("email"),
-			new RequiredFieldValidator("password"),
+			new RequiredFieldValidation("name"),
+			new RequiredFieldValidation("email"),
+			new RequiredFieldValidation("password"),
 		];
 		const sut = new ValidationComposite(validations);
 
@@ -34,9 +34,9 @@ describe("Validation Composite", () => {
 	});
 	it("should return only the first error if more than one validation fails", () => {
 		const validations = [
-			new RequiredFieldValidator("name"),
-			new RequiredFieldValidator("email"),
-			new RequiredFieldValidator("password"),
+			new RequiredFieldValidation("name"),
+			new RequiredFieldValidation("email"),
+			new RequiredFieldValidation("password"),
 		];
 		const sut = new ValidationComposite(validations);
 		const compositeSpy = jest.spyOn(sut, "validate");
