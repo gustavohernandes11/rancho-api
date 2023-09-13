@@ -1,41 +1,17 @@
-import {
-	CompareFieldsValidation,
-	EmailValidation,
-	RequiredFieldValidation,
-	ValidationComposite,
-} from "../../validation/validators";
 import { IEmailValidator } from "../../validation/protocols/email-validator";
 import { InvalidParamError, MissingParamError } from "../errors";
 import { IHttpRequest } from "../protocols/";
 import { SigunUpController } from "./signup";
+import { makeSignUpValidation } from "../../main/factories/make-signup-validation";
 
 describe("Signup Controller", () => {
-	class EmailValidatorStub implements IEmailValidator {
-		isValid = (email: string): boolean => true;
-	}
 	interface ISutTypes {
 		sut: SigunUpController;
-		emailValidatorStub: IEmailValidator;
 	}
 	const makeSut = (): ISutTypes => {
-		const emailValidatorStub = new EmailValidatorStub();
-
-		const makeSignUpValidation = () => {
-			const validations = [
-				new RequiredFieldValidation("name"),
-				new RequiredFieldValidation("email"),
-				new RequiredFieldValidation("password"),
-				new RequiredFieldValidation("passwordConfirmation"),
-				new CompareFieldsValidation("password", "passwordConfirmation"),
-				new EmailValidation("email", emailValidatorStub),
-			];
-
-			return new ValidationComposite(validations);
-		};
-
 		const singUpValidationComposite = makeSignUpValidation();
 		const sut = new SigunUpController(singUpValidationComposite);
-		return { sut, emailValidatorStub };
+		return { sut };
 	};
 	it("should return 400 if name is not provided", async () => {
 		const { sut } = makeSut();
@@ -108,8 +84,7 @@ describe("Signup Controller", () => {
 		);
 	});
 	it("should return 400 if the email provided is not valid", async () => {
-		const { sut, emailValidatorStub } = makeSut();
-		jest.spyOn(emailValidatorStub, "isValid").mockReturnValueOnce(false);
+		const { sut } = makeSut();
 		const httpRequest: IHttpRequest = {
 			body: {
 				name: "valid_name@gmail.com",
