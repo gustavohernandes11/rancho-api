@@ -1,7 +1,7 @@
 import { InvalidParamError } from "../presentation/errors/invalid-param-error";
 import { CompareFieldsValidation } from "./compare-fields-validation";
 
-describe("Required field validator", () => {
+describe("Compare Fields Validation", () => {
 	it("should throw an invalid param error if the fields is not equal", () => {
 		const sut = new CompareFieldsValidation(
 			"password",

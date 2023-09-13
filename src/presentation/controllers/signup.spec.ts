@@ -1,30 +1,40 @@
 import { CompareFieldsValidation } from "../../validation/compare-fields-validation";
+import { EmailValidation } from "../../validation/email-validation";
 import { RequiredFieldValidation } from "../../validation/required-field-validation";
 import { ValidationComposite } from "../../validation/validation-composite";
 import { InvalidParamError } from "../errors/invalid-param-error";
 import { MissingParamError } from "../errors/missing-param-error";
+import { IEmailValidator } from "../protocols/email-validator";
 import { IHttpRequest } from "../protocols/http";
 import { SigunUpController } from "./signup";
 
 describe("Signup Controller", () => {
+	class EmailValidatorStub implements IEmailValidator {
+		isValid = (email: string): boolean => true;
+	}
 	interface ISutTypes {
 		sut: SigunUpController;
+		emailValidatorStub: IEmailValidator;
 	}
-	const makeSignUpValidation = () => {
-		const validations = [
-			new RequiredFieldValidation("name"),
-			new RequiredFieldValidation("email"),
-			new RequiredFieldValidation("password"),
-			new RequiredFieldValidation("passwordConfirmation"),
-			new CompareFieldsValidation("password", "passwordConfirmation"),
-		];
-
-		return new ValidationComposite(validations);
-	};
 	const makeSut = (): ISutTypes => {
+		const emailValidatorStub = new EmailValidatorStub();
+
+		const makeSignUpValidation = () => {
+			const validations = [
+				new RequiredFieldValidation("name"),
+				new RequiredFieldValidation("email"),
+				new RequiredFieldValidation("password"),
+				new RequiredFieldValidation("passwordConfirmation"),
+				new CompareFieldsValidation("password", "passwordConfirmation"),
+				new EmailValidation("email", emailValidatorStub),
+			];
+
+			return new ValidationComposite(validations);
+		};
+
 		const singUpValidationComposite = makeSignUpValidation();
 		const sut = new SigunUpController(singUpValidationComposite);
-		return { sut };
+		return { sut, emailValidatorStub };
 	};
 	it("should return 400 if name is not provided", async () => {
 		const { sut } = makeSut();
@@ -95,5 +105,20 @@ describe("Signup Controller", () => {
 		expect(response.body).toEqual(
 			new InvalidParamError("passwordConfirmation")
 		);
+	});
+	it("should return 400 if the email provided is not valid", async () => {
+		const { sut, emailValidatorStub } = makeSut();
+		jest.spyOn(emailValidatorStub, "isValid").mockReturnValueOnce(false);
+		const httpRequest: IHttpRequest = {
+			body: {
+				name: "valid_name@gmail.com",
+				email: "INVALID_EMAIL",
+				password: "valid_password",
+				passwordConfirmation: "valid_password",
+			},
+		};
+		const response = await sut.handle(httpRequest);
+		expect(response.statusCode).toBe(400);
+		expect(response.body).toEqual(new InvalidParamError("email"));
 	});
 });
