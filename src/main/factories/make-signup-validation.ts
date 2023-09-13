@@ -1,4 +1,3 @@
-import { IEmailValidator } from "../../validation/protocols/email-validator";
 import {
 	RequiredFieldValidation,
 	CompareFieldsValidation,

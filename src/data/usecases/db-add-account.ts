@@ -14,18 +14,17 @@ export class DbAddAccount implements IAddAccount {
 		private readonly loadAccountByEmailRepository: ILoadAccountByEmailRepository
 	) {}
 
-	async add(account: IAddAccountModel): Promise<IAccountModel | null> {
-		const alreadInUseAccount =
+	async add(account: IAddAccountModel): Promise<boolean> {
+		const alreadyInUseAccount =
 			await this.loadAccountByEmailRepository.loadByEmail(account.email);
 
-		if (alreadInUseAccount === null) {
-			const hashedPassword = await this.hasher.hash(account.password);
-			const insertedAccount = await this.addAccountRepository.add(
-				Object.assign(account, { password: hashedPassword })
-			);
-			return new Promise((resolve) => resolve(insertedAccount));
-		}
+		if (alreadyInUseAccount && alreadyInUseAccount !== null)
+			return new Promise((resolve) => resolve(false));
 
-		return new Promise((resolve) => resolve(null));
+		const hashedPassword = await this.hasher.hash(account.password);
+		await this.addAccountRepository.add(
+			Object.assign(account, { password: hashedPassword })
+		);
+		return new Promise((resolve) => resolve(true));
 	}
 }

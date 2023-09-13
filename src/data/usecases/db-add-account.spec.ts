@@ -9,13 +9,8 @@ import {
 
 describe("DbAddAccount", () => {
 	class AddAccountRepositoryStub implements IAddAccountRepository {
-		async add(account: IAddAccountModel): Promise<IAccountModel> {
-			return new Promise((resolve) =>
-				resolve({
-					id: "any_id",
-					...account,
-				})
-			);
+		async add(account: IAddAccountModel): Promise<boolean> {
+			return new Promise((resolve) => resolve(true));
 		}
 	}
 	class LoadAccountByEmailRepositoryStub
@@ -63,25 +58,20 @@ describe("DbAddAccount", () => {
 	};
 
 	describe("addAccountRepository", () => {
-		it("should return an account if success", async () => {
-			const { sut } = makeSut();
-			const fakeAccount = makeFakeAccount();
-			const account = await sut.add(fakeAccount);
-			expect(account).toEqual({
-				id: "any_id",
-				name: "valid_name",
-				email: "valid_email",
-				password: "hashed_password",
-			});
-		});
-		it("should call the correct addAccountRepository", async () => {
+		it("should call the correct addAccountRepository add method", async () => {
 			const { sut, addAccountRepositoryStub } = makeSut();
 			const repoSpy = jest.spyOn(addAccountRepositoryStub, "add");
 			const fakeAccount = makeFakeAccount();
 			await sut.add(fakeAccount);
 			expect(repoSpy).toHaveBeenCalledTimes(1);
 		});
-		it("should use the incoming account properties in addAccountRepository", async () => {
+		it("should return true if success add an account", async () => {
+			const { sut } = makeSut();
+			const fakeAccount = makeFakeAccount();
+			const account = await sut.add(fakeAccount);
+			expect(account).toBe(true);
+		});
+		it("should use the correct properties in addAccountRepository", async () => {
 			const { sut, addAccountRepositoryStub } = makeSut();
 			const repoSpy = jest.spyOn(addAccountRepositoryStub, "add");
 			const fakeAccount = makeFakeAccount();
@@ -91,11 +81,7 @@ describe("DbAddAccount", () => {
 				password: "hashed_password",
 			});
 		});
-		it("should return true on addAccountRepository sucess", async () => {
-			const { sut } = makeSut();
-			const sucess = await sut.add(makeFakeAccount());
-			expect(sucess).toBeTruthy();
-		});
+
 		it("should throw if add addAccountRepository throws", async () => {
 			const { sut, addAccountRepositoryStub } = makeSut();
 			jest.spyOn(addAccountRepositoryStub, "add").mockReturnValueOnce(
@@ -144,7 +130,7 @@ describe("DbAddAccount", () => {
 			await sut.add(makeFakeAccount());
 			expect(loadSpy).toHaveBeenCalled();
 		});
-		it("should return null if email is already in use", async () => {
+		it("should return false if email is already in use", async () => {
 			const { sut, loadAccountByEmailRepositoryStub } = makeSut();
 			jest.spyOn(
 				loadAccountByEmailRepositoryStub,
@@ -160,7 +146,7 @@ describe("DbAddAccount", () => {
 				);
 			});
 			const response = await sut.add(makeFakeAccount());
-			expect(response).toBeNull();
+			expect(response).toBeFalsy();
 		});
 		it("should not add an account if the email is already in use", async () => {
 			const {
