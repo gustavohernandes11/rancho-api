@@ -1,6 +1,8 @@
 import { CompareFieldsValidation } from "../../validation/compare-fields-validation";
 import { RequiredFieldValidation } from "../../validation/required-field-validation";
 import { ValidationComposite } from "../../validation/validation-composite";
+import { InvalidParamError } from "../errors/invalid-param-error";
+import { MissingParamError } from "../errors/missing-param-error";
 import { IHttpRequest } from "../protocols/http";
 import { SigunUpController } from "./signup";
 
@@ -35,6 +37,7 @@ describe("Signup Controller", () => {
 		};
 		const response = await sut.handle(httpRequest);
 		expect(response.statusCode).toBe(400);
+		expect(response.body).toEqual(new MissingParamError("name"));
 	});
 	it("should return 400 if email is not provided", async () => {
 		const { sut } = makeSut();
@@ -47,6 +50,7 @@ describe("Signup Controller", () => {
 		};
 		const response = await sut.handle(httpRequest);
 		expect(response.statusCode).toBe(400);
+		expect(response.body).toEqual(new MissingParamError("email"));
 	});
 	it("should return 400 if password is not provided", async () => {
 		const { sut } = makeSut();
@@ -59,6 +63,7 @@ describe("Signup Controller", () => {
 		};
 		const response = await sut.handle(httpRequest);
 		expect(response.statusCode).toBe(400);
+		expect(response.body).toEqual(new MissingParamError("password"));
 	});
 	it("should return 400 if passwordConfirmation is not provided", async () => {
 		const { sut } = makeSut();
@@ -71,6 +76,9 @@ describe("Signup Controller", () => {
 		};
 		const response = await sut.handle(httpRequest);
 		expect(response.statusCode).toBe(400);
+		expect(response.body).toEqual(
+			new MissingParamError("passwordConfirmation")
+		);
 	});
 	it("should return 400 if the passwordConfirmation is not equal to the password", async () => {
 		const { sut } = makeSut();
@@ -84,5 +92,8 @@ describe("Signup Controller", () => {
 		};
 		const response = await sut.handle(httpRequest);
 		expect(response.statusCode).toBe(400);
+		expect(response.body).toEqual(
+			new InvalidParamError("passwordConfirmation")
+		);
 	});
 });
