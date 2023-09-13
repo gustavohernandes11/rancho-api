@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"devDependencies": {
 		"@types/jest": "^29.5.4",
+		"@types/validator": "^13.11.1",
 		"@typescript-eslint/eslint-plugin": "^6.6.0",
 		"@typescript-eslint/parser": "^6.6.0",
 		"eslint": "^8.48.0",
@@ -30,5 +31,8 @@
 	"bugs": {
 		"url": "https://github.com/gustavohernandes11/rancho-api/issues"
 	},
-	"homepage": "https://github.com/gustavohernandes11/rancho-api#readme"
+	"homepage": "https://github.com/gustavohernandes11/rancho-api#readme",
+	"dependencies": {
+		"validator": "^13.11.0"
+	}
 }
