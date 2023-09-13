@@ -1,11 +1,11 @@
-import { CompareFieldsValidation } from "../../validation/compare-fields-validation";
-import { EmailValidation } from "../../validation/email-validation";
-import { RequiredFieldValidation } from "../../validation/required-field-validation";
-import { ValidationComposite } from "../../validation/validation-composite";
-import { InvalidParamError } from "../errors/invalid-param-error";
-import { MissingParamError } from "../errors/missing-param-error";
-import { IEmailValidator } from "../protocols/email-validator";
-import { IHttpRequest } from "../protocols/http";
+import {
+	CompareFieldsValidation,
+	EmailValidation,
+	RequiredFieldValidation,
+	ValidationComposite,
+} from "../../validation";
+import { InvalidParamError, MissingParamError } from "../errors";
+import { IEmailValidator, IHttpRequest } from "../protocols/";
 import { SigunUpController } from "./signup";
 
 describe("Signup Controller", () => {

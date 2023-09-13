@@ -1,8 +1,10 @@
-import { MissingParamError } from "../errors/missing-param-error";
 import { badRequest } from "../helpers/http-helpers";
-import { IController } from "../protocols/controller";
-import { IHttpRequest, IHttpResponse } from "../protocols/http";
-import { IValidation } from "../protocols/validation";
+import {
+	IController,
+	IValidation,
+	IHttpRequest,
+	IHttpResponse,
+} from "../protocols";
 
 export class SigunUpController implements IController {
 	constructor(private readonly validation: IValidation) {}

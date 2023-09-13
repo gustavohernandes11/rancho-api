@@ -1,4 +1,4 @@
-import { MissingParamError } from "../presentation/errors/missing-param-error";
+import { MissingParamError } from "../presentation/errors";
 import { RequiredFieldValidation } from "./required-field-validation";
 
 describe("Required Field Validation", () => {

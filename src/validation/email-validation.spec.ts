@@ -1,5 +1,5 @@
-import { InvalidParamError } from "../presentation/errors/invalid-param-error";
-import { IEmailValidator } from "../presentation/protocols/email-validator";
+import { InvalidParamError } from "../presentation/errors";
+import { IEmailValidator } from "../presentation/protocols";
 import { EmailValidation } from "./email-validation";
 
 describe("Email Validation", () => {
