@@ -1,3 +1,4 @@
+import { CompareFieldsValidation } from "../../validation/compare-fields-validation";
 import { RequiredFieldValidation } from "../../validation/required-field-validation";
 import { ValidationComposite } from "../../validation/validation-composite";
 import { IHttpRequest } from "../protocols/http";
@@ -13,6 +14,7 @@ describe("Signup Controller", () => {
 			new RequiredFieldValidation("email"),
 			new RequiredFieldValidation("password"),
 			new RequiredFieldValidation("passwordConfirmation"),
+			new CompareFieldsValidation("password", "passwordConfirmation"),
 		];
 
 		return new ValidationComposite(validations);
@@ -65,6 +67,19 @@ describe("Signup Controller", () => {
 				name: "valid_name@gmail.com",
 				email: "valid_email@gmail.com",
 				password: "valid_password",
+			},
+		};
+		const response = await sut.handle(httpRequest);
+		expect(response.statusCode).toBe(400);
+	});
+	it("should return 400 if the passwordConfirmation is not equal to the password", async () => {
+		const { sut } = makeSut();
+		const httpRequest: IHttpRequest = {
+			body: {
+				name: "valid_name@gmail.com",
+				email: "valid_email@gmail.com",
+				password: "valid_password",
+				passwordConfirmation: "DIFFERENT_PASSWORD_CONFIRMATION",
 			},
 		};
 		const response = await sut.handle(httpRequest);
