@@ -1,6 +1,6 @@
-import { InvalidParamError } from "../presentation/errors";
-import { IEmailValidator } from "../presentation/protocols";
+import { InvalidParamError } from "../../presentation/errors";
 import { EmailValidation } from "./email-validation";
+import { IEmailValidator } from "../protocols/email-validator";
 
 describe("Email Validation", () => {
 	class EmailValidatorStub implements IEmailValidator {

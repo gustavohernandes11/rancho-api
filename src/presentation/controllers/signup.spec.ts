@@ -3,9 +3,10 @@ import {
 	EmailValidation,
 	RequiredFieldValidation,
 	ValidationComposite,
-} from "../../validation";
+} from "../../validation/validators";
+import { IEmailValidator } from "../../validation/protocols/email-validator";
 import { InvalidParamError, MissingParamError } from "../errors";
-import { IEmailValidator, IHttpRequest } from "../protocols/";
+import { IHttpRequest } from "../protocols/";
 import { SigunUpController } from "./signup";
 
 describe("Signup Controller", () => {
