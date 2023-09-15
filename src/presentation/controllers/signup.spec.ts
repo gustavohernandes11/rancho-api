@@ -6,6 +6,7 @@ import {
 	IAddAccount,
 	IAddAccountModel,
 } from "../../domain/usecases/add-account";
+import { EmailInUseError } from "../errors/email-in-use-error";
 
 describe("Signup Controller", () => {
 	class DbAddAccountStub implements IAddAccount {
@@ -126,6 +127,23 @@ describe("Signup Controller", () => {
 			sut.handle(promise);
 			expect(addSpy).toHaveBeenCalledTimes(1);
 			expect(addSpy).toHaveBeenCalledWith(promise.body);
+		});
+		it("should return 500 if the DbAddAccount throws", async () => {
+			const { sut, dbAddAccountStub } = makeSut();
+			jest.spyOn(dbAddAccountStub, "add").mockImplementationOnce(() => {
+				throw new Error();
+			});
+			const response = await sut.handle(makeFakeRequest());
+			expect(response.statusCode).toBe(500);
+		});
+		it("should return 403 (forbidden) if the DbAddAccount failed to add an account", async () => {
+			const { sut, dbAddAccountStub } = makeSut();
+			jest.spyOn(dbAddAccountStub, "add").mockReturnValueOnce(
+				new Promise((resolve) => resolve(false))
+			);
+			const response = await sut.handle(makeFakeRequest());
+			expect(response.statusCode).toBe(403);
+			expect(response.body).toEqual(new EmailInUseError());
 		});
 	});
 });

@@ -1,5 +1,11 @@
 import { IAddAccount } from "../../domain/usecases/add-account";
-import { badRequest } from "../helpers/http-helpers";
+import { EmailInUseError } from "../errors/email-in-use-error";
+import {
+	badRequest,
+	forbidden,
+	ok,
+	serverError,
+} from "../helpers/http-helpers";
 import {
 	IController,
 	IValidation,
@@ -14,13 +20,16 @@ export class SigunUpController implements IController {
 	) {}
 
 	async handle(request: IHttpRequest): Promise<IHttpResponse> {
-		const error = this.validation.validate(request.body);
-		if (error) return badRequest(error);
+		try {
+			const error = this.validation.validate(request.body);
+			if (error) return badRequest(error);
 
-		const sucess = this.dbAddAccount.add(request.body);
+			const isValid = await this.dbAddAccount.add(request.body);
+			if (!isValid) return forbidden(new EmailInUseError());
 
-		return new Promise((resolve) =>
-			resolve({ statusCode: 200, body: null })
-		);
+			return ok();
+		} catch (error) {
+			return serverError();
+		}
 	}
 }
