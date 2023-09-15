@@ -24,7 +24,14 @@ export class SigunUpController implements IController {
 			const error = this.validation.validate(request.body);
 			if (error) return badRequest(error);
 
-			const isValid = await this.dbAddAccount.add(request.body);
+			const { email, name, password } = request.body;
+
+			const isValid = await this.dbAddAccount.add({
+				email,
+				name,
+				password,
+			});
+
 			if (!isValid) return forbidden(new EmailInUseError());
 
 			return ok();

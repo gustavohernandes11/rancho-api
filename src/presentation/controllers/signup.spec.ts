@@ -123,10 +123,13 @@ describe("Signup Controller", () => {
 		it("should call the DbAddAccount with correct params", () => {
 			const { sut, dbAddAccountStub } = makeSut();
 			const addSpy = jest.spyOn(dbAddAccountStub, "add");
-			const promise = makeFakeRequest();
-			sut.handle(promise);
+			sut.handle(makeFakeRequest());
 			expect(addSpy).toHaveBeenCalledTimes(1);
-			expect(addSpy).toHaveBeenCalledWith(promise.body);
+			expect(addSpy).toHaveBeenCalledWith({
+				name: "valid_name",
+				email: "valid_email@gmail.com",
+				password: "valid_password",
+			});
 		});
 		it("should return 500 if the DbAddAccount throws", async () => {
 			const { sut, dbAddAccountStub } = makeSut();
