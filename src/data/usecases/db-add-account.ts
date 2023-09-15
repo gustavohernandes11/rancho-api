@@ -1,5 +1,4 @@
 import {
-	IAccountModel,
 	IAddAccount,
 	IAddAccountModel,
 	IAddAccountRepository,

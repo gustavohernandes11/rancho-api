@@ -1,4 +1,3 @@
-import { IAddAccountRepository } from "../../data/usecases/db-add-account-protocols";
 import { badRequest } from "../helpers/http-helpers";
 import {
 	IController,
@@ -8,9 +7,7 @@ import {
 } from "../protocols";
 
 export class SigunUpController implements IController {
-	constructor(
-		private readonly validation: IValidation
-	) {}
+	constructor(private readonly validation: IValidation) {}
 
 	async handle(request: IHttpRequest): Promise<IHttpResponse> {
 		const error = this.validation.validate(request.body);
