@@ -148,5 +148,11 @@ describe("Signup Controller", () => {
 			expect(response.statusCode).toBe(403);
 			expect(response.body).toEqual(new EmailInUseError());
 		});
+		it("should return 200 if correct data is provided", async () => {
+			const { sut } = makeSut();
+			const response = await sut.handle(makeFakeRequest());
+			expect(response.statusCode).toBe(200);
+			expect(response.body).toBeNull();
+		});
 	});
 });
