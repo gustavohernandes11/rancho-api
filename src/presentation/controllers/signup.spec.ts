@@ -1,4 +1,8 @@
-import { InvalidParamError, MissingParamError } from "../errors";
+import {
+	InvalidParamError,
+	MissingParamError,
+	EmailInUseError,
+} from "../errors";
 import { IHttpRequest } from "../protocols/";
 import { SigunUpController } from "./signup";
 import { makeSignUpValidation } from "../../main/factories/make-signup-validation";
@@ -6,7 +10,6 @@ import {
 	IAddAccount,
 	IAddAccountModel,
 } from "../../domain/usecases/add-account";
-import { EmailInUseError } from "../errors/email-in-use-error";
 import {
 	IAuthentication,
 	IAuthenticationModel,
