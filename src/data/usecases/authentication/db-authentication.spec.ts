@@ -1,6 +1,7 @@
 import { IAuthentication } from "../../../domain/usecases/authentication";
 import { IEncrypter } from "../../protocols/criptography/encrypter";
 import { IHashComparer } from "../../protocols/criptography/hash-comparer";
+import { IUpdateAccessTokenRepository } from "../../protocols/db/update-access-token-repository";
 import {
 	IAccountModel,
 	ILoadAccountByEmailRepository,
@@ -8,17 +9,6 @@ import {
 import { DbAuthentication } from "./db-authentication";
 
 describe("DbAuthentication", () => {
-	class EncrypterStub implements IEncrypter {
-		encrypt(plaintext: string): Promise<string> {
-			return new Promise((resolve) => resolve("encrypted_text"));
-		}
-	}
-	class HashComparerStub implements IHashComparer {
-		compare(): Promise<boolean> {
-			return new Promise((resolve) => resolve(true));
-		}
-	}
-
 	class LoadAccountByEmailRepositoryStub
 		implements ILoadAccountByEmailRepository
 	{
@@ -33,11 +23,27 @@ describe("DbAuthentication", () => {
 			);
 		}
 	}
+	class HashComparerStub implements IHashComparer {
+		compare(): Promise<boolean> {
+			return new Promise((resolve) => resolve(true));
+		}
+	}
+	class EncrypterStub implements IEncrypter {
+		encrypt(plaintext: string): Promise<string> {
+			return new Promise((resolve) => resolve("encrypted_text"));
+		}
+	}
+	class UpdateAccessTokenRepositoryStub
+		implements IUpdateAccessTokenRepository
+	{
+		async updateAccessToken(id: string, token: string): Promise<void> {}
+	}
 	interface ISutType {
 		sut: IAuthentication;
 		hashComparerStub: IHashComparer;
 		loadAccountByEmailRepositoryStub: ILoadAccountByEmailRepository;
 		encrypter: IEncrypter;
+		updateAccessTokenRepositoryStub: IUpdateAccessTokenRepository;
 	}
 	const makeSut = (): ISutType => {
 		const hashComparerStub = new HashComparerStub();
@@ -45,11 +51,14 @@ describe("DbAuthentication", () => {
 			new LoadAccountByEmailRepositoryStub();
 
 		const encrypter = new EncrypterStub();
+		const updateAccessTokenRepositoryStub =
+			new UpdateAccessTokenRepositoryStub();
 
 		const sut = new DbAuthentication(
 			loadAccountByEmailRepositoryStub,
 			hashComparerStub,
-			encrypter
+			encrypter,
+			updateAccessTokenRepositoryStub
 		);
 
 		return {
@@ -57,9 +66,10 @@ describe("DbAuthentication", () => {
 			loadAccountByEmailRepositoryStub,
 			hashComparerStub,
 			encrypter,
+			updateAccessTokenRepositoryStub,
 		};
 	};
-	describe("loadAccountByEmailRepository", () => {
+	describe("LoadAccountByEmailRepository", () => {
 		it("should call the correct loadAccountByEmailRepository method", async () => {
 			const { sut, loadAccountByEmailRepositoryStub } = makeSut();
 			const loadSpy = jest.spyOn(
@@ -204,6 +214,38 @@ describe("DbAuthentication", () => {
 				name: "any_name",
 				accessToken: "encrypted_text",
 			});
+		});
+	});
+	describe("UpdateAccessTokenRepository", () => {
+		it("should throw if updateAccessTokenRepositoryStub throws", async () => {
+			const { sut, updateAccessTokenRepositoryStub } = makeSut();
+			jest.spyOn(
+				updateAccessTokenRepositoryStub,
+				"updateAccessToken"
+			).mockImplementationOnce((): never => {
+				throw new Error();
+			});
+
+			const promise = sut.auth({
+				email: "any_email",
+				password: "any_password",
+			});
+			expect(promise).rejects.toThrow();
+		});
+		it("should call updateAccessTokenRepositoryStub method when correect data is provided", async () => {
+			const { sut, updateAccessTokenRepositoryStub } = makeSut();
+			const updateTokenSpy = jest.spyOn(
+				updateAccessTokenRepositoryStub,
+				"updateAccessToken"
+			);
+
+			await sut.auth({ email: "any_email", password: "any_password" });
+
+			expect(updateTokenSpy).toHaveBeenCalledTimes(1);
+			expect(updateTokenSpy).toHaveBeenCalledWith(
+				"any_id",
+				"encrypted_text"
+			);
 		});
 	});
 });
