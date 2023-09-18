@@ -1,5 +1,5 @@
 export interface IAuthentication {
-	auth(account: IAuthenticationModel): Promise<IAuthenticationResult>;
+	auth(account: IAuthenticationModel): Promise<IAuthenticationResult | null>;
 }
 
 export interface IAuthenticationModel {
