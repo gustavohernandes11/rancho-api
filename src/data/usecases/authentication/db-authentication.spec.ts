@@ -56,6 +56,17 @@ describe("DbAuthentication", () => {
 			expect(loadSpy).toHaveBeenCalledTimes(1);
 			expect(loadSpy).toHaveBeenCalledWith("any_email");
 		});
+		it("should call loadAccountByEmailRepository with correct email", async () => {
+			const { sut, loadAccountByEmailRepositoryStub } = makeSut();
+			const loadSpy = jest.spyOn(
+				loadAccountByEmailRepositoryStub,
+				"loadByEmail"
+			);
+
+			await sut.auth({ email: "any_email", password: "any_password" });
+
+			expect(loadSpy).toHaveBeenCalledWith("any_email");
+		});
 		it("should return null if account wasn't found", async () => {
 			const { sut, loadAccountByEmailRepositoryStub } = makeSut();
 			jest.spyOn(
@@ -94,6 +105,17 @@ describe("DbAuthentication", () => {
 			await sut.auth({ email: "any_email", password: "any_password" });
 
 			expect(comparerSpy).toHaveBeenCalledTimes(1);
+			expect(comparerSpy).toHaveBeenCalledWith(
+				"any_password",
+				"hashed_password"
+			);
+		});
+		it("should call hash comparer with correct parameters", async () => {
+			const { sut, hashComparerStub } = makeSut();
+			const comparerSpy = jest.spyOn(hashComparerStub, "compare");
+
+			await sut.auth({ email: "any_email", password: "any_password" });
+
 			expect(comparerSpy).toHaveBeenCalledWith(
 				"any_password",
 				"hashed_password"
