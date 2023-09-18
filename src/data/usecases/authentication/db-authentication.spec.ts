@@ -1,4 +1,5 @@
 import { IAuthentication } from "../../../domain/usecases/authentication";
+import { IEncrypter } from "../../protocols/criptography/encrypter";
 import { IHashComparer } from "../../protocols/criptography/hash-comparer";
 import {
 	IAccountModel,
@@ -7,6 +8,11 @@ import {
 import { DbAuthentication } from "./db-authentication";
 
 describe("DbAuthentication", () => {
+	class EncrypterStub implements IEncrypter {
+		encrypt(plaintext: string): Promise<string> {
+			return new Promise((resolve) => resolve("encrypted_text"));
+		}
+	}
 	class HashComparerStub implements IHashComparer {
 		compare(): Promise<boolean> {
 			return new Promise((resolve) => resolve(true));
@@ -31,17 +37,27 @@ describe("DbAuthentication", () => {
 		sut: IAuthentication;
 		hashComparerStub: IHashComparer;
 		loadAccountByEmailRepositoryStub: ILoadAccountByEmailRepository;
+		encrypter: IEncrypter;
 	}
 	const makeSut = (): ISutType => {
 		const hashComparerStub = new HashComparerStub();
 		const loadAccountByEmailRepositoryStub =
 			new LoadAccountByEmailRepositoryStub();
 
+		const encrypter = new EncrypterStub();
+
 		const sut = new DbAuthentication(
 			loadAccountByEmailRepositoryStub,
-			hashComparerStub
+			hashComparerStub,
+			encrypter
 		);
-		return { sut, loadAccountByEmailRepositoryStub, hashComparerStub };
+
+		return {
+			sut,
+			loadAccountByEmailRepositoryStub,
+			hashComparerStub,
+			encrypter,
+		};
 	};
 	describe("loadAccountByEmailRepository", () => {
 		it("should call the correct loadAccountByEmailRepository method", async () => {
@@ -110,6 +126,20 @@ describe("DbAuthentication", () => {
 				"hashed_password"
 			);
 		});
+		it("should return null if the password is not validate by comparison", async () => {
+			const { sut, hashComparerStub } = makeSut();
+			jest.spyOn(hashComparerStub, "compare").mockReturnValueOnce(
+				new Promise((resolve) => resolve(false))
+			);
+
+			const response = await sut.auth({
+				email: "any_email",
+				password: "any_password",
+			});
+
+			expect(response).toBeNull();
+		});
+
 		it("should call hash comparer with correct parameters", async () => {
 			const { sut, hashComparerStub } = makeSut();
 			const comparerSpy = jest.spyOn(hashComparerStub, "compare");
@@ -121,7 +151,7 @@ describe("DbAuthentication", () => {
 				"hashed_password"
 			);
 		});
-		it("should throw if HashComparer throws", async () => {
+		it("should throw if hashComparer throws", async () => {
 			const { sut, hashComparerStub } = makeSut();
 			jest.spyOn(hashComparerStub, "compare").mockImplementationOnce(
 				(): never => {
@@ -134,6 +164,46 @@ describe("DbAuthentication", () => {
 				password: "any_password",
 			});
 			expect(promise).rejects.toThrow();
+		});
+	});
+	describe("Encrypter", () => {
+		it("should call encrypter with correct parameters", async () => {
+			const { sut, encrypter } = makeSut();
+			const encryptSpy = jest.spyOn(encrypter, "encrypt");
+
+			await sut.auth({
+				email: "any_email",
+				password: "any_password",
+			});
+
+			expect(encryptSpy).toHaveBeenCalledWith("any_id");
+		});
+		it("should throw if encrypter throws", async () => {
+			const { sut, encrypter } = makeSut();
+			jest.spyOn(encrypter, "encrypt").mockImplementationOnce(
+				(): never => {
+					throw new Error();
+				}
+			);
+
+			const promise = sut.auth({
+				email: "any_email",
+				password: "any_password",
+			});
+			expect(promise).rejects.toThrow();
+		});
+		it("should return the correct accessToken from encrypter and account name", async () => {
+			const { sut } = makeSut();
+
+			const response = await sut.auth({
+				email: "any_email",
+				password: "any_password",
+			});
+
+			expect(response).toEqual({
+				name: "any_name",
+				accessToken: "encrypted_text",
+			});
 		});
 	});
 });
