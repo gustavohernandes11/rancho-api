@@ -12,9 +12,9 @@ import {
 } from "../../domain/usecases/add-account";
 import {
 	IAuthentication,
-	IAuthenticationModel,
 	IAuthenticationResult,
 } from "../../domain/usecases/authentication";
+import { IAuthenticationModel } from "../../domain/models/authentication";
 
 describe("Signup Controller", () => {
 	class DbAddAccountStub implements IAddAccount {
