@@ -7,6 +7,11 @@ import {
 	IAddAccountModel,
 } from "../../domain/usecases/add-account";
 import { EmailInUseError } from "../errors/email-in-use-error";
+import {
+	IAuthentication,
+	IAuthenticationModel,
+	IAuthenticationResult,
+} from "../../domain/usecases/authentication";
 
 describe("Signup Controller", () => {
 	class DbAddAccountStub implements IAddAccount {
@@ -14,15 +19,31 @@ describe("Signup Controller", () => {
 			return new Promise((resolve) => resolve(true));
 		}
 	}
+	class DbAuthenticationStub implements IAuthentication {
+		auth(account: IAuthenticationModel): Promise<IAuthenticationResult> {
+			return new Promise((resolve) =>
+				resolve({
+					accessToken: "valid_acess_token",
+					name: "valid_name",
+				})
+			);
+		}
+	}
 	interface ISutTypes {
 		sut: SigunUpController;
 		dbAddAccountStub: IAddAccount;
+		authenticationStub: IAuthentication;
 	}
 	const makeSut = (): ISutTypes => {
 		const signupValidations = makeSignUpValidation();
 		const dbAddAccountStub = new DbAddAccountStub();
-		const sut = new SigunUpController(signupValidations, dbAddAccountStub);
-		return { sut, dbAddAccountStub };
+		const authenticationStub = new DbAuthenticationStub();
+		const sut = new SigunUpController(
+			signupValidations,
+			dbAddAccountStub,
+			authenticationStub
+		);
+		return { sut, dbAddAccountStub, authenticationStub };
 	};
 	const makeFakeRequest = () => ({
 		body: {
@@ -152,7 +173,38 @@ describe("Signup Controller", () => {
 			const { sut } = makeSut();
 			const response = await sut.handle(makeFakeRequest());
 			expect(response.statusCode).toBe(200);
-			expect(response.body).toBeNull();
+		});
+	});
+	describe("Authentication", () => {
+		it("should return 500 if Authentication throws", async () => {
+			const { sut, authenticationStub } = makeSut();
+			jest.spyOn(authenticationStub, "auth").mockImplementationOnce(
+				() => {
+					throw new Error();
+				}
+			);
+			const response = await sut.handle(makeFakeRequest());
+			expect(response.statusCode).toBe(500);
+		});
+		it("should call the correct authentication method", async () => {
+			const { sut, authenticationStub } = makeSut();
+			const authSpy = jest.spyOn(authenticationStub, "auth");
+			await sut.handle(makeFakeRequest());
+
+			expect(authSpy).toHaveBeenCalledWith({
+				email: "valid_email@gmail.com",
+				password: "valid_password",
+			});
+		});
+		it("should return 200 with authentication (name and accessToken)", async () => {
+			const { sut } = makeSut();
+			const response = await sut.handle(makeFakeRequest());
+
+			expect(response.body).toEqual({
+				accessToken: "valid_acess_token",
+				name: "valid_name",
+			});
+			expect(response.statusCode).toBe(200);
 		});
 	});
 });

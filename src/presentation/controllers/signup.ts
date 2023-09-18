@@ -1,4 +1,5 @@
 import { IAddAccount } from "../../domain/usecases/add-account";
+import { IAuthentication } from "../../domain/usecases/authentication";
 import { EmailInUseError } from "../errors/email-in-use-error";
 import {
 	badRequest,
@@ -16,7 +17,8 @@ import {
 export class SigunUpController implements IController {
 	constructor(
 		private readonly validation: IValidation,
-		private readonly dbAddAccount: IAddAccount
+		private readonly dbAddAccount: IAddAccount,
+		private readonly authentication: IAuthentication
 	) {}
 
 	async handle(request: IHttpRequest): Promise<IHttpResponse> {
@@ -33,8 +35,12 @@ export class SigunUpController implements IController {
 			});
 
 			if (!isValid) return forbidden(new EmailInUseError());
+			const authResult = await this.authentication.auth({
+				email,
+				password,
+			});
 
-			return ok();
+			return ok(authResult);
 		} catch (error) {
 			return serverError();
 		}
