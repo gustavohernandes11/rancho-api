@@ -5,7 +5,7 @@ import {
 } from "../errors";
 import { IHttpRequest } from "../protocols/";
 import { SigunUpController } from "./signup";
-import { makeSignUpValidation } from "../../main/factories/make-signup-validation";
+import { makeSignUpValidation } from "../../main/factories/validation/make-signup-validation";
 import {
 	IAddAccount,
 	IAddAccountModel,

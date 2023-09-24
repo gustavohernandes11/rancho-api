@@ -3,7 +3,7 @@ import {
 	IAuthentication,
 	IAuthenticationResult,
 } from "../../domain/usecases/authentication";
-import { makeLoginValidations } from "../../main/factories/make-login-validation";
+import { makeLoginValidations } from "../../main/factories/validation/make-login-validation";
 import { MissingParamError } from "../errors";
 import { LoginController } from "./login";
 
