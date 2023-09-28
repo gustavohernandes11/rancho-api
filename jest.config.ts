@@ -16,6 +16,7 @@ const config: Config = {
 	coverageProvider: "v8",
 	transformIgnorePatterns: ["\\\\node_modules\\\\"],
 	collectCoverageFrom: ["<rootDir>/src/**/*.ts", "!<rootDir>/src/main/**"],
+	preset: "@shelf/jest-mongodb",
 };
 
 export default config;
