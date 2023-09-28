@@ -5,6 +5,7 @@ import { IAddAccountModel } from "../../../domain/usecases/add-account";
 
 import { IAccountModel } from "../../../domain/models/account";
 import { MongoHelper } from "./mongo-helper";
+import { ObjectId } from "mongodb";
 
 export class AccountMongoRepository
 	implements
@@ -13,6 +14,13 @@ export class AccountMongoRepository
 		IUpdateAccessTokenRepository
 {
 	constructor() {}
+	async add(account: IAddAccountModel): Promise<boolean> {
+		const accountCollection = MongoHelper.getCollection("accounts");
+		const insertedId =
+			accountCollection && (await accountCollection.insertOne(account));
+
+		return insertedId !== null;
+	}
 	async loadByEmail(email: string): Promise<IAccountModel | null> {
 		const accountCollection = MongoHelper.getCollection("accounts");
 		const account = await accountCollection.findOne(
@@ -29,14 +37,16 @@ export class AccountMongoRepository
 		);
 		return account && MongoHelper.map(account);
 	}
-	updateAccessToken(id: string, token: string): Promise<void> {
-		throw new Error("Method not implemented.");
-	}
-	async add(account: IAddAccountModel): Promise<boolean> {
+	async updateAccessToken(
+		id: string | ObjectId,
+		token: string
+	): Promise<void> {
 		const accountCollection = MongoHelper.getCollection("accounts");
-		const insertedId =
-			accountCollection && (await accountCollection.insertOne(account));
-
-		return insertedId !== null;
+		await accountCollection.updateOne(
+			{ _id: id },
+			{
+				$set: { accessToken: token },
+			}
+		);
 	}
 }

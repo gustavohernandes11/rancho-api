@@ -51,4 +51,24 @@ describe("Account Mongo Repository", () => {
 			expect(account).toBeNull();
 		});
 	});
+	describe("updateAcessToken()", () => {
+		it("should update the access token correctly", async () => {
+			const sut = new AccountMongoRepository();
+			const { insertedId } = await accountCollection.insertOne(
+				makeFakeAccount()
+			);
+			const fakeAccount = await accountCollection.findOne({
+				_id: insertedId,
+			});
+			expect(fakeAccount?.acessToken).toBeFalsy();
+			const accessToken = "any_token";
+			await sut.updateAccessToken(insertedId, accessToken);
+
+			const account = await accountCollection.findOne({
+				_id: insertedId,
+			});
+			expect(account).toBeTruthy();
+			expect(account!.accessToken).toBe(accessToken);
+		});
+	});
 });
