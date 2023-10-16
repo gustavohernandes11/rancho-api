@@ -7,7 +7,7 @@ export class BcryptAdapter implements IHasher, IHashComparer {
 	async hash(text: string): Promise<string> {
 		return await bcrypt.hash(text, this.salt);
 	}
-	compare(plaintext: string, digest: string): Promise<boolean> {
-		throw new Error("Method not implemented.");
+	async compare(plaintext: string, digest: string): Promise<boolean> {
+		return await bcrypt.compare(plaintext, digest);
 	}
 }
