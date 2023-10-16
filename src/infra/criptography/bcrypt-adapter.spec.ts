@@ -1,3 +1,5 @@
+import { IHashComparer } from "../../data/protocols/criptography/hash-comparer";
+import { IHasher } from "../../data/protocols/criptography/hasher";
 import { BcryptAdapter } from "./bcrypt-adapter";
 import bcrypt from "bcrypt";
 
@@ -10,22 +12,31 @@ jest.mock("bcrypt", () => ({
 	},
 }));
 
+type ISutType = {
+	sut: IHasher & IHashComparer;
+};
+const makeSut = (): ISutType => {
+	return {
+		sut: new BcryptAdapter(12),
+	};
+};
+
 describe("Bcrypt Adapter", () => {
 	describe("hash()", () => {
 		it("should use the correct params", () => {
-			const sut = new BcryptAdapter(12);
+			const { sut } = makeSut();
 			const bcryptSpy = jest.spyOn(bcrypt, "hash");
 			sut.hash("any_text");
 			expect(bcryptSpy).toHaveBeenCalledWith("any_text", 12);
 		});
 		it("should return a valid hash value", async () => {
-			const sut = new BcryptAdapter(12);
+			const { sut } = makeSut();
 			jest.spyOn(bcrypt, "hash");
 			const response = await sut.hash("any_text");
 			expect(response).toBe("hash");
 		});
 		it("should throw if bcrypt throws", async () => {
-			const sut = new BcryptAdapter(12);
+			const { sut } = makeSut();
 			const bcryptSpy = jest.spyOn(bcrypt, "hash");
 			bcryptSpy.mockImplementationOnce(() => {
 				throw new Error();
@@ -36,7 +47,7 @@ describe("Bcrypt Adapter", () => {
 	});
 	describe("compare", () => {
 		it("should use the correct values in method", async () => {
-			const sut = new BcryptAdapter(12);
+			const { sut } = makeSut();
 			const compareSpy = jest.spyOn(sut, "compare");
 			const original = "any_text";
 			const hashed = await sut.hash(original);
@@ -45,7 +56,7 @@ describe("Bcrypt Adapter", () => {
 			expect(compareSpy).toHaveBeenCalledWith("any_text", hashed);
 		});
 		it("should return true if the hashed IS the same as the original after hashing", async () => {
-			const sut = new BcryptAdapter(12);
+			const { sut } = makeSut();
 			const original = "any_text";
 			const hashed = await sut.hash(original);
 			const response = await sut.compare(original, hashed);
@@ -53,7 +64,7 @@ describe("Bcrypt Adapter", () => {
 			expect(response).toBeTruthy();
 		});
 		it("should return false if the hashed IS NOT the same as the original after hashing", async () => {
-			const sut = new BcryptAdapter(12);
+			const { sut } = makeSut();
 			jest.spyOn(bcrypt, "compare").mockImplementationOnce(() => false);
 			const original = "any_text";
 			const hashed = await sut.hash("not_the_any_text");
@@ -62,7 +73,7 @@ describe("Bcrypt Adapter", () => {
 			expect(response).toBeFalsy();
 		});
 		it("should throw if compare throws", async () => {
-			const sut = new BcryptAdapter(12);
+			const { sut } = makeSut();
 			jest.spyOn(bcrypt, "compare").mockImplementationOnce(() => {
 				throw new Error();
 			});

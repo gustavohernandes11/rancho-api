@@ -1,3 +1,5 @@
+import { IDecrypter } from "../../data/protocols/criptography/decrypter";
+import { IEncrypter } from "../../data/protocols/criptography/encrypter";
 import { JwtAdapter } from "./jwt-adapter";
 import jwt from "jsonwebtoken";
 
@@ -9,12 +11,21 @@ jest.mock("jsonwebtoken", () => ({
 		return new Promise((resolve) => resolve("decrypted_text"));
 	},
 }));
+type ISutType = {
+	sut: IEncrypter & IDecrypter;
+};
+const makeSut = (): ISutType => {
+	const secret = "any_secret";
+
+	return {
+		sut: new JwtAdapter(secret),
+	};
+};
 
 describe("JWT Adapter", () => {
 	describe("encrypt", () => {
 		it("should call encrypt method with correct parameters", () => {
-			const secret = "any_secret";
-			const sut = new JwtAdapter(secret);
+			const { sut } = makeSut();
 			const jwtSpy = jest.spyOn(sut, "encrypt");
 			const text = "any_text";
 			sut.encrypt(text);
@@ -22,16 +33,14 @@ describe("JWT Adapter", () => {
 			expect(jwtSpy).toHaveBeenCalledWith("any_text");
 		});
 		it("should return an encrypted text", async () => {
-			const secret = "any_secret";
-			const sut = new JwtAdapter(secret);
+			const { sut } = makeSut();
 			const text = "any_text";
 			const response = await sut.encrypt(text);
 
 			expect(response).toBeTruthy();
 		});
 		it("should throw if encrypt throws", async () => {
-			const secret = "any_secret";
-			const sut = new JwtAdapter(secret);
+			const { sut } = makeSut();
 			const encryptSpy = jest.spyOn(jwt, "sign");
 			encryptSpy.mockImplementationOnce((): never => {
 				throw new Error();
@@ -43,8 +52,7 @@ describe("JWT Adapter", () => {
 	});
 	describe("decrypt", () => {
 		it("should call decrypt with correct values", async () => {
-			const secret = "any_secret";
-			const sut = new JwtAdapter(secret);
+			const { sut } = makeSut();
 			const jwtSpy = jest.spyOn(sut, "decrypt");
 			const text = "any_text";
 			await sut.decrypt(text);
@@ -53,16 +61,14 @@ describe("JWT Adapter", () => {
 			expect(jwtSpy).toHaveBeenCalled();
 		});
 		it("should return an encrypted value on success", async () => {
-			const secret = "any_secret";
-			const sut = new JwtAdapter(secret);
+			const { sut } = makeSut();
 			const response = await sut.decrypt("any_text");
 
 			expect(response).toBe("decrypted_text");
 		});
 
 		it("should throw if decrypt throws", () => {
-			const secret = "any_secret";
-			const sut = new JwtAdapter(secret);
+			const { sut } = makeSut();
 			jest.spyOn(jwt, "verify").mockImplementationOnce(() => {
 				throw new Error();
 			});
