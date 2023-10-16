@@ -28,11 +28,17 @@
 		"prepare": "husky install",
 		"lint": "eslint --fix",
 		"start": "node dist/src/main/server.js",
-		"build": "rimraf dist && tsc -p tsconfig.json"
+		"build": "rimraf dist && tsc -p tsconfig.json",
+		"precommit": "yarn lint-staged && yarn test"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/gustavohernandes11/rancho-api.git"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "npm run precommit"
+		}
 	},
 	"author": "",
 	"license": "ISC",
