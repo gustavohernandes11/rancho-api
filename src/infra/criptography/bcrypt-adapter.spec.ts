@@ -34,4 +34,41 @@ describe("Bcrypt Adapter", () => {
 			expect(promise).rejects.toThrow();
 		});
 	});
+	describe("compare", () => {
+		it("should use the correct values in method", async () => {
+			const sut = new BcryptAdapter(12);
+			const compareSpy = jest.spyOn(sut, "compare");
+			const original = "any_text";
+			const hashed = await sut.hash(original);
+			await sut.compare(original, hashed);
+
+			expect(compareSpy).toHaveBeenCalledWith("any_text", hashed);
+		});
+		it("should return true if the hashed IS the same as the original after hashing", async () => {
+			const sut = new BcryptAdapter(12);
+			const original = "any_text";
+			const hashed = await sut.hash(original);
+			const response = await sut.compare(original, hashed);
+
+			expect(response).toBeTruthy();
+		});
+		it("should return false if the hashed IS NOT the same as the original after hashing", async () => {
+			const sut = new BcryptAdapter(12);
+			jest.spyOn(bcrypt, "compare").mockImplementationOnce(() => false);
+			const original = "any_text";
+			const hashed = await sut.hash("not_the_any_text");
+			const response = await sut.compare(original, hashed);
+
+			expect(response).toBeFalsy();
+		});
+		it("should throw if compare throws", async () => {
+			const sut = new BcryptAdapter(12);
+			jest.spyOn(bcrypt, "compare").mockImplementationOnce(() => {
+				throw new Error();
+			});
+
+			const promise = sut.compare("any_text", "any_hash");
+			expect(promise).rejects.toThrow();
+		});
+	});
 });
