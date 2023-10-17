@@ -76,6 +76,14 @@ describe("Login", () => {
 			const result = await sut.handle(makeFakeRequest());
 			expect(result.statusCode).toBe(500);
 		});
+		it("should return 401 if authentication return null", async () => {
+			const { sut, authenticationStub } = makeSut();
+			jest.spyOn(authenticationStub, "auth").mockReturnValueOnce(
+				new Promise((resolve) => resolve(null))
+			);
+			const result = await sut.handle(makeFakeRequest());
+			expect(result.statusCode).toBe(401);
+		});
 		it("should return 200 with accessToken and name params in the body on success", async () => {
 			const { sut } = makeSut();
 			const request = makeFakeRequest();

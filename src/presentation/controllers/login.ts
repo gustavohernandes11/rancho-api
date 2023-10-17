@@ -1,5 +1,10 @@
 import { IAuthentication } from "../../domain/usecases/authentication";
-import { badRequest, ok, serverError } from "../helpers/http-helpers";
+import {
+	badRequest,
+	ok,
+	serverError,
+	unauthorized,
+} from "../helpers/http-helpers";
 import {
 	IController,
 	IHttpRequest,
@@ -24,6 +29,7 @@ export class LoginController implements IController {
 				password,
 			});
 
+			if (!authResult) return unauthorized();
 			return ok(authResult);
 		} catch (error) {
 			return serverError();
