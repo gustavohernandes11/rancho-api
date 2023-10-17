@@ -1,10 +1,9 @@
 import { DbAddAccount } from "./db-add-account";
 import {
-	IAccountModel,
 	IAddAccountModel,
 	IAddAccountRepository,
+	ICheckAccountByEmail,
 	IHasher,
-	ILoadAccountByEmailRepository,
 } from "./db-add-account-protocols";
 
 describe("DbAddAccount", () => {
@@ -13,11 +12,9 @@ describe("DbAddAccount", () => {
 			return new Promise((resolve) => resolve(true));
 		}
 	}
-	class LoadAccountByEmailRepositoryStub
-		implements ILoadAccountByEmailRepository
-	{
-		async loadByEmail(email: string): Promise<IAccountModel | null> {
-			return new Promise((resolve) => resolve(null));
+	class CheckAccountByEmailRepositoryStub implements ICheckAccountByEmail {
+		checkByEmail(email: string): Promise<boolean> {
+			return new Promise((resolve) => resolve(false));
 		}
 	}
 	class HasherStub implements IHasher {
@@ -28,7 +25,7 @@ describe("DbAddAccount", () => {
 	type SutTypes = {
 		sut: DbAddAccount;
 		addAccountRepositoryStub: IAddAccountRepository;
-		loadAccountByEmailRepositoryStub: ILoadAccountByEmailRepository;
+		checkAccountByEmailRepositoryStub: ICheckAccountByEmail;
 		hasherStub: IHasher;
 	};
 
@@ -41,18 +38,18 @@ describe("DbAddAccount", () => {
 	const makeSut = (): SutTypes => {
 		const addAccountRepositoryStub = new AddAccountRepositoryStub();
 		const hasherStub = new HasherStub();
-		const loadAccountByEmailRepositoryStub =
-			new LoadAccountByEmailRepositoryStub();
+		const checkAccountByEmailRepositoryStub =
+			new CheckAccountByEmailRepositoryStub();
 		const sut = new DbAddAccount(
 			addAccountRepositoryStub,
 			hasherStub,
-			loadAccountByEmailRepositoryStub
+			checkAccountByEmailRepositoryStub
 		);
 
 		return {
 			sut,
 			hasherStub,
-			loadAccountByEmailRepositoryStub,
+			checkAccountByEmailRepositoryStub,
 			addAccountRepositoryStub,
 		};
 	};
@@ -120,30 +117,23 @@ describe("DbAddAccount", () => {
 			await expect(promise).rejects.toThrow();
 		});
 	});
-	describe("loadAccountByEmailRepository", () => {
-		it("should call the correct loadAccountByEmailRepository when adding an account", async () => {
-			const { sut, loadAccountByEmailRepositoryStub } = makeSut();
+	describe("checkAccountByEmailRepository", () => {
+		it("should call the correct checkAccountByEmailRepository when adding an account", async () => {
+			const { sut, checkAccountByEmailRepositoryStub } = makeSut();
 			const loadSpy = jest.spyOn(
-				loadAccountByEmailRepositoryStub,
-				"loadByEmail"
+				checkAccountByEmailRepositoryStub,
+				"checkByEmail"
 			);
 			await sut.add(makeFakeAccount());
 			expect(loadSpy).toHaveBeenCalled();
 		});
 		it("should return false if email is already in use", async () => {
-			const { sut, loadAccountByEmailRepositoryStub } = makeSut();
+			const { sut, checkAccountByEmailRepositoryStub } = makeSut();
 			jest.spyOn(
-				loadAccountByEmailRepositoryStub,
-				"loadByEmail"
+				checkAccountByEmailRepositoryStub,
+				"checkByEmail"
 			).mockImplementationOnce(() => {
-				return new Promise((resolve) =>
-					resolve({
-						id: "any_id_2",
-						name: "valid_name_2",
-						email: "valid_email_2",
-						password: "hashed_password_2",
-					})
-				);
+				return new Promise((resolve) => resolve(true));
 			});
 			const response = await sut.add(makeFakeAccount());
 			expect(response).toBeFalsy();
@@ -151,23 +141,16 @@ describe("DbAddAccount", () => {
 		it("should not add an account if the email is already in use", async () => {
 			const {
 				sut,
-				loadAccountByEmailRepositoryStub,
+				checkAccountByEmailRepositoryStub,
 				addAccountRepositoryStub,
 			} = makeSut();
 
 			const addSpy = jest.spyOn(addAccountRepositoryStub, "add");
 			jest.spyOn(
-				loadAccountByEmailRepositoryStub,
-				"loadByEmail"
+				checkAccountByEmailRepositoryStub,
+				"checkByEmail"
 			).mockImplementationOnce(() => {
-				return new Promise((resolve) =>
-					resolve({
-						id: "any_id_2",
-						name: "valid_name_2",
-						email: "valid_email_2",
-						password: "hashed_password_2",
-					})
-				);
+				return new Promise((resolve) => resolve(true));
 			});
 			await sut.add(makeFakeAccount());
 			expect(addSpy).toHaveBeenCalledTimes(0);

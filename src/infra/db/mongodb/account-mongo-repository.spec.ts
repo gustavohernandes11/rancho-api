@@ -71,4 +71,23 @@ describe("Account Mongo Repository", () => {
 			expect(account!.accessToken).toBe(accessToken);
 		});
 	});
+	describe("checkByEmail()", () => {
+		it("should return false if the account do not exists", async () => {
+			const sut = new AccountMongoRepository();
+			const response = await sut.checkByEmail(
+				"non_existent_email@gmail.com"
+			);
+			expect(response).toBe(false);
+		});
+		it("should return true if the account exists", async () => {
+			const sut = new AccountMongoRepository();
+			await sut.add({
+				name: "any_name",
+				email: "any_email@gmail.com",
+				password: "any_hashed_password",
+			});
+			const response = await sut.checkByEmail("any_email@gmail.com");
+			expect(response).toBe(true);
+		});
+	});
 });

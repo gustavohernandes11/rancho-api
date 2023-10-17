@@ -6,3 +6,4 @@ export {
 export { IAddAccountRepository } from "../../protocols/db/add-account-repository";
 export { IHasher } from "../../protocols/criptography/hasher";
 export { ILoadAccountByEmailRepository } from "../../protocols/db/load-account-by-email-repository";
+export { ICheckAccountByEmail } from "../../protocols/db/check-account-by-email-repository";

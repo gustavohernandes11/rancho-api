@@ -2,28 +2,31 @@ import {
 	IAddAccount,
 	IAddAccountModel,
 	IAddAccountRepository,
+	ICheckAccountByEmail,
 	IHasher,
-	ILoadAccountByEmailRepository,
 } from "./db-add-account-protocols";
 
 export class DbAddAccount implements IAddAccount {
 	constructor(
 		private readonly addAccountRepository: IAddAccountRepository,
 		private readonly hasher: IHasher,
-		private readonly loadAccountByEmailRepository: ILoadAccountByEmailRepository
+		private readonly checkAccountByEmailRepository: ICheckAccountByEmail
 	) {}
 
 	async add(account: IAddAccountModel): Promise<boolean> {
 		const alreadyInUseAccount =
-			await this.loadAccountByEmailRepository.loadByEmail(account.email);
+			await this.checkAccountByEmailRepository.checkByEmail(
+				account.email
+			);
 
-		if (alreadyInUseAccount && alreadyInUseAccount !== null)
-			return new Promise((resolve) => resolve(false));
+		let isValid = false;
+		if (!alreadyInUseAccount) {
+			const hashedPassword = await this.hasher.hash(account.password);
 
-		const hashedPassword = await this.hasher.hash(account.password);
-		await this.addAccountRepository.add(
-			Object.assign(account, { password: hashedPassword })
-		);
-		return new Promise((resolve) => resolve(true));
+			isValid = await this.addAccountRepository.add(
+				Object.assign({ ...account, password: hashedPassword })
+			);
+		}
+		return isValid;
 	}
 }

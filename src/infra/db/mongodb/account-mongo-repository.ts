@@ -6,14 +6,30 @@ import { IAddAccountModel } from "../../../domain/usecases/add-account";
 import { IAccountModel } from "../../../domain/models/account";
 import { MongoHelper } from "./mongo-helper";
 import { ObjectId } from "mongodb";
+import { ICheckAccountByEmail } from "../../../data/protocols/db/check-account-by-email-repository";
 
 export class AccountMongoRepository
 	implements
 		IAddAccountRepository,
 		ILoadAccountByEmailRepository,
-		IUpdateAccessTokenRepository
+		IUpdateAccessTokenRepository,
+		ICheckAccountByEmail
 {
 	constructor() {}
+	async checkByEmail(email: string): Promise<boolean> {
+		const accountCollection = MongoHelper.getCollection("accounts");
+		const account = await accountCollection.findOne(
+			{
+				email,
+			},
+			{
+				projection: {
+					_id: 1,
+				},
+			}
+		);
+		return account !== null;
+	}
 	async add(account: IAddAccountModel): Promise<boolean> {
 		const accountCollection = MongoHelper.getCollection("accounts");
 		const insertedId =
