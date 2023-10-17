@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 export const adaptRoute = (controller: IController) => {
 	return async (req: Request, res: Response) => {
 		const request = {
-			...(req.body || {}),
+			body: req.body || {},
 			...(req.header || {}),
 			accountId: req.accountId,
 		};
@@ -13,7 +13,7 @@ export const adaptRoute = (controller: IController) => {
 			res.status(httpResponse.statusCode).json(httpResponse.body);
 		} else {
 			res.status(httpResponse.statusCode).json({
-				error: httpResponse.body,
+				error: httpResponse.body.message,
 			});
 		}
 	};

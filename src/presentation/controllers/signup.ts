@@ -42,7 +42,7 @@ export class SigunUpController implements IController {
 
 			return ok(authResult);
 		} catch (error) {
-			return serverError();
+			return serverError(error as Error);
 		}
 	}
 }
