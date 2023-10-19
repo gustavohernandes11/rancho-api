@@ -18,7 +18,7 @@ export class DbAuthentication implements IAuthentication {
 
 	async auth(
 		authentication: IAuthenticationModel
-	): Promise<IAuthenticationResult> {
+	): Promise<IAuthenticationResult | null> {
 		const account = await this.loadByEmailRepo.loadByEmail(
 			authentication.email
 		);
@@ -27,6 +27,7 @@ export class DbAuthentication implements IAuthentication {
 				authentication.password,
 				account.password
 			);
+
 			if (isValid) {
 				const accessToken = await this.encrypter.encrypt(account.id);
 				await this.updateAccessTokenRespository.updateAccessToken(
@@ -38,6 +39,6 @@ export class DbAuthentication implements IAuthentication {
 				);
 			}
 		}
-		return new Promise((resolve) => resolve(null!));
+		return new Promise((resolve) => resolve(null));
 	}
 }

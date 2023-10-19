@@ -4,9 +4,9 @@ export const badRequest = (error: Error): IHttpResponse => ({
 	statusCode: 400,
 	body: error,
 });
-export const unauthorized = (): IHttpResponse => ({
+export const unauthorized = (body: any = null): IHttpResponse => ({
 	statusCode: 401,
-	body: null,
+	body,
 });
 export const serverError = (error?: Error): IHttpResponse => ({
 	statusCode: 500,

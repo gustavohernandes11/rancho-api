@@ -4,6 +4,7 @@ import { JwtAdapter } from "../../../infra/criptography/jwt-adapter";
 import { AccountMongoRepository } from "../../../infra/db/mongodb/account-mongo-repository";
 import { LoginController } from "../../../presentation/controllers/login";
 import { IController } from "../../../presentation/protocols";
+import env from "../../config/env";
 import { makeLoginValidations } from "../validation/make-login-validation";
 
 export const makeLoginController = (): IController => {
@@ -11,12 +12,12 @@ export const makeLoginController = (): IController => {
 	const accountMongoRepoisitory = new AccountMongoRepository();
 	const salt = 12;
 	const bcryptAdapter = new BcryptAdapter(salt);
-	const jwtAdapter = new JwtAdapter(process.env.JWT_SECRET!);
-	const authentication = new DbAuthentication(
+	const jwtAdapter = new JwtAdapter(env.jwtSecret);
+	const dbAuthentication = new DbAuthentication(
 		accountMongoRepoisitory,
 		bcryptAdapter,
 		jwtAdapter,
 		accountMongoRepoisitory
 	);
-	return new LoginController(validation, authentication);
+	return new LoginController(validation, dbAuthentication);
 };
