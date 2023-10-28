@@ -58,10 +58,15 @@ export class AccountMongoRepository
 		token: string
 	): Promise<void> {
 		const accountCollection = MongoHelper.getCollection("accounts");
+
 		await accountCollection.updateOne(
-			{ _id: id },
 			{
-				$set: { accessToken: token },
+				_id: id,
+			},
+			{
+				$set: {
+					accessToken: token,
+				},
 			}
 		);
 	}

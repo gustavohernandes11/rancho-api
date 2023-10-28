@@ -78,6 +78,21 @@
 2. [ ] Retorna erro **401** se não encontrar um usuário com os dados fornecidos
 3. [ ] Retorna **500** se houver algum erro no servidor
 
+## Verificar animail
+
+### Caso de sucesso
+
+1. [ ] Recebe uma requisição do tipo **GET** na rota **/api/animals/:id**
+2. [ ] Valida qual usuário está fazendo a requisição pelo token JWT
+3. [ ] Retorna **204** se estiver vazio
+4. [ ] Retorna **200** com uma lista de animais **desse usuário**
+
+### Exceções
+
+1. [ ] Retorna erro **400** se a API não existir
+2. [ ] Retorna erro **401** se não encontrar um usuário com os dados fornecidos
+3. [ ] Retorna **500** se houver algum erro no servidor
+
 
 ## Editar Animal
 

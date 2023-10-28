@@ -232,7 +232,7 @@ describe("DbAuthentication", () => {
 			});
 			expect(promise).rejects.toThrow();
 		});
-		it("should call updateAccessTokenRepositoryStub method when correect data is provided", async () => {
+		it("should call updateAccessTokenRepositoryStub method when correct data is provided", async () => {
 			const { sut, updateAccessTokenRepositoryStub } = makeSut();
 			const updateTokenSpy = jest.spyOn(
 				updateAccessTokenRepositoryStub,

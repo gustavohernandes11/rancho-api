@@ -52,7 +52,7 @@ describe("Account Mongo Repository", () => {
 		});
 	});
 	describe("updateAcessToken()", () => {
-		it("should update the access token correctly", async () => {
+		it("should set or update the accessToken in the database", async () => {
 			const sut = new AccountMongoRepository();
 			const { insertedId } = await accountCollection.insertOne(
 				makeFakeAccount()
@@ -60,7 +60,7 @@ describe("Account Mongo Repository", () => {
 			const fakeAccount = await accountCollection.findOne({
 				_id: insertedId,
 			});
-			expect(fakeAccount?.acessToken).toBeFalsy();
+			expect(fakeAccount?.accessToken).toBeFalsy();
 			const accessToken = "any_token";
 			await sut.updateAccessToken(insertedId, accessToken);
 
@@ -68,6 +68,7 @@ describe("Account Mongo Repository", () => {
 				_id: insertedId,
 			});
 			expect(account).toBeTruthy();
+			expect(account!.accessToken).toBeTruthy();
 			expect(account!.accessToken).toBe(accessToken);
 		});
 	});
