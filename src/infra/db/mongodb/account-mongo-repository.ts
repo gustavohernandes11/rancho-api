@@ -7,13 +7,18 @@ import { IAccountModel } from "../../../domain/models/account";
 import { MongoHelper } from "./mongo-helper";
 import { ObjectId } from "mongodb";
 import { ICheckAccountByEmail } from "../../../data/protocols/db/check-account-by-email-repository";
+import {
+	AccountId,
+	ILoadAccountByTokenRepository,
+} from "../../../data/protocols/db/load-account-by-token-repository";
 
 export class AccountMongoRepository
 	implements
 		IAddAccountRepository,
 		ILoadAccountByEmailRepository,
 		IUpdateAccessTokenRepository,
-		ICheckAccountByEmail
+		ICheckAccountByEmail,
+		ILoadAccountByTokenRepository
 {
 	constructor() {}
 	async checkByEmail(email: string): Promise<boolean> {
@@ -69,5 +74,24 @@ export class AccountMongoRepository
 				},
 			}
 		);
+	}
+
+	async loadByToken(
+		token: string,
+		role?: string | undefined
+	): Promise<AccountId | null> {
+		const accountCollection = MongoHelper.getCollection("accounts");
+		const account = await accountCollection.findOne(
+			{
+				accessToken: token,
+				$or: [{ role }, { role: "admin" }],
+			},
+			{
+				projection: {
+					_id: 1,
+				},
+			}
+		);
+		return account && MongoHelper.map(account);
 	}
 }
