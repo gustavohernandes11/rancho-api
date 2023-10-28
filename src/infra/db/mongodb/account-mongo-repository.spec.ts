@@ -91,4 +91,78 @@ describe("Account Mongo Repository", () => {
 			expect(response).toBe(true);
 		});
 	});
+	describe("loadAccountByEmail()", () => {
+		beforeEach(() => {});
+		it("should load the correct account from token without role", async () => {
+			const sut = new AccountMongoRepository();
+
+			const accountCollection = MongoHelper.getCollection("accounts");
+			const { insertedId } = await accountCollection.insertOne({
+				...makeFakeAccount(),
+				accessToken: "any_access_token",
+			});
+			const response = await sut.loadByToken("any_access_token");
+
+			expect(response!.id).toBeTruthy();
+			expect(response!.id).toEqual(insertedId.toHexString());
+		});
+		it("should load the correct account with role", async () => {
+			const sut = new AccountMongoRepository();
+
+			const accountCollection = MongoHelper.getCollection("accounts");
+			const fakeAccount = makeFakeAccount();
+			const { insertedId } = await accountCollection.insertOne({
+				...fakeAccount,
+				accessToken: "any_access_token",
+				role: "admin",
+			});
+			const account = await sut.loadByToken("any_access_token", "admin");
+			expect(account!.id).toEqual(insertedId.toHexString());
+		});
+		it("should return null if the role is not correct", async () => {
+			const sut = new AccountMongoRepository();
+
+			const accountCollection = MongoHelper.getCollection("accounts");
+			const fakeAccount = makeFakeAccount();
+			await accountCollection.insertOne({
+				...fakeAccount,
+				accessToken: "any_access_token",
+				role: undefined,
+			});
+			const account = await sut.loadByToken("any_access_token", "admin");
+			expect(account).toBeNull();
+		});
+		it("should return the account even if the role is not provided when it's an admin", async () => {
+			const sut = new AccountMongoRepository();
+
+			const accountCollection = MongoHelper.getCollection("accounts");
+			const fakeAccount = makeFakeAccount();
+			await accountCollection.insertOne({
+				...fakeAccount,
+				accessToken: "any_access_token",
+				role: "admin",
+			});
+			const account = await sut.loadByToken("any_access_token");
+			expect(account).toBeTruthy();
+		});
+		it("should return null if the accessToken is invalid", async () => {
+			const sut = new AccountMongoRepository();
+
+			const accountCollection = MongoHelper.getCollection("accounts");
+			const fakeAccount = makeFakeAccount();
+			await accountCollection.insertOne({
+				...fakeAccount,
+				accessToken: "any_access_token",
+				role: "admin",
+			});
+			const account = await sut.loadByToken("invalid_access_token");
+			expect(account).toBeNull();
+		});
+
+		it("should return null if the account do not exists", async () => {
+			const sut = new AccountMongoRepository();
+			const account = await sut.loadByToken("any_access_token");
+			expect(account).toBeNull();
+		});
+	});
 });
