@@ -1,4 +1,4 @@
-import { ILoadAccountByTokenRepository } from "../../data/protocols/db/load-account-by-token-repository";
+import { ILoadAccountByTokenRepository } from "../../data/protocols/db/accounts/load-account-by-token-repository";
 import { AccessDeniedError } from "../errors/access-denied-error";
 import { forbidden, ok, serverError } from "../helpers/http-helpers";
 import { IHttpResponse } from "../protocols";
