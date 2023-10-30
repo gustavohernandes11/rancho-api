@@ -100,6 +100,39 @@ describe("Account Mongo Repository", () => {
 			expect(response).toBe(true);
 		});
 	});
+	describe("checkById()", () => {
+		it("should return false if the account do not exists", async () => {
+			const { sut } = makeSut();
+			const response = await sut.checkById("non_existent_id");
+			expect(response).toBe(false);
+		});
+		it("should return true if the account exists", async () => {
+			const { sut } = makeSut();
+			const { insertedId } = await accountCollection.insertOne({
+				name: "any_name",
+				email: "any_email@gmail.com",
+				password: "any_hashed_password",
+			});
+
+			const response = await sut.checkById(insertedId);
+			expect(response).toBe(true);
+		});
+		it("should work with type strings or ObjectId", async () => {
+			const { sut } = makeSut();
+			const { insertedId } = await accountCollection.insertOne({
+				name: "any_name",
+				email: "any_email@gmail.com",
+				password: "any_hashed_password",
+			});
+
+			const responseFromObjectId = await sut.checkById(insertedId);
+			const responseFromString = await sut.checkById(insertedId);
+
+			expect(responseFromObjectId).toBeTruthy();
+			expect(responseFromString).toBeTruthy();
+		});
+	});
+
 	describe("loadAccountByEmail()", () => {
 		beforeEach(() => {});
 		it("should load the correct account from token without role", async () => {

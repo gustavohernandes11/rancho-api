@@ -1,16 +1,16 @@
-import { IAddAccountRepository } from "../../../data/protocols/db/add-account-repository";
+import { IAddAccountRepository } from "../../../data/protocols/db/accounts/add-account-repository";
 import { IUpdateAccessTokenRepository } from "../../../data/protocols/db/update-access-token-repository";
-import { ILoadAccountByEmailRepository } from "../../../data/protocols/db/load-account-by-email-repository";
+import { ILoadAccountByEmailRepository } from "../../../data/protocols/db/accounts/load-account-by-email-repository";
 import { IAddAccountModel } from "../../../domain/usecases/add-account";
-
 import { IAccountModel } from "../../../domain/models/account";
 import { MongoHelper } from "./mongo-helper";
 import { ObjectId } from "mongodb";
-import { ICheckAccountByEmail } from "../../../data/protocols/db/check-account-by-email-repository";
+import { ICheckAccountByEmail } from "../../../data/protocols/db/accounts/check-account-by-email-repository";
 import {
 	AccountId,
 	ILoadAccountByTokenRepository,
-} from "../../../data/protocols/db/load-account-by-token-repository";
+} from "../../../data/protocols/db/accounts/load-account-by-token-repository";
+import { ICheckAccountByIdRepository } from "../../../data/protocols/db/accounts/check-account-by-id-repository";
 
 export class AccountMongoRepository
 	implements
@@ -18,6 +18,7 @@ export class AccountMongoRepository
 		ILoadAccountByEmailRepository,
 		IUpdateAccessTokenRepository,
 		ICheckAccountByEmail,
+		ICheckAccountByIdRepository,
 		ILoadAccountByTokenRepository
 {
 	constructor() {}
@@ -33,6 +34,13 @@ export class AccountMongoRepository
 				},
 			}
 		);
+		return account !== null;
+	}
+	async checkById(id: string | ObjectId): Promise<boolean> {
+		const accountCollection = MongoHelper.getCollection("accounts");
+		const account = await accountCollection.findOne({
+			_id: id,
+		});
 		return account !== null;
 	}
 	async add(account: IAddAccountModel): Promise<boolean> {
