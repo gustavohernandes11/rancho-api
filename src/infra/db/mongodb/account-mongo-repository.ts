@@ -36,11 +36,25 @@ export class AccountMongoRepository
 		);
 		return account !== null;
 	}
-	async checkById(id: string | ObjectId): Promise<boolean> {
+
+	async checkById(id: ObjectId | string): Promise<boolean> {
 		const accountCollection = MongoHelper.getCollection("accounts");
+
+		let objectId;
+		if (typeof id === "string") {
+			try {
+				objectId = new ObjectId(id);
+			} catch (_) {
+				return false;
+			}
+		} else {
+			objectId = id;
+		}
+
 		const account = await accountCollection.findOne({
-			_id: id,
+			_id: objectId,
 		});
+
 		return account !== null;
 	}
 	async add(account: IAddAccountModel): Promise<boolean> {

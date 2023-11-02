@@ -117,7 +117,7 @@ describe("Account Mongo Repository", () => {
 			const response = await sut.checkById(insertedId);
 			expect(response).toBe(true);
 		});
-		it("should work with type strings or ObjectId", async () => {
+		it("should work with a string as id", async () => {
 			const { sut } = makeSut();
 			const { insertedId } = await accountCollection.insertOne({
 				name: "any_name",
@@ -125,11 +125,8 @@ describe("Account Mongo Repository", () => {
 				password: "any_hashed_password",
 			});
 
-			const responseFromObjectId = await sut.checkById(insertedId);
-			const responseFromString = await sut.checkById(insertedId);
-
-			expect(responseFromObjectId).toBeTruthy();
-			expect(responseFromString).toBeTruthy();
+			const response = await sut.checkById(insertedId.toHexString());
+			expect(response).toBeTruthy();
 		});
 	});
 
