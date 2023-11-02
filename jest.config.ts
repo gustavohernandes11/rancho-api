@@ -10,13 +10,19 @@ const config: Config = {
 		"^.+\\.(ts|tsx)$": "ts-jest",
 	},
 	clearMocks: true,
-	collectCoverage: true,
-	coverageDirectory: "coverage",
-	coveragePathIgnorePatterns: ["\\\\node_modules\\\\"],
-	coverageProvider: "v8",
+	collectCoverage: false,
 	transformIgnorePatterns: ["\\\\node_modules\\\\"],
-	collectCoverageFrom: ["<rootDir>/src/**/*.ts", "!<rootDir>/src/main/**"],
 	preset: "@shelf/jest-mongodb",
+
+	moduleNameMapper: {
+		"@/(.*)": "<rootDir>/src/$1",
+		"@domain/(.*)": "<rootDir>/src/domain/$1",
+		"@data/(.*)": "<rootDir>/src/data/$1",
+		"@infra/(.*)": "<rootDir>/src/infra/$1",
+		"@presentation/(.*)": "<rootDir>/src/presentation/$1",
+		"@main/(.*)": "<rootDir>/src/main/$1",
+		"@validation/(.*)": "<rootDir>/src/validation/$1",
+	},
 };
 
 export default config;

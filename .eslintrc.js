@@ -4,7 +4,6 @@ module.exports = {
 		es2021: true,
 	},
 	extends: "eslint:recommended",
-
 	overrides: [
 		{
 			files: ["src/**"],
@@ -19,10 +18,11 @@ module.exports = {
 	ignorePatterns: ".eslintrc.js",
 	rules: {
 		"@typescript-eslint/no-unused-vars": "off",
-		"@typescript-eslint/no-explicit-any": "off"
+		"@typescript-eslint/no-explicit-any": "off",
 	},
 	parserOptions: {
 		ecmaVersion: "latest",
 		sourceType: "module",
+		project: "./tsconfig.json",
 	},
 };

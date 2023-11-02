@@ -1,5 +1,5 @@
-import { IAddAccount } from "../../domain/usecases/add-account";
-import { IAuthentication } from "../../domain/usecases/authentication";
+import { IAddAccount } from "@domain/usecases/add-account";
+import { IAuthentication } from "@domain/usecases/authentication";
 import { EmailInUseError } from "../errors/email-in-use-error";
 import {
 	badRequest,

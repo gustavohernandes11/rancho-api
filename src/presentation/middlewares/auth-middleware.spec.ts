@@ -1,7 +1,7 @@
 import {
 	AccountId,
 	ILoadAccountByTokenRepository,
-} from "../../data/protocols/db/accounts/load-account-by-token-repository";
+} from "@data/protocols/db/accounts";
 import { AccessDeniedError } from "../errors/access-denied-error";
 import { forbidden } from "../helpers/http-helpers";
 import { AuthMiddleware } from "./auth-middleware";

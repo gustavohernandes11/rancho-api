@@ -2,7 +2,7 @@ import request from "supertest";
 import { Express } from "express";
 import { setupApp } from "../config/app";
 import { Collection } from "mongodb";
-import { MongoHelper } from "../../infra/db/mongodb/mongo-helper";
+import { MongoHelper } from "@infra/db/mongodb/mongo-helper";
 import { sign } from "jsonwebtoken";
 import env from "../config/env";
 jest.setTimeout(15000);

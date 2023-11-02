@@ -1,5 +1,5 @@
-import { Collection, ObjectId } from "mongodb";
-import { IAddAnimalModel } from "../../../domain/usecases/add-animal";
+import { Collection } from "mongodb";
+import { IAddAnimalModel } from "@domain/usecases/add-animal";
 import { AnimalMongoRepository } from "./animal-mongo-repository";
 import { MongoHelper } from "./mongo-helper";
 

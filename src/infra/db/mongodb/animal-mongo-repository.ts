@@ -1,7 +1,4 @@
-import {
-	IAddAnimal,
-	IAddAnimalModel,
-} from "../../../domain/usecases/add-animal";
+import { IAddAnimal, IAddAnimalModel } from "@domain/usecases/add-animal";
 import { MongoHelper } from "./mongo-helper";
 
 export class AnimalMongoRepository implements IAddAnimal {

@@ -1,16 +1,16 @@
-import { IAddAccountRepository } from "../../../data/protocols/db/accounts/add-account-repository";
-import { IUpdateAccessTokenRepository } from "../../../data/protocols/db/update-access-token-repository";
-import { ILoadAccountByEmailRepository } from "../../../data/protocols/db/accounts/load-account-by-email-repository";
-import { IAddAccountModel } from "../../../domain/usecases/add-account";
-import { IAccountModel } from "../../../domain/models/account";
 import { MongoHelper } from "./mongo-helper";
 import { ObjectId } from "mongodb";
-import { ICheckAccountByEmail } from "../../../data/protocols/db/accounts/check-account-by-email-repository";
+import { AccountId } from "@data/protocols/db/accounts/load-account-by-token-repository";
 import {
-	AccountId,
+	IAddAccountRepository,
+	ICheckAccountByEmail,
+	ICheckAccountByIdRepository,
+	ILoadAccountByEmailRepository,
 	ILoadAccountByTokenRepository,
-} from "../../../data/protocols/db/accounts/load-account-by-token-repository";
-import { ICheckAccountByIdRepository } from "../../../data/protocols/db/accounts/check-account-by-id-repository";
+	IUpdateAccessTokenRepository,
+} from "@data/protocols/db/accounts";
+import { IAddAccountModel } from "@domain/usecases/add-account";
+import { IAccountModel } from "@domain/models/account";
 
 export class AccountMongoRepository
 	implements
@@ -40,7 +40,7 @@ export class AccountMongoRepository
 	async checkById(id: ObjectId | string): Promise<boolean> {
 		const accountCollection = MongoHelper.getCollection("accounts");
 
-		let objectId;
+		let objectId: ObjectId | undefined;
 		if (typeof id === "string") {
 			try {
 				objectId = new ObjectId(id);
@@ -59,10 +59,10 @@ export class AccountMongoRepository
 	}
 	async add(account: IAddAccountModel): Promise<boolean> {
 		const accountCollection = MongoHelper.getCollection("accounts");
-		const insertedId =
+		const { acknowledged } =
 			accountCollection && (await accountCollection.insertOne(account));
 
-		return insertedId !== null;
+		return acknowledged;
 	}
 	async loadByEmail(email: string): Promise<IAccountModel | null> {
 		const accountCollection = MongoHelper.getCollection("accounts");

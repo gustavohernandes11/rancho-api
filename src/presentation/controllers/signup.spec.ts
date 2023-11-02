@@ -5,16 +5,13 @@ import {
 } from "../errors";
 import { IHttpRequest } from "../protocols/";
 import { SigunUpController } from "./signup";
-import { makeSignUpValidation } from "../../main/factories/validation/make-signup-validation";
-import {
-	IAddAccount,
-	IAddAccountModel,
-} from "../../domain/usecases/add-account";
+import { makeSignUpValidation } from "@main/factories/validation/make-signup-validation";
+import { IAddAccount, IAddAccountModel } from "@domain/usecases/add-account";
 import {
 	IAuthentication,
 	IAuthenticationResult,
-} from "../../domain/usecases/authentication";
-import { IAuthenticationModel } from "../../domain/models/authentication";
+} from "@domain/usecases/authentication";
+import { IAuthenticationModel } from "@domain/models/authentication";
 
 describe("Signup Controller", () => {
 	class DbAddAccountStub implements IAddAccount {

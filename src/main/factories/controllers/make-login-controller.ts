@@ -1,9 +1,9 @@
-import { DbAuthentication } from "../../../data/usecases/authentication/db-authentication";
-import { BcryptAdapter } from "../../../infra/criptography/bcrypt-adapter";
-import { JwtAdapter } from "../../../infra/criptography/jwt-adapter";
-import { AccountMongoRepository } from "../../../infra/db/mongodb/account-mongo-repository";
-import { LoginController } from "../../../presentation/controllers/login";
-import { IController } from "../../../presentation/protocols";
+import { DbAuthentication } from "@data/usecases/authentication/db-authentication";
+import { BcryptAdapter } from "@infra/criptography/bcrypt-adapter";
+import { JwtAdapter } from "@infra/criptography/jwt-adapter";
+import { AccountMongoRepository } from "@infra/db/mongodb/account-mongo-repository";
+import { LoginController } from "@presentation/controllers/login";
+import { IController } from "@presentation/protocols";
 import env from "../../config/env";
 import { makeLoginValidations } from "../validation/make-login-validation";
 
