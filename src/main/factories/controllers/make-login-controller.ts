@@ -9,15 +9,15 @@ import { makeLoginValidations } from "../validation/make-login-validation";
 
 export const makeLoginController = (): IController => {
 	const validation = makeLoginValidations();
-	const accountMongoRepoisitory = new AccountMongoRepository();
+	const accountMongoRepository = new AccountMongoRepository();
 	const salt = 12;
 	const bcryptAdapter = new BcryptAdapter(salt);
 	const jwtAdapter = new JwtAdapter(env.jwtSecret);
 	const dbAuthentication = new DbAuthentication(
-		accountMongoRepoisitory,
+		accountMongoRepository,
 		bcryptAdapter,
 		jwtAdapter,
-		accountMongoRepoisitory
+		accountMongoRepository
 	);
 	return new LoginController(validation, dbAuthentication);
 };
