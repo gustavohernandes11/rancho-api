@@ -8,7 +8,6 @@ export interface IUpdateAnimalModel {
 	maternityId?: string;
 	paternityId?: string;
 	age?: Date;
-	birthdayDate?: Date;
 	code?: number;
 	observation?: string;
 }

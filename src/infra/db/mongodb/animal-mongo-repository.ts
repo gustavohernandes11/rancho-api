@@ -8,14 +8,26 @@ import { IListAnimalsByOwnerIdRepository } from "@data/protocols/db/animals/list
 import { IAnimalModel } from "@domain/models/animals";
 import { IUpdateAnimalByIdRepository } from "@data/protocols/db/animals/update-animal-by-id-repository";
 import { IUpdateAnimalModel } from "@domain/usecases/update-animal";
+import { ILoadAnimalByOwnerIdRepository } from "@data/protocols/db/animals/load-animal-by-owner-repository";
 
 export class AnimalMongoRepository
 	implements
 		IAddAnimalRepository,
 		IRemoveAnimalByIdRepository,
 		IListAnimalsByOwnerIdRepository,
-		IUpdateAnimalByIdRepository
+		IUpdateAnimalByIdRepository,
+		ILoadAnimalByOwnerIdRepository
 {
+	async loadAnimal(ownerId: string): Promise<IAnimalModel | null> {
+		const animalsCollection = MongoHelper.getCollection("animals");
+
+		const result = await animalsCollection.findOne({
+			_id: parseToObjectId(ownerId),
+		});
+
+		return result ? MongoHelper.map(result) : null;
+	}
+
 	async updateAnimal(
 		id: string,
 		props: IUpdateAnimalModel
