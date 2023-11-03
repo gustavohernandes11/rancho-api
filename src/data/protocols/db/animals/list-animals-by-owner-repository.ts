@@ -1,5 +1,5 @@
 import { IAnimalModel } from "@domain/models/animals";
 
-export interface IListAnimalsByOwnerId {
+export interface IListAnimalsByOwnerIdRepository {
 	listAnimals(ownerId: string): Promise<IAnimalModel[]>;
 }

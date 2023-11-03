@@ -4,19 +4,33 @@ import { IAddAnimalRepository } from "@data/usecases/add-animal/db-add-animal-pr
 import { IRemoveAnimalByIdRepository } from "@data/protocols/db/animals/remove-animal-by-id-repository";
 import { ObjectId } from "mongodb";
 import { parseToObjectId } from "./utils/parse-to-object-id";
-import { IListAnimalsByOwnerId } from "@data/protocols/db/animals/list-animals-by-owner-repository";
+import { IListAnimalsByOwnerIdRepository } from "@data/protocols/db/animals/list-animals-by-owner-repository";
 import { IAnimalModel } from "@domain/models/animals";
 import { IUpdateAnimalByIdRepository } from "@data/protocols/db/animals/update-animal-by-id-repository";
+import { IUpdateAnimalModel } from "@domain/usecases/update-animal";
 
 export class AnimalMongoRepository
 	implements
 		IAddAnimalRepository,
 		IRemoveAnimalByIdRepository,
-		IListAnimalsByOwnerId,
+		IListAnimalsByOwnerIdRepository,
 		IUpdateAnimalByIdRepository
 {
-	async updateAnimal(id: string): Promise<boolean> {
-		throw new Error("Method not implemented.");
+	async updateAnimal(
+		id: string,
+		props: IUpdateAnimalModel
+	): Promise<boolean> {
+		const animalsCollection = MongoHelper.getCollection("animals");
+		const { matchedCount } = await animalsCollection.updateOne(
+			{ _id: parseToObjectId(id) },
+			{
+				$set: props,
+			},
+			{
+				upsert: false,
+			}
+		);
+		return matchedCount > 0;
 	}
 	async listAnimals(ownerId: string): Promise<IAnimalModel[]> {
 		const animalsCollection = MongoHelper.getCollection("animals");
