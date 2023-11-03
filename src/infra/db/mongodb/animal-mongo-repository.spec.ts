@@ -42,6 +42,32 @@ describe("Animal Mongo Repository", () => {
 
 		return { userId: id };
 	};
+	describe("loadAnimal()", () => {
+		it("should return null if the animal is not in the database", async () => {
+			const sut = new AnimalMongoRepository();
+			const animal = await sut.loadAnimal("any_id");
+			expect(animal).toBeNull();
+		});
+		it("should return the animal from the correct animal from the database", async () => {
+			const sut = new AnimalMongoRepository();
+			const { insertedIds } = await animalsCollection.insertMany([
+				{
+					name: "first_animal",
+					ownerId: "any_id",
+					age: new Date("01/01/2000"),
+				},
+				{
+					name: "second_animal",
+					ownerId: "any_id2",
+					age: new Date("01/01/2000"),
+				},
+			]);
+			let result = await sut.loadAnimal(insertedIds[0].toHexString());
+			expect(result?.name).toBe("first_animal");
+			result = await sut.loadAnimal(insertedIds[1].toHexString());
+			expect(result?.name).toBe("second_animal");
+		});
+	});
 	describe("updateAnimal()", () => {
 		it("should update only the age when required", async () => {
 			const sut = new AnimalMongoRepository();
