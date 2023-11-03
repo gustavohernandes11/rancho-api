@@ -11,6 +11,7 @@ import {
 } from "@data/protocols/db/accounts";
 import { IAddAccountModel } from "@domain/usecases/add-account";
 import { IAccountModel } from "@domain/models/account";
+import { parseToObjectId } from "./utils/parse-to-object-id";
 
 export class AccountMongoRepository
 	implements
@@ -40,19 +41,8 @@ export class AccountMongoRepository
 	async checkById(id: ObjectId | string): Promise<boolean> {
 		const accountCollection = MongoHelper.getCollection("accounts");
 
-		let objectId: ObjectId | undefined;
-		if (typeof id === "string") {
-			try {
-				objectId = new ObjectId(id);
-			} catch (_) {
-				return false;
-			}
-		} else {
-			objectId = id;
-		}
-
 		const account = await accountCollection.findOne({
-			_id: objectId,
+			_id: parseToObjectId(id),
 		});
 
 		return account !== null;
