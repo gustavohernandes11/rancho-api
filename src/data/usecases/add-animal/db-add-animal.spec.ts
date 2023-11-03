@@ -1,7 +1,9 @@
-import { IAddAnimalModel } from "@domain/usecases/add-animal";
-import { ICheckAccountByIdRepository } from "../../protocols/db/accounts/check-account-by-id-repository";
-import { IAddAnimalRepository } from "../../protocols/db/animals/add-animal-repository";
 import { DbAddAnimal } from "./db-add-animal";
+import {
+	IAddAnimalModel,
+	IAddAnimalRepository,
+	ICheckAccountByIdRepository,
+} from "./db-add-animal-protocols";
 
 describe("Db Add Animal", () => {
 	const makeFakeAnimal = (): IAddAnimalModel => ({

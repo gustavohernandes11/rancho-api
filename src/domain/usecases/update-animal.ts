@@ -1,5 +1,10 @@
-export interface IUpdateAnimal {
-	update: (animal: IUpdateAnimalModel) => Promise<boolean>;
+import { IAnimalModel } from "@domain/models/animals";
+
+export interface IDbUpdateAnimal {
+	update: (
+		id: string,
+		props: IUpdateAnimalModel
+	) => Promise<IAnimalModel | null>;
 }
 
 export interface IUpdateAnimalModel {

@@ -140,7 +140,7 @@ describe("Animal Mongo Repository", () => {
 
 			expect(result).toBeTruthy();
 		});
-		it("should return false when the animal do not exists in the database", async () => {
+		it("should return null when the animal do not exists in the database", async () => {
 			const sut = new AnimalMongoRepository();
 			const result = await sut.updateAnimal("invalid_id", {
 				name: "modified_animal_name",
@@ -148,7 +148,7 @@ describe("Animal Mongo Repository", () => {
 				age: new Date("02/12/2019"),
 			});
 
-			expect(result).toBeFalsy();
+			expect(result).toBeNull();
 		});
 	});
 	describe("addAnimal()", () => {

@@ -31,9 +31,9 @@ export class AnimalMongoRepository
 	async updateAnimal(
 		id: string,
 		props: IUpdateAnimalModel
-	): Promise<boolean> {
+	): Promise<IAnimalModel | null> {
 		const animalsCollection = MongoHelper.getCollection("animals");
-		const { matchedCount } = await animalsCollection.updateOne(
+		const { value } = await animalsCollection.findOneAndUpdate(
 			{ _id: parseToObjectId(id) },
 			{
 				$set: props,
@@ -42,7 +42,7 @@ export class AnimalMongoRepository
 				upsert: false,
 			}
 		);
-		return matchedCount > 0;
+		return value ? MongoHelper.map(value) : null;
 	}
 	async listAnimals(ownerId: string): Promise<IAnimalModel[]> {
 		const animalsCollection = MongoHelper.getCollection("animals");

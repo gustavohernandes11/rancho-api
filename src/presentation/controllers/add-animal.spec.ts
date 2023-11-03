@@ -1,11 +1,11 @@
-import { IAddAnimal, IAddAnimalModel } from "@domain/usecases/add-animal";
+import { IDbAddAnimal, IAddAnimalModel } from "@domain/usecases/add-animal";
 import { makeAddAnimalValidations } from "@main/factories/validation/make-add-animal-validations";
 import { InvalidParamError, MissingParamError } from "../errors";
 import { badRequest, ok } from "../helpers/http-helpers";
 import { AddAnimalController } from "./add-animal";
 
 describe("Add Animal Controller", () => {
-	class DbAddAnimalStub implements IAddAnimal {
+	class DbAddAnimalStub implements IDbAddAnimal {
 		async add(animal: IAddAnimalModel): Promise<boolean> {
 			return true;
 		}

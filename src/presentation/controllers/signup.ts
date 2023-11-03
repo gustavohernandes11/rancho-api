@@ -1,4 +1,4 @@
-import { IAddAccount } from "@domain/usecases/add-account";
+import { IDbAddAccount } from "@domain/usecases/add-account";
 import { IAuthentication } from "@domain/usecases/authentication";
 import { EmailInUseError } from "../errors/email-in-use-error";
 import {
@@ -17,7 +17,7 @@ import {
 export class SigunUpController implements IController {
 	constructor(
 		private readonly validation: IValidation,
-		private readonly dbAddAccount: IAddAccount,
+		private readonly dbAddAccount: IDbAddAccount,
 		private readonly authentication: IAuthentication
 	) {}
 

@@ -114,7 +114,7 @@ describe("Account Mongo Repository", () => {
 				password: "any_hashed_password",
 			});
 
-			const response = await sut.checkById(insertedId);
+			const response = await sut.checkById(insertedId.toHexString());
 			expect(response).toBe(true);
 		});
 		it("should work with a string as id", async () => {
@@ -130,7 +130,7 @@ describe("Account Mongo Repository", () => {
 		});
 	});
 
-	describe("loadAccountByEmail()", () => {
+	describe("loadByToken()", () => {
 		beforeEach(() => {});
 		it("should load the correct account from token without role", async () => {
 			const { sut } = makeSut();

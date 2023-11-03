@@ -1,4 +1,4 @@
-export interface IAddAnimal {
+export interface IDbAddAnimal {
 	add: (animal: IAddAnimalModel) => Promise<boolean>;
 }
 

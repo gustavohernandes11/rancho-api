@@ -1,11 +1,11 @@
 import {
-	IAddAnimal,
+	IDbAddAnimal,
 	IAddAnimalModel,
 	IAddAnimalRepository,
 	ICheckAccountByIdRepository,
 } from "./db-add-animal-protocols";
 
-export class DbAddAnimal implements IAddAnimal {
+export class DbAddAnimal implements IDbAddAnimal {
 	constructor(
 		private readonly checkAccountById: ICheckAccountByIdRepository,
 		private readonly addAnimalRepository: IAddAnimalRepository

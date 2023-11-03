@@ -1,4 +1,4 @@
-import { IAddAnimal } from "@domain/usecases/add-animal";
+import { IDbAddAnimal } from "@domain/usecases/add-animal";
 import { InvalidParamError } from "../errors";
 import { badRequest, ok, serverError } from "../helpers/http-helpers";
 import {
@@ -11,7 +11,7 @@ import {
 export class AddAnimalController implements IController {
 	constructor(
 		private readonly validations: IValidation,
-		private readonly dbAddAnimal: IAddAnimal
+		private readonly dbAddAnimal: IDbAddAnimal
 	) {}
 	async handle(request: IHttpRequest): Promise<IHttpResponse> {
 		try {
