@@ -8,7 +8,7 @@ import { IListAnimalsByOwnerIdRepository } from "@data/protocols/db/animals/list
 import { IAnimalModel } from "@domain/models/animals";
 import { IUpdateAnimalByIdRepository } from "@data/protocols/db/animals/update-animal-by-id-repository";
 import { IUpdateAnimalModel } from "@domain/usecases/update-animal";
-import { ILoadAnimalByOwnerIdRepository } from "@data/protocols/db/animals/load-animal-by-owner-repository";
+import { ILoadAnimalByIdRepository } from "@data/protocols/db/animals/load-animal-by-id-repository";
 
 export class AnimalMongoRepository
 	implements
@@ -16,7 +16,7 @@ export class AnimalMongoRepository
 		IRemoveAnimalByIdRepository,
 		IListAnimalsByOwnerIdRepository,
 		IUpdateAnimalByIdRepository,
-		ILoadAnimalByOwnerIdRepository
+		ILoadAnimalByIdRepository
 {
 	async loadAnimal(ownerId: string): Promise<IAnimalModel | null> {
 		const animalsCollection = MongoHelper.getCollection("animals");
