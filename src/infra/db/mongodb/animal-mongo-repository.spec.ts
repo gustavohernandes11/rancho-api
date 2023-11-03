@@ -42,7 +42,89 @@ describe("Animal Mongo Repository", () => {
 
 		return { userId: id };
 	};
+	describe("updateAnimal()", () => {
+		it("should update only the age when required", async () => {
+			const sut = new AnimalMongoRepository();
+			const { insertedId } = await animalsCollection.insertOne({
+				name: "any_animal_name",
+				ownerId: "any_id",
+				age: new Date("12/12/2019"),
+			});
+			await sut.updateAnimal(insertedId.toHexString(), {
+				age: new Date("11/11/2019"),
+			});
 
+			const animal = await animalsCollection.findOne({
+				_id: insertedId,
+			});
+
+			expect(animal?.age).toEqual(new Date("11/11/2019"));
+			expect(animal?.name).toEqual("any_animal_name");
+			expect(animal?.ownerId).toEqual("any_id");
+		});
+		it("should update only the name when required", async () => {
+			const sut = new AnimalMongoRepository();
+			const { insertedId } = await animalsCollection.insertOne({
+				name: "any_animal_name",
+				ownerId: "any_id",
+				age: new Date("12/12/2019"),
+			});
+			await sut.updateAnimal(insertedId.toHexString(), {
+				name: "modified_name",
+			});
+			const animal = await animalsCollection.findOne({
+				_id: insertedId,
+			});
+
+			expect(animal?.age).toEqual(new Date("12/12/2019"));
+			expect(animal?.name).toEqual("modified_name");
+			expect(animal?.ownerId).toEqual("any_id");
+		});
+		it("should update only the ownerId when required", async () => {
+			const sut = new AnimalMongoRepository();
+			const { insertedId } = await animalsCollection.insertOne({
+				name: "any_animal_name",
+				ownerId: "any_id",
+				age: new Date("12/12/2019"),
+			});
+
+			await sut.updateAnimal(insertedId.toHexString(), {
+				ownerId: "modified_ownerId",
+			});
+
+			const animal = await animalsCollection.findOne({ _id: insertedId });
+
+			expect(animal?.age).toEqual(new Date("12/12/2019"));
+			expect(animal?.name).toEqual("any_animal_name");
+			expect(animal?.ownerId).toEqual;
+		});
+		it("should return true when the update is correctly done", async () => {
+			const sut = new AnimalMongoRepository();
+			const { insertedId } = await animalsCollection.insertOne({
+				name: "any_animal_name",
+				ownerId: "any_id",
+				age: new Date("12/12/2019"),
+			});
+
+			const result = await sut.updateAnimal(insertedId.toHexString(), {
+				name: "modified_animal_name",
+				ownerId: "modified_ownerId",
+				age: new Date("02/12/2019"),
+			});
+
+			expect(result).toBeTruthy();
+		});
+		it("should return false when the animal do not exists in the database", async () => {
+			const sut = new AnimalMongoRepository();
+			const result = await sut.updateAnimal("invalid_id", {
+				name: "modified_animal_name",
+				ownerId: "modified_ownerId",
+				age: new Date("02/12/2019"),
+			});
+
+			expect(result).toBeFalsy();
+		});
+	});
 	describe("addAnimal()", () => {
 		it("should return true if the animal was added", async () => {
 			const sut = new AnimalMongoRepository();
