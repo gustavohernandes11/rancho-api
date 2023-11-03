@@ -18,7 +18,7 @@ describe("Db Add Animal", () => {
 	}
 
 	class AddAnimalRepositoryStub implements IAddAnimalRepository {
-		async add(account: IAddAnimalModel): Promise<boolean> {
+		async addAnimal(account: IAddAnimalModel): Promise<boolean> {
 			return true;
 		}
 	}
@@ -65,7 +65,7 @@ describe("Db Add Animal", () => {
 		});
 		it("should call the addAnimalRepository", async () => {
 			const { sut, addAnimalRepositoryStub } = makeSut();
-			const addRepoSpy = jest.spyOn(addAnimalRepositoryStub, "add");
+			const addRepoSpy = jest.spyOn(addAnimalRepositoryStub, "addAnimal");
 			await sut.add(makeFakeAnimal());
 			expect(addRepoSpy).toHaveBeenCalled();
 		});

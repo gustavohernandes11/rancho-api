@@ -16,7 +16,7 @@ export class DbAddAnimal implements IAddAnimal {
 			animal.ownerId
 		);
 		if (isValidOwner) {
-			return await this.addAnimalRepository.add(animal);
+			return await this.addAnimalRepository.addAnimal(animal);
 		}
 		return false;
 	}
