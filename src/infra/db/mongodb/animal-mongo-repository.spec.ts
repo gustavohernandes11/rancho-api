@@ -10,6 +10,8 @@ const makeFakeAnimal = (): IAddAnimalModel => ({
 });
 describe("Animal Mongo Repository", () => {
 	let animalsCollection: Collection;
+	let accountCollection: Collection;
+
 	beforeAll(async () => {
 		await MongoHelper.connect(
 			process.env.MONGO_URL || "mongodb://127.0.0.1:27017/rancho-api"
@@ -22,15 +24,130 @@ describe("Animal Mongo Repository", () => {
 
 	beforeEach(async () => {
 		animalsCollection = MongoHelper.getCollection("animals");
+		accountCollection = MongoHelper.getCollection("accounts");
 		await animalsCollection.deleteMany({});
+		await accountCollection.deleteMany({});
 	});
 
-	describe("Add()", () => {
+	interface IMockDatabaseUserType {
+		userId: string;
+	}
+	const mockDatabaseUser = async (): Promise<IMockDatabaseUserType> => {
+		const { insertedId } = await accountCollection.insertOne({
+			name: "any_name",
+			email: "any.email@gmail.com",
+			password: "123",
+		});
+		const id = insertedId.toHexString();
+
+		return { userId: id };
+	};
+
+	describe("addAnimal()", () => {
 		it("should return true if the animal was added", async () => {
 			const sut = new AnimalMongoRepository();
 
-			const result = await sut.add(makeFakeAnimal());
+			const result = await sut.addAnimal(makeFakeAnimal());
 			expect(result).toBeTruthy();
+		});
+	});
+	describe("removeAnimal()", () => {
+		it("should remove the animal from the database", async () => {
+			const { insertedId } = await animalsCollection.insertOne(
+				makeFakeAnimal()
+			);
+			const sut = new AnimalMongoRepository();
+			await sut.removeAnimal(insertedId);
+
+			const removed = await animalsCollection.findOne({
+				id: insertedId,
+			});
+
+			expect(removed).toBeFalsy;
+		});
+		it("should work with strings", async () => {
+			const { insertedId } = await animalsCollection.insertOne(
+				makeFakeAnimal()
+			);
+			const sut = new AnimalMongoRepository();
+			await sut.removeAnimal(insertedId.toHexString());
+
+			const removed = await animalsCollection.findOne({
+				id: insertedId,
+			});
+
+			expect(removed).toBeFalsy;
+		});
+
+		it("should return false when the animal do not exists in the database", async () => {
+			const sut = new AnimalMongoRepository();
+			const result = await sut.removeAnimal("invalid_id");
+
+			expect(result).toBeFalsy;
+		});
+		it("should return true when remove the animal from the database", async () => {
+			const { insertedId } = await animalsCollection.insertOne(
+				makeFakeAnimal()
+			);
+			const sut = new AnimalMongoRepository();
+			const result = await sut.removeAnimal(insertedId);
+
+			expect(result).toBeTruthy();
+		});
+	});
+	describe("listAnimals()", () => {
+		it("should list the correct data length from the database", async () => {
+			const sut = new AnimalMongoRepository();
+			const { userId } = await mockDatabaseUser();
+			let result = await sut.listAnimals(userId);
+			expect(result.length).toBe(0);
+
+			await animalsCollection.insertMany([
+				{
+					name: "any_animal_name",
+					ownerId: userId,
+					age: new Date("12/12/2019"),
+				},
+				{
+					name: "any_animal_name",
+					ownerId: userId,
+					age: new Date("12/12/2019"),
+				},
+				{
+					name: "any_animal_name",
+					ownerId: userId,
+					age: new Date("12/12/2019"),
+				},
+			]);
+
+			result = await sut.listAnimals(userId);
+			expect(result.length).toBe(3);
+		});
+		it("should list the data from the correct ownerId", async () => {
+			const sut = new AnimalMongoRepository();
+			const { userId } = await mockDatabaseUser();
+
+			await animalsCollection.insertMany([
+				{
+					name: "any_animal_name",
+					ownerId: userId,
+					age: new Date("12/12/2019"),
+				},
+				{
+					name: "any_animal_name",
+					ownerId: userId,
+					age: new Date("12/12/2019"),
+				},
+				{
+					name: "any_animal_name",
+					ownerId: "invalid_id",
+					age: new Date("12/12/2019"),
+				},
+			]);
+
+			const result = await sut.listAnimals(userId);
+			console.log(result);
+			expect(result.length).toBe(2);
 		});
 	});
 });
