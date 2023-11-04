@@ -10,7 +10,7 @@ export class DbListAnimals implements IDbListAnimals {
 		private readonly listAnimalsByOwnerIdRepository: IListAnimalsByOwnerIdRepository,
 		private readonly checkAccountByIdRepository: ICheckAccountByIdRepository
 	) {}
-	async load(accountId: string): Promise<IAnimalModel[] | null> {
+	async list(accountId: string): Promise<IAnimalModel[] | null> {
 		const isValid = await this.checkAccountByIdRepository.checkById(
 			accountId
 		);

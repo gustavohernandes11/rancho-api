@@ -56,7 +56,7 @@ describe("DbListAnimal", () => {
 		};
 	};
 
-	describe("load", () => {
+	describe("list", () => {
 		it("should call checkAccountByIdRepository with the correct account ID", async () => {
 			const { sut, checkAccountByIdRepositoryStub } = makeSut();
 			const checkSpy = jest.spyOn(
@@ -65,7 +65,7 @@ describe("DbListAnimal", () => {
 			);
 
 			const fakeAccountId = "valid_account_id";
-			await sut.load(fakeAccountId);
+			await sut.list(fakeAccountId);
 
 			expect(checkSpy).toHaveBeenCalledWith(fakeAccountId);
 		});
@@ -77,7 +77,7 @@ describe("DbListAnimal", () => {
 				"checkById"
 			).mockResolvedValue(false);
 
-			const result = await sut.load("invalid_account_id");
+			const result = await sut.list("invalid_account_id");
 
 			expect(result).toBeNull();
 		});
@@ -90,7 +90,7 @@ describe("DbListAnimal", () => {
 			);
 
 			const fakeAccountId = "valid_account_id";
-			await sut.load(fakeAccountId);
+			await sut.list(fakeAccountId);
 
 			expect(listSpy).toHaveBeenCalledWith(fakeAccountId);
 		});
@@ -98,7 +98,7 @@ describe("DbListAnimal", () => {
 		it("should return an array of animals if the account is valid", async () => {
 			const { sut } = makeSut();
 			const fakeAccountId = "valid_account_id";
-			const result = await sut.load(fakeAccountId);
+			const result = await sut.list(fakeAccountId);
 
 			expect(Array.isArray(result)).toBe(true);
 			expect(result?.length).toBeGreaterThan(0);
