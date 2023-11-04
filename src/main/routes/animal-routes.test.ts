@@ -10,6 +10,8 @@ jest.setTimeout(15000);
 let app: Express;
 let accountCollection: Collection;
 describe("Animal routes", () => {
+	const mockISODate = new Date().toISOString();
+
 	beforeAll(async () => {
 		app = await setupApp();
 		await MongoHelper.connect(process.env.MONGO_URL!);
@@ -58,7 +60,7 @@ describe("Animal routes", () => {
 				.send({
 					name: "any_name",
 					ownerId: userId,
-					age: "any_age",
+					age: mockISODate,
 				})
 				.expect(200);
 		});
@@ -68,7 +70,7 @@ describe("Animal routes", () => {
 				.send({
 					name: "any_name",
 					ownerId: "any_id",
-					age: "any_age",
+					age: mockISODate,
 				})
 				.expect(400);
 		});
