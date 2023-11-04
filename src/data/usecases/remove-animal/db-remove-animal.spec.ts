@@ -59,5 +59,17 @@ describe("DbRemoveAnimal", () => {
 
 			expect(result).toBe(false);
 		});
+		it("should throw an error if removeAnimalByIdRepository throws", async () => {
+			const { sut, removeAnimalByIdRepositoryStub } = makeSut();
+			jest.spyOn(
+				removeAnimalByIdRepositoryStub,
+				"removeAnimal"
+			).mockRejectedValue(new Error());
+
+			const fakeAnimalId = "existing_id";
+			const removePromise = sut.remove(fakeAnimalId);
+
+			await expect(removePromise).rejects.toThrow();
+		});
 	});
 });
