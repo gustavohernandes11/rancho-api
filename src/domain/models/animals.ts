@@ -1,7 +1,7 @@
 export interface IAnimalModel {
 	id: string;
 	ownerId: string;
-	age: Date;
+	age: string;
 	name?: string;
 	maternityId?: string;
 	paternityId?: string;

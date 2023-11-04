@@ -9,7 +9,7 @@ describe("DbLoadAnimals", () => {
 			return {
 				id: id,
 				ownerId: "owner_id",
-				age: new Date("2020-01-01"),
+				age: new Date("2020-01-01").toISOString(),
 				name: "sample_animal",
 			};
 		}

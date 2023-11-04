@@ -52,8 +52,6 @@ describe("Animal routes", () => {
 	describe("/api/animals", () => {
 		it("should return 200 when sending valid animal data", async () => {
 			const { accessToken, userId } = await mockDatabaseUser();
-			console.log(accessToken);
-			console.log(userId);
 			await request(app)
 				.post("/api/animals")
 				.set("x-access-token", accessToken)

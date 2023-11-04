@@ -12,7 +12,7 @@ export interface IUpdateAnimalModel {
 	name?: string;
 	maternityId?: string;
 	paternityId?: string;
-	age?: Date;
+	age?: string;
 	code?: number;
 	observation?: string;
 }

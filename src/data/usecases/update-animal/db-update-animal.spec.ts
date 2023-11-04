@@ -9,7 +9,7 @@ import {
 describe("DbUpdateAnimal", () => {
 	const makeFakeUpdateAnimalModel = (): IUpdateAnimalModel => ({
 		name: "updated_animal_name",
-		age: new Date("2020-01-01"),
+		age: new Date("2020-01-01").toISOString(),
 	});
 
 	class UpdateAnimalByIdRepositoryStub
@@ -22,7 +22,7 @@ describe("DbUpdateAnimal", () => {
 			return {
 				id: id || "any_id",
 				name: animal.name || "original_animal_name",
-				age: animal.age || new Date("2019-01-01"),
+				age: animal.age || new Date("2019-01-01").toISOString(),
 				ownerId: "any_ownerId",
 			};
 		}

@@ -6,7 +6,7 @@ import { MongoHelper } from "./mongo-helper";
 const makeFakeAnimal = (): IAddAnimalModel => ({
 	name: "any_animal_name",
 	ownerId: "any_id",
-	age: new Date("12/12/2019"),
+	age: new Date("12/12/2019").toISOString(),
 });
 describe("Animal Mongo Repository", () => {
 	let animalsCollection: Collection;
@@ -74,17 +74,17 @@ describe("Animal Mongo Repository", () => {
 			const { insertedId } = await animalsCollection.insertOne({
 				name: "any_animal_name",
 				ownerId: "any_id",
-				age: new Date("12/12/2019"),
+				age: new Date("12/12/2019").toISOString(),
 			});
 			await sut.updateAnimal(insertedId.toHexString(), {
-				age: new Date("11/11/2019"),
+				age: new Date("11/11/2019").toISOString(),
 			});
 
 			const animal = await animalsCollection.findOne({
 				_id: insertedId,
 			});
 
-			expect(animal?.age).toEqual(new Date("11/11/2019"));
+			expect(animal?.age).toEqual(new Date("11/11/2019").toISOString());
 			expect(animal?.name).toEqual("any_animal_name");
 			expect(animal?.ownerId).toEqual("any_id");
 		});
@@ -111,7 +111,7 @@ describe("Animal Mongo Repository", () => {
 			const { insertedId } = await animalsCollection.insertOne({
 				name: "any_animal_name",
 				ownerId: "any_id",
-				age: new Date("12/12/2019"),
+				age: new Date("12/12/2019").toISOString(),
 			});
 
 			await sut.updateAnimal(insertedId.toHexString(), {
@@ -120,9 +120,9 @@ describe("Animal Mongo Repository", () => {
 
 			const animal = await animalsCollection.findOne({ _id: insertedId });
 
-			expect(animal?.age).toEqual(new Date("12/12/2019"));
+			expect(animal?.age).toEqual(new Date("12/12/2019").toISOString());
 			expect(animal?.name).toEqual("any_animal_name");
-			expect(animal?.ownerId).toEqual;
+			expect(animal?.ownerId).toEqual("modified_ownerId");
 		});
 		it("should return true when the update is correctly done", async () => {
 			const sut = new AnimalMongoRepository();
@@ -135,7 +135,7 @@ describe("Animal Mongo Repository", () => {
 			const result = await sut.updateAnimal(insertedId.toHexString(), {
 				name: "modified_animal_name",
 				ownerId: "modified_ownerId",
-				age: new Date("02/12/2019"),
+				age: new Date("02/12/2019").toISOString(),
 			});
 
 			expect(result).toBeTruthy();
@@ -145,7 +145,7 @@ describe("Animal Mongo Repository", () => {
 			const result = await sut.updateAnimal("invalid_id", {
 				name: "modified_animal_name",
 				ownerId: "modified_ownerId",
-				age: new Date("02/12/2019"),
+				age: new Date("02/12/2019").toISOString(),
 			});
 
 			expect(result).toBeNull();
@@ -254,7 +254,6 @@ describe("Animal Mongo Repository", () => {
 			]);
 
 			const result = await sut.listAnimals(userId);
-			console.log(result);
 			expect(result.length).toBe(2);
 		});
 	});
