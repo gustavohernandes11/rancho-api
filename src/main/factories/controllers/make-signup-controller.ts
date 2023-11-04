@@ -3,7 +3,7 @@ import { DbAuthentication } from "@data/usecases/authentication/db-authenticatio
 import { BcryptAdapter } from "@infra/criptography/bcrypt-adapter";
 import { JwtAdapter } from "@infra/criptography/jwt-adapter";
 import { AccountMongoRepository } from "@infra/db/mongodb/account-mongo-repository";
-import { SigunUpController } from "@presentation/controllers/signup";
+import { SigunUpController } from "@presentation/controllers/signup-controller";
 import { IController } from "@presentation/protocols";
 import { makeSignUpValidation } from "../validation/make-signup-validation";
 import env from "../../config/env";
