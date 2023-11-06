@@ -1,15 +1,11 @@
-import {
-	AccountId,
-	ILoadAccountByTokenRepository,
-} from "@data/protocols/db/accounts";
+import { AccountId } from "@data/protocols/db/accounts";
 import { AccessDeniedError } from "../errors/access-denied-error";
 import { forbidden } from "../helpers/http-helpers";
 import { AuthMiddleware } from "./auth-middleware";
+import { IDbLoadAccountByToken } from "@domain/usecases/load-account-by-token";
 
-class LoadAccountByTokenRepositoryStub
-	implements ILoadAccountByTokenRepository
-{
-	async loadByToken(token: string): Promise<AccountId | null> {
+class DbLoadAccountByTokenStub implements IDbLoadAccountByToken {
+	async load(token: string): Promise<AccountId | null> {
 		return {
 			id: "any_id",
 		};
@@ -17,17 +13,16 @@ class LoadAccountByTokenRepositoryStub
 }
 
 interface ISutTypes {
-	loadAccountByTokenRepositoryStub: LoadAccountByTokenRepositoryStub;
+	dbLoadAccountByToken: DbLoadAccountByTokenStub;
 	sut: AuthMiddleware;
 }
 
 const makeSut = (): ISutTypes => {
-	const loadAccountByTokenRepositoryStub =
-		new LoadAccountByTokenRepositoryStub();
+	const dbLoadAccountByToken = new DbLoadAccountByTokenStub();
 
 	return {
-		loadAccountByTokenRepositoryStub,
-		sut: new AuthMiddleware(loadAccountByTokenRepositoryStub),
+		dbLoadAccountByToken,
+		sut: new AuthMiddleware(dbLoadAccountByToken),
 	};
 };
 
@@ -43,19 +38,13 @@ describe("Auth Middleware", () => {
 		expect(response.statusCode).toBe(403);
 	});
 
-	it("should call the correct loadAccountByTokenRepository", () => {
-		const { sut, loadAccountByTokenRepositoryStub } = makeSut();
-		const loadByTokenSpy = jest.spyOn(
-			loadAccountByTokenRepositoryStub,
-			"loadByToken"
-		);
+	it("should call the correct dbLoadAccountByToken", () => {
+		const { sut, dbLoadAccountByToken } = makeSut();
+		const loadSpy = jest.spyOn(dbLoadAccountByToken, "load");
 		const request = makeFakeRequest();
 		sut.handle(request);
 
-		expect(loadByTokenSpy).toHaveBeenCalledWith(
-			request.accessToken,
-			undefined
-		);
+		expect(loadSpy).toHaveBeenCalledWith(request.accessToken, undefined);
 	});
 	it("should return 200 if the token is valid", async () => {
 		const { sut } = makeSut();
@@ -68,24 +57,20 @@ describe("Auth Middleware", () => {
 		expect(response.body).toEqual({ accountId: "any_id" });
 	});
 
-	it("should return 403 if loadAccountByToken returns null", async () => {
-		const { sut, loadAccountByTokenRepositoryStub } = makeSut();
-		jest.spyOn(
-			loadAccountByTokenRepositoryStub,
-			"loadByToken"
-		).mockReturnValueOnce(new Promise((resolve) => resolve(null)));
+	it("should return 403 if dbLoadAccountByToken returns null", async () => {
+		const { sut, dbLoadAccountByToken } = makeSut();
+		jest.spyOn(dbLoadAccountByToken, "load").mockReturnValueOnce(
+			new Promise((resolve) => resolve(null))
+		);
 
 		const response = await sut.handle(makeFakeRequest());
 		expect(response.statusCode).toBe(403);
 		expect(response).toEqual(forbidden(new AccessDeniedError()));
 	});
-	it("should return 500 if loadAccountByTokenRepository throws", async () => {
-		const { sut, loadAccountByTokenRepositoryStub } = makeSut();
+	it("should return 500 if dbLoadAccountByToken throws", async () => {
+		const { sut, dbLoadAccountByToken } = makeSut();
 
-		jest.spyOn(
-			loadAccountByTokenRepositoryStub,
-			"loadByToken"
-		).mockImplementationOnce(() => {
+		jest.spyOn(dbLoadAccountByToken, "load").mockImplementationOnce(() => {
 			throw new Error();
 		});
 
