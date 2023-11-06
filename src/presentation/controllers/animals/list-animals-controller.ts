@@ -2,7 +2,12 @@ import {
 	IDbListAnimals,
 	IListAnimalsByOwnerIdRepository,
 } from "@data/usecases/list-animals/db-list-animals-protocols";
-import { noContent, notFound, ok, serverError } from "../helpers/http-helpers";
+import {
+	noContent,
+	notFound,
+	ok,
+	serverError,
+} from "../../helpers/http-helpers";
 import { IHttpRequest } from "@presentation/protocols";
 
 export class ListAnimalsController {

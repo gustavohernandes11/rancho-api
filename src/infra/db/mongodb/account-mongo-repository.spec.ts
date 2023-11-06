@@ -60,7 +60,7 @@ describe("Account Mongo Repository", () => {
 			expect(account).toBeNull();
 		});
 	});
-	describe("updateAcessToken()", () => {
+	describe("updateAccessToken()", () => {
 		it("should set or update the accessToken in the database", async () => {
 			const { sut } = makeSut();
 			const { insertedId } = await accountCollection.insertOne(

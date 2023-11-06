@@ -1,6 +1,6 @@
 import { RemoveAnimalController } from "./remove-animal-controller";
-import { InvalidParamError } from "../errors";
-import { badRequest, ok, serverError } from "../helpers/http-helpers";
+import { InvalidParamError } from "../../errors";
+import { badRequest, ok, serverError } from "../../helpers/http-helpers";
 import { IDbRemoveAnimal } from "@domain/usecases/remove-animal";
 import { IController, IValidation } from "@presentation/protocols";
 

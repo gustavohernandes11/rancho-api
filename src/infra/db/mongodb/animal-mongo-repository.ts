@@ -55,10 +55,10 @@ export class AnimalMongoRepository
 	}
 	async removeAnimal(animalId: string | ObjectId): Promise<boolean> {
 		const animalsCollection = MongoHelper.getCollection("animals");
-		const { ok } = await animalsCollection.findOneAndDelete({
+		const { deletedCount } = await animalsCollection.deleteOne({
 			_id: parseToObjectId(animalId),
 		});
-		return ok === 1;
+		return deletedCount > 0;
 	}
 	async addAnimal(animal: IAddAnimalModel): Promise<boolean> {
 		const animalsCollection = MongoHelper.getCollection("animals");

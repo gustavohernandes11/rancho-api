@@ -1,7 +1,7 @@
 import { IDbAddAnimal, IAddAnimalModel } from "@domain/usecases/add-animal";
 import { makeAddAnimalValidations } from "@main/factories/validation/make-add-animal-validations";
-import { InvalidParamError, MissingParamError } from "../errors";
-import { badRequest, ok } from "../helpers/http-helpers";
+import { InvalidParamError, MissingParamError } from "../../errors";
+import { badRequest, ok } from "../../helpers/http-helpers";
 import { AddAnimalController } from "./add-animal-controller";
 
 describe("Add Animal Controller", () => {

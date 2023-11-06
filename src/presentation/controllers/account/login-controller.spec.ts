@@ -4,7 +4,7 @@ import {
 	IAuthenticationResult,
 } from "@domain/usecases/authentication";
 import { makeLoginValidations } from "@main/factories/validation/make-login-validation";
-import { MissingParamError } from "../errors";
+import { MissingParamError } from "../../errors";
 import { LoginController } from "./login-controller";
 
 describe("Login", () => {

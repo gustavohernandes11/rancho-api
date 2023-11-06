@@ -42,8 +42,8 @@ describe("UpdateAnimalController", () => {
 	const makeSut = (): ISutTypes => {
 		const dbUpdateAnimalStub = new DbUpdateAnimalStub();
 		const sut = new UpdateAnimalController(
-			dbUpdateAnimalStub,
-			makeUpdateAnimalValidations()
+			makeUpdateAnimalValidations(),
+			dbUpdateAnimalStub
 		);
 
 		return {

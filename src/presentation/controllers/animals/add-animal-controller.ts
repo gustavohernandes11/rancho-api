@@ -1,12 +1,12 @@
 import { IDbAddAnimal } from "@domain/usecases/add-animal";
-import { InvalidParamError } from "../errors";
-import { badRequest, ok, serverError } from "../helpers/http-helpers";
+import { InvalidParamError } from "../../errors";
+import { badRequest, ok, serverError } from "../../helpers/http-helpers";
 import {
 	IController,
 	IHttpRequest,
 	IHttpResponse,
 	IValidation,
-} from "../protocols";
+} from "../../protocols";
 
 export class AddAnimalController implements IController {
 	constructor(

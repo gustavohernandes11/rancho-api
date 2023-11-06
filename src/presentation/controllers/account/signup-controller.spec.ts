@@ -2,8 +2,8 @@ import {
 	InvalidParamError,
 	MissingParamError,
 	EmailInUseError,
-} from "../errors";
-import { IHttpRequest } from "../protocols";
+} from "../../errors";
+import { IHttpRequest } from "../../protocols";
 import { SigunUpController } from "./signup-controller";
 import { makeSignUpValidation } from "@main/factories/validation/make-signup-validation";
 import { IDbAddAccount, IAddAccountModel } from "@domain/usecases/add-account";

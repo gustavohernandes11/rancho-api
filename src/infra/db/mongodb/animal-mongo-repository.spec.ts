@@ -171,7 +171,7 @@ describe("Animal Mongo Repository", () => {
 				id: insertedId,
 			});
 
-			expect(removed).toBeFalsy;
+			expect(removed).toBeFalsy();
 		});
 		it("should work with strings", async () => {
 			const { insertedId } = await animalsCollection.insertOne(
@@ -184,14 +184,14 @@ describe("Animal Mongo Repository", () => {
 				id: insertedId,
 			});
 
-			expect(removed).toBeFalsy;
+			expect(removed).toBeFalsy();
 		});
 
 		it("should return false when the animal do not exists in the database", async () => {
 			const sut = new AnimalMongoRepository();
 			const result = await sut.removeAnimal("invalid_id");
 
-			expect(result).toBeFalsy;
+			expect(result).toBeFalsy();
 		});
 		it("should return true when remove the animal from the database", async () => {
 			const { insertedId } = await animalsCollection.insertOne(
