@@ -7,6 +7,7 @@ export class GlobalDateFormatValidation implements IValidation {
 
 	validate(input: any): any {
 		const inputValue = input[this.dateField];
+		if (!inputValue) return; // optional field
 
 		if (typeof inputValue !== "string") {
 			return new InvalidParamError(this.dateField);
