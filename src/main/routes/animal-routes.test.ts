@@ -5,10 +5,13 @@ import { Collection } from "mongodb";
 import { MongoHelper } from "@infra/db/mongodb/mongo-helper";
 import { sign } from "jsonwebtoken";
 import env from "../config/env";
+import { parseToObjectId } from "@infra/db/mongodb/utils/parse-to-object-id";
 jest.setTimeout(15000);
 
 let app: Express;
 let accountCollection: Collection;
+let animalColletion: Collection;
+
 describe("Animal routes", () => {
 	const mockISODate = new Date().toISOString();
 
@@ -22,6 +25,8 @@ describe("Animal routes", () => {
 	});
 
 	beforeEach(async () => {
+		animalColletion = MongoHelper.getCollection("animals");
+		await animalColletion.deleteMany({});
 		accountCollection = MongoHelper.getCollection("accounts");
 		await accountCollection.deleteMany({});
 	});
@@ -48,11 +53,76 @@ describe("Animal routes", () => {
 				},
 			}
 		);
+		console.log("mockDatabaseUser: " + accessToken);
 		return { accessToken, userId: id };
 	};
+	type IMockDatabaseAnimalAndUserType = {
+		animalId: string;
+		accessToken: string;
+	};
+	const mockDatabaseAnimalAndUser =
+		async (): Promise<IMockDatabaseAnimalAndUserType> => {
+			const { userId, accessToken } = await mockDatabaseUser();
+
+			const { insertedId } = await animalColletion.insertOne({
+				name: "any_animal_name",
+				age: new Date("10/10/2000").toISOString(),
+				ownerId: userId,
+			});
+
+			return { animalId: insertedId.toHexString(), accessToken };
+		};
+
+	describe("/api/animals/:animalId", () => {
+		it("should return 403 when not sending a accessToken", async () => {
+			const { animalId } = await mockDatabaseAnimalAndUser();
+			await request(app)
+				.put(`/api/animals/${animalId}`)
+				.send({})
+				.expect(403);
+		});
+		it("should return 400 when sending invalid animalId", async () => {
+			const { accessToken } = await mockDatabaseAnimalAndUser();
+			await request(app)
+				.put("/api/animals/INVALID_ID")
+				.set("x-access-token", accessToken)
+				.send({})
+				.expect(400);
+		});
+		it("should return 200 when sending a valid animalId with correct accessToken", async () => {
+			const { animalId, accessToken } = await mockDatabaseAnimalAndUser();
+			await request(app)
+				.put(`/api/animals/${animalId}`)
+				.set("x-access-token", accessToken)
+				.send({})
+				.expect(200);
+		});
+		it("it should update the animal in the database when return 200", async () => {
+			const { animalId, accessToken } = await mockDatabaseAnimalAndUser();
+			const newAge = new Date("01/01/2002").toISOString();
+			const changedName = "changed_animal_name";
+
+			await request(app)
+				.put("/api/animals/" + animalId)
+				.set("x-access-token", accessToken)
+				.send({
+					name: changedName,
+					age: newAge,
+				})
+				.expect(200);
+
+			const changed = MongoHelper.map(
+				await animalColletion.findOne({
+					_id: parseToObjectId(animalId),
+				})
+			);
+			expect(changed.age).toBe(newAge);
+			expect(changed.name).toBe(changedName);
+		});
+	});
 
 	describe("/api/animals", () => {
-		it("should return 200 when sending valid animal data", async () => {
+		it("should return 200 when sending valid animal data and accessToken", async () => {
 			const { accessToken, userId } = await mockDatabaseUser();
 			await request(app)
 				.post("/api/animals")
@@ -64,7 +134,7 @@ describe("Animal routes", () => {
 				})
 				.expect(200);
 		});
-		it("should return 400 if the animal owner is not in the database", async () => {
+		it("should return 403 if accessToken was not passed", async () => {
 			await request(app)
 				.post("/api/animals")
 				.send({
@@ -72,7 +142,7 @@ describe("Animal routes", () => {
 					ownerId: "any_id",
 					age: mockISODate,
 				})
-				.expect(400);
+				.expect(403);
 		});
 	});
 });
