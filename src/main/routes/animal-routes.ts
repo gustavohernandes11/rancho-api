@@ -4,17 +4,24 @@ import { makeAddAnimalController } from "../factories/controllers/make-add-anima
 import { makeUpdateAnimalController } from "@main/factories/controllers/make-update-animal-controller";
 import { auth } from "@main/middlewares/auth";
 import { makeRemoveAnimalController } from "@main/factories/controllers/make-remove-animal-controller";
+import { makeLoadAnimalController } from "@main/factories/controllers/make-load-animal-controller";
 
 export default (router: Router) => {
+	router.get(
+		"/animals/:animalId",
+		auth,
+		adaptRoute(makeLoadAnimalController())
+	);
 	router.put(
 		"/animals/:animalId",
 		auth,
 		adaptRoute(makeUpdateAnimalController())
 	);
-	router.post("/animals", auth, adaptRoute(makeAddAnimalController()));
 	router.delete(
 		"/animals/:animalId",
 		auth,
 		adaptRoute(makeRemoveAnimalController())
 	);
+	router.post("/animals", auth, adaptRoute(makeAddAnimalController()));
+	// router.get("/animals", auth, adaptRoute(makeGetAnimalsController()));
 };

@@ -72,6 +72,34 @@ describe("Animal routes", () => {
 
 			return { animalId: insertedId.toHexString(), accessToken };
 		};
+	describe("GET /api/animals/:animalId", () => {
+		it("should return 403 when not sending an accessToken", async () => {
+			const { animalId } = await mockDatabaseAnimalAndUser();
+			await request(app).get(`/api/animals/${animalId}`).expect(403);
+		});
+		it("should return 404 when trying to get information about a non-existing animal", async () => {
+			const { accessToken } = await mockDatabaseUser();
+			const nonExistingAnimalId = "non_existing_animal_id";
+			await request(app)
+				.get(`/api/animals/${nonExistingAnimalId}`)
+				.set("x-access-token", accessToken)
+				.expect(404);
+		});
+		it("should return 200 and animal information when sending a valid animalId with the correct accessToken", async () => {
+			const { animalId, accessToken } = await mockDatabaseAnimalAndUser();
+			await request(app)
+				.get(`/api/animals/${animalId}`)
+				.set("x-access-token", accessToken)
+				.expect(200)
+				.then((response) => {
+					const animal = response.body;
+					expect(animal).toHaveProperty("name");
+					expect(animal).toHaveProperty("age");
+					expect(animal).toHaveProperty("ownerId");
+				});
+		});
+	});
+
 	describe("DELETE /api/animals/:animalId", () => {
 		it("should return 403 when not sending an accessToken", async () => {
 			const { animalId } = await mockDatabaseAnimalAndUser();
