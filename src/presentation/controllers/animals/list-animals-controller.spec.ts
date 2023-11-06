@@ -44,15 +44,6 @@ describe("ListAnimalsController", () => {
 		return { sut, listAnimalsStub };
 	};
 
-	it("should return 404 if the DbListAnimals return null", async () => {
-		const { sut, listAnimalsStub } = makeSut();
-		jest.spyOn(listAnimalsStub, "list").mockReturnValue(
-			Promise.resolve(null)
-		);
-
-		const response = await sut.handle({ body: null });
-		expect(response).toEqual(notFound());
-	});
 	it("should return 204 if there is an empty response", async () => {
 		const { sut, listAnimalsStub } = makeSut();
 		jest.spyOn(listAnimalsStub, "list").mockReturnValue(

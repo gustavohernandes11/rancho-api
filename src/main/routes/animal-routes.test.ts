@@ -73,7 +73,7 @@ describe("Animal routes", () => {
 			return { animalId: insertedId.toHexString(), accessToken };
 		};
 	describe("GET /api/animals/:animalId", () => {
-		it("should return 403 when not sending an accessToken", async () => {
+		it("should return 403 when not sending a accessToken", async () => {
 			const { animalId } = await mockDatabaseAnimalAndUser();
 			await request(app).get(`/api/animals/${animalId}`).expect(403);
 		});
@@ -199,7 +199,7 @@ describe("Animal routes", () => {
 				})
 				.expect(200);
 		});
-		it("should return 403 if accessToken was not passed", async () => {
+		it("should return 403 when not sending a accessToken", async () => {
 			await request(app)
 				.post("/api/animals")
 				.send({
@@ -208,6 +208,84 @@ describe("Animal routes", () => {
 					age: mockISODate,
 				})
 				.expect(403);
+		});
+	});
+	describe("GET /api/animals", () => {
+		it("should return 403 when not sending a accessToken", async () => {
+			await request(app).get("/api/animals").send({}).expect(403);
+		});
+		it("should return 2xx when sending accessToken", async () => {
+			const { accessToken } = await mockDatabaseUser();
+			await request(app)
+				.get("/api/animals")
+				.set("x-access-token", accessToken)
+				.send({})
+				.expect([200, 204]);
+		});
+
+		it("should return 204 when the animal database is empty", async () => {
+			const { accessToken } = await mockDatabaseUser();
+
+			await request(app)
+				.get("/api/animals")
+				.set("x-access-token", accessToken)
+				.send({})
+				.expect(204);
+		});
+
+		it("should list the animals when it exists", async () => {
+			const { accessToken, userId } = await mockDatabaseUser();
+			const mockedDate = new Date().toISOString();
+			animalColletion.insertMany([
+				{
+					name: "name_1",
+					age: mockedDate,
+					ownerId: userId,
+				},
+				{
+					name: "name_2",
+					age: mockedDate,
+					ownerId: userId,
+				},
+				{
+					name: "name_3",
+					age: mockedDate,
+					ownerId: userId,
+				},
+				{
+					name: "name_4",
+					age: mockedDate,
+					ownerId: userId,
+				},
+			]);
+
+			await request(app)
+				.get("/api/animals")
+				.set("x-access-token", accessToken)
+				.send({})
+				.then((response: any) => {
+					expect(response.body).toHaveLength(4);
+
+					expect(response.body[0].name).toBe("name_1");
+					expect(response.body[1].name).toBe("name_2");
+					expect(response.body[2].name).toBe("name_3");
+					expect(response.body[3].name).toBe("name_4");
+				});
+		});
+		it("should return 200 when the account and animals exists in the database", async () => {
+			const { accessToken, userId } = await mockDatabaseUser();
+			const mockedDate = new Date().toISOString();
+			animalColletion.insertOne({
+				name: "any_name",
+				age: mockedDate,
+				ownerId: userId,
+			});
+
+			await request(app)
+				.get("/api/animals")
+				.set("x-access-token", accessToken)
+				.send({})
+				.expect(200);
 		});
 	});
 });

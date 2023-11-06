@@ -1,7 +1,4 @@
-import {
-	IDbListAnimals,
-	IListAnimalsByOwnerIdRepository,
-} from "@data/usecases/list-animals/db-list-animals-protocols";
+import { IDbListAnimals } from "@data/usecases/list-animals/db-list-animals-protocols";
 import {
 	noContent,
 	notFound,
@@ -18,8 +15,7 @@ export class ListAnimalsController {
 			const { accountId } = request as any;
 			const animals = await this.dbListAnimals.list(accountId);
 
-			if (animals === null) return notFound();
-			if (animals.length === 0) return noContent();
+			if (animals?.length === 0) return noContent();
 			return ok(animals);
 		} catch (error) {
 			return serverError(error as Error);
