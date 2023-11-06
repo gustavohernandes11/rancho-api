@@ -72,8 +72,45 @@ describe("Animal routes", () => {
 
 			return { animalId: insertedId.toHexString(), accessToken };
 		};
+	describe("DELETE /api/animals/:animalId", () => {
+		it("should return 403 when not sending an accessToken", async () => {
+			const { animalId } = await mockDatabaseAnimalAndUser();
+			await request(app).delete(`/api/animals/${animalId}`).expect(403);
+		});
 
-	describe("/api/animals/:animalId", () => {
+		it("should return 404 when trying to delete a non-existing animal", async () => {
+			const { accessToken } = await mockDatabaseUser();
+			const nonExistingAnimalId = "non_existing_animal_id";
+			await request(app)
+				.delete(`/api/animals/${nonExistingAnimalId}`)
+				.set("x-access-token", accessToken)
+				.expect(404);
+		});
+
+		it("should return 200 when sending a valid animalId with the correct accessToken", async () => {
+			const { animalId, accessToken } = await mockDatabaseAnimalAndUser();
+			await request(app)
+				.delete(`/api/animals/${animalId}`)
+				.set("x-access-token", accessToken)
+				.expect(200);
+		});
+
+		it("should delete the animal from the database when returning 200", async () => {
+			const { animalId, accessToken } = await mockDatabaseAnimalAndUser();
+			await request(app)
+				.delete(`/api/animals/${animalId}`)
+				.set("x-access-token", accessToken)
+				.expect(200);
+
+			const deletedAnimal = await animalColletion.findOne({
+				_id: parseToObjectId(animalId),
+			});
+
+			expect(deletedAnimal).toBeNull();
+		});
+	});
+
+	describe("PUT /api/animals/:animalId", () => {
 		it("should return 403 when not sending a accessToken", async () => {
 			const { animalId } = await mockDatabaseAnimalAndUser();
 			await request(app)
@@ -121,7 +158,7 @@ describe("Animal routes", () => {
 		});
 	});
 
-	describe("/api/animals", () => {
+	describe("POST /api/animals", () => {
 		it("should return 200 when sending valid animal data and accessToken", async () => {
 			const { accessToken, userId } = await mockDatabaseUser();
 			await request(app)
