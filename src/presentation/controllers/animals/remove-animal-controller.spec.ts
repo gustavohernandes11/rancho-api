@@ -3,6 +3,7 @@ import { InvalidParamError } from "../../errors";
 import { badRequest, ok, serverError } from "../../helpers/http-helpers";
 import { IDbRemoveAnimal } from "@domain/usecases/remove-animal";
 import { IController, IValidation } from "@presentation/protocols";
+import { IDbLoadAnimal } from "@domain/usecases/load-animal";
 
 describe("Remove Animal Controller", () => {
 	const makeFakeRequest = () => ({
@@ -13,6 +14,12 @@ describe("Remove Animal Controller", () => {
 	class DbRemoveAnimalStub implements IDbRemoveAnimal {
 		async remove() {
 			return true;
+		}
+	}
+
+	class DbLoadAnimalStub implements IDbLoadAnimal {
+		async load() {
+			return { id: "any_id", age: "any_age", ownerId: "any_ownerId" };
 		}
 	}
 	class ValidationStub implements IValidation {
@@ -30,9 +37,11 @@ describe("Remove Animal Controller", () => {
 	const makeSut = (): ISutTypes => {
 		const validationStub = new ValidationStub();
 		const dbRemoveAnimalStub = new DbRemoveAnimalStub();
+		const dbLoadAnimalStub = new DbLoadAnimalStub();
 		const sut = new RemoveAnimalController(
 			validationStub,
-			dbRemoveAnimalStub
+			dbRemoveAnimalStub,
+			dbLoadAnimalStub
 		);
 
 		return {
@@ -65,7 +74,7 @@ describe("Remove Animal Controller", () => {
 
 		const response = await sut.handle(makeFakeRequest());
 
-		expect(removeSpy).toHaveBeenCalledWith("valid_id");
+		expect(removeSpy).toHaveBeenCalledWith("valid_id", undefined);
 		expect(response).toEqual(ok());
 	});
 
