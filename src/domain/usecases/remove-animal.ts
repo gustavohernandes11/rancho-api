@@ -1,3 +1,3 @@
 export interface IDbRemoveAnimal {
-	remove(id: string): Promise<boolean>;
+	remove(id: string, ownerId: string): Promise<boolean>;
 }
