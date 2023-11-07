@@ -2,22 +2,19 @@ import {
 	InvalidParamError,
 	MissingParamError,
 	EmailInUseError,
-} from "../errors";
-import { IHttpRequest } from "../protocols/";
-import { SigunUpController } from "./signup";
-import { makeSignUpValidation } from "../../main/factories/validation/make-signup-validation";
-import {
-	IAddAccount,
-	IAddAccountModel,
-} from "../../domain/usecases/add-account";
+} from "../../errors";
+import { IHttpRequest } from "../../protocols";
+import { SigunUpController } from "./signup-controller";
+import { makeSignUpValidation } from "@main/factories/validation/make-signup-validation";
+import { IDbAddAccount, IAddAccountModel } from "@domain/usecases/add-account";
 import {
 	IAuthentication,
 	IAuthenticationResult,
-} from "../../domain/usecases/authentication";
-import { IAuthenticationModel } from "../../domain/models/authentication";
+} from "@domain/usecases/authentication";
+import { IAuthenticationModel } from "@domain/models/authentication";
 
 describe("Signup Controller", () => {
-	class DbAddAccountStub implements IAddAccount {
+	class DbAddAccountStub implements IDbAddAccount {
 		async add(account: IAddAccountModel): Promise<boolean> {
 			return new Promise((resolve) => resolve(true));
 		}
@@ -34,7 +31,7 @@ describe("Signup Controller", () => {
 	}
 	interface ISutTypes {
 		sut: SigunUpController;
-		dbAddAccountStub: IAddAccount;
+		dbAddAccountStub: IDbAddAccount;
 		authenticationStub: IAuthentication;
 	}
 	const makeSut = (): ISutTypes => {

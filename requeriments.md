@@ -12,7 +12,7 @@
 6. [x] Gera uma senha **criptografada** (essa senha não pode ser descriptografada)
 7. [x] **Cria** uma conta para o usuário com os dados informados, **substituindo** a senha pela senha criptografada
 8. [x] Gera um **token** de acesso a partir do ID do usuário
-9. [ ] **Atualiza** os dados do usuário com o token de acesso gerado
+9. [x] **Atualiza** os dados do usuário com o token de acesso gerado
 10. [x] Retorna **200** com o token de acesso e o nome do usuário
 
 ### Exceções
@@ -36,7 +36,7 @@
 3. [x] Valida que o campo **email** é um e-mail válido
 4. [x] **Busca** o usuário com o email e senha fornecidos
 5. [x] Gera um **token** de acesso a partir do ID do usuário
-6. [ ] **Atualiza** os dados do usuário com o token de acesso gerado
+6. [x] **Atualiza** os dados do usuário com o token de acesso gerado
 7. [x] Retorna **200** com o token de acesso e o nome do usuário
 
 ### Exceções
@@ -52,16 +52,17 @@
 
 ### Caso de sucesso
 
-1. [ ] Recebe uma requisição do tipo **POST** na rota **/api/animals**
-2. [ ] Valida os dados obrigatórios, como **nome**, **idade** ou **data de nascimento** e pelo menos uma das seguintes informações opcionais: **numeração**, **observação**, **maternidade** ou **paternidade**
-3. [ ] Cria um novo animal com os dados informados
-4. [ ] Retorna **201** com os dados do animal criado
+1. [x] Recebe uma requisição do tipo **POST** na rota **/api/animals**
+2. [x] Valida os dados obrigatórios, como **nome**, **idade** ou **data de nascimento**.
+3. [ ] Opções informações opcionais: **numeração**, **observação**, **maternidade** ou **paternidade**.
+4. [x] Cria um novo animal com os dados informados
+5. [x] Retorna **201** com os dados do animal criado
 
 ### Exceções
 
-1. [ ] Retorna erro **404** se a API não existir
-2. [ ] Retorna erro **400** se o nome e a idade do animal não for enviado
-3. [ ] Retorna erro **500** se ocorrer um erro ao tentar criar o animal
+1. [x] Retorna erro **404** se a API não existir
+2. [x] Retorna erro **400** se o nome e a idade do animal não for enviado
+3. [x] Retorna erro **500** se ocorrer um erro ao tentar criar o animal
 
 ## Verificar animais
 
@@ -92,7 +93,6 @@
 1. [ ] Retorna erro **400** se a API não existir
 2. [ ] Retorna erro **401** se não encontrar um usuário com os dados fornecidos
 3. [ ] Retorna **500** se houver algum erro no servidor
-
 
 ## Editar Animal
 

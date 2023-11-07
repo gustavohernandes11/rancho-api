@@ -1,11 +1,11 @@
-import { IAuthenticationModel } from "../../domain/models/authentication";
+import { IAuthenticationModel } from "@domain/models/authentication";
 import {
 	IAuthentication,
 	IAuthenticationResult,
-} from "../../domain/usecases/authentication";
-import { makeLoginValidations } from "../../main/factories/validation/make-login-validation";
-import { MissingParamError } from "../errors";
-import { LoginController } from "./login";
+} from "@domain/usecases/authentication";
+import { makeLoginValidations } from "@main/factories/validation/make-login-validation";
+import { MissingParamError } from "../../errors";
+import { LoginController } from "./login-controller";
 
 describe("Login", () => {
 	class DbAuthenticationStub implements IAuthentication {

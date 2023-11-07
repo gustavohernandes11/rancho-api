@@ -1,23 +1,23 @@
-import { IAddAccount } from "../../domain/usecases/add-account";
-import { IAuthentication } from "../../domain/usecases/authentication";
-import { EmailInUseError } from "../errors/email-in-use-error";
+import { IDbAddAccount } from "@domain/usecases/add-account";
+import { IAuthentication } from "@domain/usecases/authentication";
+import { EmailInUseError } from "../../errors/email-in-use-error";
 import {
 	badRequest,
 	forbidden,
 	ok,
 	serverError,
-} from "../helpers/http-helpers";
+} from "../../helpers/http-helpers";
 import {
 	IController,
 	IValidation,
 	IHttpRequest,
 	IHttpResponse,
-} from "../protocols";
+} from "../../protocols";
 
 export class SigunUpController implements IController {
 	constructor(
 		private readonly validation: IValidation,
-		private readonly dbAddAccount: IAddAccount,
+		private readonly dbAddAccount: IDbAddAccount,
 		private readonly authentication: IAuthentication
 	) {}
 

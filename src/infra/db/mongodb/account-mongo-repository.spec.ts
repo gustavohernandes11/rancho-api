@@ -19,21 +19,30 @@ describe("Account Mongo Repository", () => {
 		await accountCollection.deleteMany({});
 	});
 
+	type ISutTypes = {
+		sut: AccountMongoRepository;
+	};
+
+	const makeSut = (): ISutTypes => {
+		return { sut: new AccountMongoRepository() };
+	};
+
 	const makeFakeAccount = () => ({
 		name: "any_name",
 		email: "any_email@gmail.com",
 		password: "any_hashed_password",
 	});
+
 	describe("add()", () => {
 		it("should return true if the account is added", async () => {
-			const sut = new AccountMongoRepository();
+			const { sut } = makeSut();
 			const sucess = await sut.add(makeFakeAccount());
 			expect(sucess).toBe(true);
 		});
 	});
 	describe("loadByEmail()", () => {
 		it("should load the correct account by email", async () => {
-			const sut = new AccountMongoRepository();
+			const { sut } = makeSut();
 			await sut.add({
 				name: "any_name",
 				email: "any_email@gmail.com",
@@ -46,14 +55,14 @@ describe("Account Mongo Repository", () => {
 			expect(account?.password).toBe("any_hashed_password");
 		});
 		it("should return null if the account do not exists", async () => {
-			const sut = new AccountMongoRepository();
+			const { sut } = makeSut();
 			const account = await sut.loadByEmail("any_email@gmail.com");
 			expect(account).toBeNull();
 		});
 	});
-	describe("updateAcessToken()", () => {
+	describe("updateAccessToken()", () => {
 		it("should set or update the accessToken in the database", async () => {
-			const sut = new AccountMongoRepository();
+			const { sut } = makeSut();
 			const { insertedId } = await accountCollection.insertOne(
 				makeFakeAccount()
 			);
@@ -74,14 +83,14 @@ describe("Account Mongo Repository", () => {
 	});
 	describe("checkByEmail()", () => {
 		it("should return false if the account do not exists", async () => {
-			const sut = new AccountMongoRepository();
+			const { sut } = makeSut();
 			const response = await sut.checkByEmail(
 				"non_existent_email@gmail.com"
 			);
 			expect(response).toBe(false);
 		});
 		it("should return true if the account exists", async () => {
-			const sut = new AccountMongoRepository();
+			const { sut } = makeSut();
 			await sut.add({
 				name: "any_name",
 				email: "any_email@gmail.com",
@@ -91,10 +100,40 @@ describe("Account Mongo Repository", () => {
 			expect(response).toBe(true);
 		});
 	});
-	describe("loadAccountByEmail()", () => {
+	describe("checkById()", () => {
+		it("should return false if the account do not exists", async () => {
+			const { sut } = makeSut();
+			const response = await sut.checkById("non_existent_id");
+			expect(response).toBe(false);
+		});
+		it("should return true if the account exists", async () => {
+			const { sut } = makeSut();
+			const { insertedId } = await accountCollection.insertOne({
+				name: "any_name",
+				email: "any_email@gmail.com",
+				password: "any_hashed_password",
+			});
+
+			const response = await sut.checkById(insertedId.toHexString());
+			expect(response).toBe(true);
+		});
+		it("should work with a string as id", async () => {
+			const { sut } = makeSut();
+			const { insertedId } = await accountCollection.insertOne({
+				name: "any_name",
+				email: "any_email@gmail.com",
+				password: "any_hashed_password",
+			});
+
+			const response = await sut.checkById(insertedId.toHexString());
+			expect(response).toBeTruthy();
+		});
+	});
+
+	describe("loadByToken()", () => {
 		beforeEach(() => {});
 		it("should load the correct account from token without role", async () => {
-			const sut = new AccountMongoRepository();
+			const { sut } = makeSut();
 
 			const accountCollection = MongoHelper.getCollection("accounts");
 			const { insertedId } = await accountCollection.insertOne({
@@ -107,7 +146,7 @@ describe("Account Mongo Repository", () => {
 			expect(response!.id).toEqual(insertedId.toHexString());
 		});
 		it("should load the correct account with role", async () => {
-			const sut = new AccountMongoRepository();
+			const { sut } = makeSut();
 
 			const accountCollection = MongoHelper.getCollection("accounts");
 			const fakeAccount = makeFakeAccount();
@@ -120,7 +159,7 @@ describe("Account Mongo Repository", () => {
 			expect(account!.id).toEqual(insertedId.toHexString());
 		});
 		it("should return null if the role is not correct", async () => {
-			const sut = new AccountMongoRepository();
+			const { sut } = makeSut();
 
 			const accountCollection = MongoHelper.getCollection("accounts");
 			const fakeAccount = makeFakeAccount();
@@ -133,7 +172,7 @@ describe("Account Mongo Repository", () => {
 			expect(account).toBeNull();
 		});
 		it("should return the account even if the role is not provided when it's an admin", async () => {
-			const sut = new AccountMongoRepository();
+			const { sut } = makeSut();
 
 			const accountCollection = MongoHelper.getCollection("accounts");
 			const fakeAccount = makeFakeAccount();
@@ -146,7 +185,7 @@ describe("Account Mongo Repository", () => {
 			expect(account).toBeTruthy();
 		});
 		it("should return null if the accessToken is invalid", async () => {
-			const sut = new AccountMongoRepository();
+			const { sut } = makeSut();
 
 			const accountCollection = MongoHelper.getCollection("accounts");
 			const fakeAccount = makeFakeAccount();
@@ -160,7 +199,7 @@ describe("Account Mongo Repository", () => {
 		});
 
 		it("should return null if the account do not exists", async () => {
-			const sut = new AccountMongoRepository();
+			const { sut } = makeSut();
 			const account = await sut.loadByToken("any_access_token");
 			expect(account).toBeNull();
 		});

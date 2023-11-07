@@ -1,4 +1,4 @@
-export interface IAddAccount {
+export interface IDbAddAccount {
 	add: (account: IAddAccountModel) => Promise<boolean>;
 }
 

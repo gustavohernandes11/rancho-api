@@ -4,6 +4,6 @@ import { makeSignupController } from "../factories/controllers/make-signup-contr
 import { makeLoginController } from "../factories/controllers/make-login-controller";
 
 export default (router: Router) => {
-	router.use("/signup", adaptRoute(makeSignupController()));
-	router.use("/login", adaptRoute(makeLoginController()));
+	router.post("/signup", adaptRoute(makeSignupController()));
+	router.post("/login", adaptRoute(makeLoginController()));
 };

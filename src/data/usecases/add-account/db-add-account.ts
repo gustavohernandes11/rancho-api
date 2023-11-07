@@ -1,12 +1,12 @@
 import {
-	IAddAccount,
+	IDbAddAccount,
 	IAddAccountModel,
 	IAddAccountRepository,
 	ICheckAccountByEmail,
 	IHasher,
 } from "./db-add-account-protocols";
 
-export class DbAddAccount implements IAddAccount {
+export class DbAddAccount implements IDbAddAccount {
 	constructor(
 		private readonly addAccountRepository: IAddAccountRepository,
 		private readonly hasher: IHasher,

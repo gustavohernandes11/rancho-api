@@ -1,16 +1,16 @@
-import { IAuthentication } from "../../domain/usecases/authentication";
+import { IAuthentication } from "@domain/usecases/authentication";
 import {
 	badRequest,
 	ok,
 	serverError,
 	unauthorized,
-} from "../helpers/http-helpers";
+} from "../../helpers/http-helpers";
 import {
 	IController,
 	IHttpRequest,
 	IHttpResponse,
 	IValidation,
-} from "../protocols";
+} from "../../protocols";
 
 export class LoginController implements IController {
 	constructor(

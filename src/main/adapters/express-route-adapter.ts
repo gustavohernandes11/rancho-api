@@ -1,4 +1,4 @@
-import { IController } from "../../presentation/protocols";
+import { IController } from "@presentation/protocols";
 import { Request, Response } from "express";
 
 export const adaptRoute = (controller: IController) => {
@@ -6,6 +6,7 @@ export const adaptRoute = (controller: IController) => {
 		const request = {
 			body: req.body || {},
 			...(req.header || {}),
+			...(req.params || {}),
 			accountId: req.accountId,
 		};
 		const httpResponse = await controller.handle(request);
