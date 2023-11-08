@@ -9,6 +9,7 @@ export interface IDbUpdateAnimal {
 
 export interface IUpdateAnimalModel {
 	ownerId?: string;
+	batchId?: string | null;
 	name?: string;
 	maternityId?: string;
 	paternityId?: string;
