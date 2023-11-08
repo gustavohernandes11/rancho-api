@@ -1,3 +1,4 @@
+import { ICheckBatchByNameRepository } from "@data/protocols/db/batch/check-batch-by-name-repository";
 import { DbAddBatch } from "./db-add-batch";
 import {
 	IAddBatchModel,
@@ -24,10 +25,18 @@ describe("DbAddBatch", () => {
 			return true;
 		}
 	}
+	class CheckBatchByNameRepositoryStub
+		implements ICheckBatchByNameRepository
+	{
+		async checkByName(name: string): Promise<boolean> {
+			return false;
+		}
+	}
 
 	type ISutTypes = {
 		sut: DbAddBatch;
 		checkAccountByIdRepositoryStub: CheckAccountByIdRepositoryStub;
+		checkBatchByNameRepositoryStub: CheckBatchByNameRepositoryStub;
 		addBatchRepositoryStub: AddBatchRepositoryStub;
 	};
 
@@ -35,13 +44,18 @@ describe("DbAddBatch", () => {
 		const checkAccountByIdRepositoryStub =
 			new CheckAccountByIdRepositoryStub();
 		const addBatchRepositoryStub = new AddBatchRepositoryStub();
+		const checkBatchByNameRepositoryStub =
+			new CheckBatchByNameRepositoryStub();
+
 		return {
 			sut: new DbAddBatch(
 				checkAccountByIdRepositoryStub,
-				addBatchRepositoryStub
+				addBatchRepositoryStub,
+				checkBatchByNameRepositoryStub
 			),
 			addBatchRepositoryStub,
 			checkAccountByIdRepositoryStub,
+			checkBatchByNameRepositoryStub,
 		};
 	};
 
@@ -81,6 +95,29 @@ describe("DbAddBatch", () => {
 			const fakeBatch = makeFakeBatch();
 			const result = await sut.add(fakeBatch);
 			expect(result).toBe(true);
+		});
+
+		it("should call checkBatchByNameRepository with the correct name", async () => {
+			const { sut, checkBatchByNameRepositoryStub } = makeSut();
+			const checkByNameSpy = jest.spyOn(
+				checkBatchByNameRepositoryStub,
+				"checkByName"
+			);
+			const fakeBatch = makeFakeBatch();
+			await sut.add(fakeBatch);
+			expect(checkByNameSpy).toHaveBeenCalledWith(fakeBatch.name);
+		});
+		it("should return false if the name is already in use", async () => {
+			const { sut, checkBatchByNameRepositoryStub } = makeSut();
+			jest.spyOn(
+				checkBatchByNameRepositoryStub,
+				"checkByName"
+			).mockResolvedValueOnce(true);
+
+			const fakeBatch = makeFakeBatch();
+			const response = await sut.add(fakeBatch);
+
+			expect(response).toBeFalsy();
 		});
 	});
 });
