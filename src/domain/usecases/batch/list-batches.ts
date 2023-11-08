@@ -1,5 +1,5 @@
 import { IBatchModel } from "@domain/models/batch";
 
-export interface IDbAddBatch {
+export interface IDbListBatches {
 	listBatches: (ownerId: string) => Promise<IBatchModel[] | null>;
 }

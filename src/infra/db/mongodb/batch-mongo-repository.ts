@@ -1,10 +1,9 @@
 import { IAddBatchRepository } from "@data/protocols/db/batch/add-batch-repository";
 import { ICheckBatchByIdRepository } from "@data/protocols/db/batch/check-batch-by-id-repository";
 import { ICheckBatchByNameRepository } from "@data/protocols/db/batch/check-batch-by-name-repository";
-import { IListAnimalsByBatchRepository } from "@data/protocols/db/animals/list-animals-by-batch-repository";
 import { IListBatchesByOwnerIdRepository } from "@data/protocols/db/batch/list-batches-repository";
 import { IRemoveBatchByIdRepository } from "@data/protocols/db/batch/remove-batch-by-id-repository";
-import { IUpdateBatchByIdRepository } from "@data/protocols/db/batch/update-batch-by-id-repository copy";
+import { IUpdateBatchByIdRepository } from "@data/protocols/db/batch/update-batch-by-id-repository";
 import { IAddBatchModel } from "@domain/usecases/batch/add-batch";
 import { ObjectId } from "mongodb";
 import { IBatchModel } from "@domain/models/batch";
