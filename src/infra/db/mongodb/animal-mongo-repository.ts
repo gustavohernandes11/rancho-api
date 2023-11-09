@@ -23,9 +23,8 @@ export class AnimalMongoRepository
 {
 	async listByBatch(batchId: string): Promise<IAnimalModel[] | null> {
 		const animalsCollection = MongoHelper.getCollection("animals");
-
 		const result = (await animalsCollection
-			.aggregate([{ $match: { batchId: parseToObjectId(batchId) } }])
+			.aggregate([{ $match: { batchId } }])
 			.toArray()) as IAnimalModel[];
 
 		return MongoHelper.mapCollection(result);
