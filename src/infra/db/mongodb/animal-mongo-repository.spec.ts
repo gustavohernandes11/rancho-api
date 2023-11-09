@@ -68,25 +68,25 @@ describe("Animal Mongo Repository", () => {
 				{
 					name: "animal_1",
 					ownerId: "any_ownerId",
-					batchId: insertedIds[0],
+					batchId: insertedIds[0].toHexString(),
 					age: new Date("01/01/2000").toISOString(),
 				},
 				{
 					name: "animal_2",
 					ownerId: "any_ownerId",
-					batchId: insertedIds[0],
+					batchId: insertedIds[0].toHexString(),
 					age: new Date("01/01/2000").toISOString(),
 				},
 				{
 					name: "animal_3",
 					ownerId: "any_ownerId",
-					batchId: insertedIds[1],
+					batchId: insertedIds[1].toHexString(),
 					age: new Date("01/01/2000").toISOString(),
 				},
 				{
 					name: "animal_4",
 					ownerId: "any_ownerId",
-					batchId: insertedIds[1],
+					batchId: insertedIds[1].toHexString(),
 					age: new Date("01/01/2000").toISOString(),
 				},
 			]);
