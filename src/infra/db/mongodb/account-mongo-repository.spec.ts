@@ -71,7 +71,7 @@ describe("Account Mongo Repository", () => {
 			});
 			expect(fakeAccount?.accessToken).toBeFalsy();
 			const accessToken = "any_token";
-			await sut.updateAccessToken(insertedId, accessToken);
+			await sut.updateAccessToken(insertedId.toHexString(), accessToken);
 
 			const account = await accountCollection.findOne({
 				_id: insertedId,
