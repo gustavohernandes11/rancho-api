@@ -1,16 +1,16 @@
-import { IDbUpdateAnimal } from "@data/usecases/update-animal/db-update-animal-protocols";
-import { InvalidParamError } from "@presentation/errors";
+import { IDbUpdateAnimal } from "@/data/usecases/update-animal/db-update-animal-protocols";
+import { InvalidParamError } from "@/presentation/errors";
 import {
 	badRequest,
 	ok,
 	serverError,
-} from "@presentation/helpers/http-helpers";
+} from "@/presentation/helpers/http-helpers";
 import {
 	IController,
 	IHttpRequest,
 	IHttpResponse,
 	IValidation,
-} from "@presentation/protocols";
+} from "@/presentation/protocols";
 
 export class UpdateAnimalController implements IController {
 	constructor(

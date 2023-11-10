@@ -2,10 +2,10 @@ import { UpdateBatchController } from "./update-batch-controller";
 import {
 	IDbUpdateBatch,
 	IUpdateBatchModel,
-} from "@domain/usecases/batch/update-batch";
-import { InvalidParamError } from "@presentation/errors";
-import { badRequest, ok } from "@presentation/helpers/http-helpers";
-import { IValidation } from "@presentation/protocols";
+} from "@/domain/usecases/batch/update-batch";
+import { InvalidParamError } from "@/presentation/errors";
+import { badRequest, ok } from "@/presentation/helpers/http-helpers";
+import { IValidation } from "@/presentation/protocols";
 
 describe("Update Batch Controller", () => {
 	class DbUpdateBatchStub implements IDbUpdateBatch {

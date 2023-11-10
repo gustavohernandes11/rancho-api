@@ -1,5 +1,5 @@
-import { IBatchModel } from "@domain/models/batch";
-import { IUpdateBatchModel } from "@domain/usecases/batch/update-batch";
+import { IBatchModel } from "@/domain/models/batch";
+import { IUpdateBatchModel } from "@/domain/usecases/batch/update-batch";
 
 export interface IUpdateBatchByIdRepository {
 	updateBatch(

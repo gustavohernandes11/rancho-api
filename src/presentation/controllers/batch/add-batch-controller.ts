@@ -1,4 +1,4 @@
-import { IDbAddAnimal } from "@domain/usecases/add-animal";
+import { IDbAddAnimal } from "@/domain/usecases/add-animal";
 import { InvalidParamError } from "../../errors";
 import { badRequest, ok, serverError } from "../../helpers/http-helpers";
 import {
@@ -7,7 +7,7 @@ import {
 	IHttpResponse,
 	IValidation,
 } from "../../protocols";
-import { IDbAddBatch } from "@domain/usecases/batch/add-batch";
+import { IDbAddBatch } from "@/domain/usecases/batch/add-batch";
 
 export class AddBatchController implements IController {
 	constructor(

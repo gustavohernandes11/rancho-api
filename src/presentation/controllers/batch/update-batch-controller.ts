@@ -1,16 +1,16 @@
-import { IDbUpdateBatch } from "@domain/usecases/batch/update-batch";
-import { InvalidParamError } from "@presentation/errors";
+import { IDbUpdateBatch } from "@/domain/usecases/batch/update-batch";
+import { InvalidParamError } from "@/presentation/errors";
 import {
 	badRequest,
 	ok,
 	serverError,
-} from "@presentation/helpers/http-helpers";
+} from "@/presentation/helpers/http-helpers";
 import {
 	IController,
 	IHttpRequest,
 	IHttpResponse,
 	IValidation,
-} from "@presentation/protocols";
+} from "@/presentation/protocols";
 
 export class UpdateBatchController implements IController {
 	constructor(

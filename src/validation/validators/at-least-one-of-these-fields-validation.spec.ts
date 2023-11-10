@@ -1,4 +1,4 @@
-import { MissingParamInListError } from "@presentation/errors/missing-param-in-list";
+import { MissingParamInListError } from "@/presentation/errors/missing-param-in-list";
 import { AtLeastOneOfTheseFieldsValidation } from "./at-least-one-of-these-fields-validation";
 
 describe("At Least One Of These Fields Validation", () => {

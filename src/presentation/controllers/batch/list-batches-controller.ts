@@ -1,6 +1,6 @@
 import { noContent, ok, serverError } from "../../helpers/http-helpers";
-import { IController, IHttpRequest } from "@presentation/protocols";
-import { IDbListBatches } from "@domain/usecases/batch/list-batches";
+import { IController, IHttpRequest } from "@/presentation/protocols";
+import { IDbListBatches } from "@/domain/usecases/batch/list-batches";
 
 export class ListBatchesController implements IController {
 	constructor(private readonly dbListBatches: IDbListBatches) {}

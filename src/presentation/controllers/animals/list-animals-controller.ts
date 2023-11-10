@@ -1,6 +1,6 @@
-import { IDbListAnimals } from "@data/usecases/list-animals/db-list-animals-protocols";
+import { IDbListAnimals } from "@/data/usecases/list-animals/db-list-animals-protocols";
 import { noContent, ok, serverError } from "../../helpers/http-helpers";
-import { IHttpRequest } from "@presentation/protocols";
+import { IHttpRequest } from "@/presentation/protocols";
 
 export class ListAnimalsController {
 	constructor(private readonly dbListAnimals: IDbListAnimals) {}

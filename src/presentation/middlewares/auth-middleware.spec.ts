@@ -1,8 +1,8 @@
-import { AccountId } from "@data/protocols/db/accounts";
+import { AccountId } from "@/data/protocols/db/accounts";
 import { AccessDeniedError } from "../errors/access-denied-error";
 import { forbidden } from "../helpers/http-helpers";
 import { AuthMiddleware } from "./auth-middleware";
-import { IDbLoadAccountByToken } from "@domain/usecases/load-account-by-token";
+import { IDbLoadAccountByToken } from "@/domain/usecases/load-account-by-token";
 
 class DbLoadAccountByTokenStub implements IDbLoadAccountByToken {
 	async load(token: string): Promise<AccountId | null> {

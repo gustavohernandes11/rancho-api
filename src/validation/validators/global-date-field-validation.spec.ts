@@ -1,6 +1,6 @@
-import { InvalidDateFormatError } from "@presentation/errors/invalid-date-format-error";
+import { InvalidDateFormatError } from "@/presentation/errors/invalid-date-format-error";
 import { GlobalDateFormatValidation } from "./global-date-field-validation";
-import { InvalidParamError } from "@presentation/errors";
+import { InvalidParamError } from "@/presentation/errors";
 
 describe("UtcDateValidation", () => {
 	interface SutTypes {

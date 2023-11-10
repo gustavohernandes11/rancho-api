@@ -1,6 +1,6 @@
 import { MongoHelper } from "./mongo-helper";
 import { ObjectId } from "mongodb";
-import { AccountId } from "@data/protocols/db/accounts/load-account-by-token-repository";
+import { AccountId } from "@/data/protocols/db/accounts/load-account-by-token-repository";
 import {
 	IAddAccountRepository,
 	ICheckAccountByEmail,
@@ -8,9 +8,9 @@ import {
 	ILoadAccountByEmailRepository,
 	ILoadAccountByTokenRepository,
 	IUpdateAccessTokenRepository,
-} from "@data/protocols/db/accounts";
-import { IAddAccountModel } from "@domain/usecases/add-account";
-import { IAccountModel } from "@domain/models/account";
+} from "@/data/protocols/db/accounts";
+import { IAddAccountModel } from "@/domain/usecases/add-account";
+import { IAccountModel } from "@/domain/models/account";
 import { parseToObjectId } from "./utils/parse-to-object-id";
 
 export class AccountMongoRepository

@@ -1,9 +1,9 @@
-import { IUpdateBatchByIdRepository } from "@data/protocols/db/batch/update-batch-by-id-repository";
-import { IBatchModel } from "@domain/models/batch";
+import { IUpdateBatchByIdRepository } from "@/data/protocols/db/batch/update-batch-by-id-repository";
+import { IBatchModel } from "@/domain/models/batch";
 import {
 	IDbUpdateBatch,
 	IUpdateBatchModel,
-} from "@domain/usecases/batch/update-batch";
+} from "@/domain/usecases/batch/update-batch";
 import { DbUpdateBatch } from "./db-update-batch";
 
 describe("DbUpdateBatch", () => {

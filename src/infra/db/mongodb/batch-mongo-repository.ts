@@ -1,13 +1,13 @@
-import { IAddBatchRepository } from "@data/protocols/db/batch/add-batch-repository";
-import { ICheckBatchByIdRepository } from "@data/protocols/db/batch/check-batch-by-id-repository";
-import { ICheckBatchByNameRepository } from "@data/protocols/db/batch/check-batch-by-name-repository";
-import { IListBatchesByOwnerIdRepository } from "@data/protocols/db/batch/list-batches-repository";
-import { IRemoveBatchByIdRepository } from "@data/protocols/db/batch/remove-batch-by-id-repository";
-import { IUpdateBatchByIdRepository } from "@data/protocols/db/batch/update-batch-by-id-repository";
-import { IAddBatchModel } from "@domain/usecases/batch/add-batch";
+import { IAddBatchRepository } from "@/data/protocols/db/batch/add-batch-repository";
+import { ICheckBatchByIdRepository } from "@/data/protocols/db/batch/check-batch-by-id-repository";
+import { ICheckBatchByNameRepository } from "@/data/protocols/db/batch/check-batch-by-name-repository";
+import { IListBatchesByOwnerIdRepository } from "@/data/protocols/db/batch/list-batches-repository";
+import { IRemoveBatchByIdRepository } from "@/data/protocols/db/batch/remove-batch-by-id-repository";
+import { IUpdateBatchByIdRepository } from "@/data/protocols/db/batch/update-batch-by-id-repository";
+import { IAddBatchModel } from "@/domain/usecases/batch/add-batch";
 import { ObjectId } from "mongodb";
-import { IBatchModel } from "@domain/models/batch";
-import { IUpdateBatchModel } from "@domain/usecases/batch/update-batch";
+import { IBatchModel } from "@/domain/models/batch";
+import { IUpdateBatchModel } from "@/domain/usecases/batch/update-batch";
 import { MongoHelper } from "./mongo-helper";
 import { parseToObjectId } from "./utils/parse-to-object-id";
 

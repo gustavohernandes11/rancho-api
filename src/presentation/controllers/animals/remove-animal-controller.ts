@@ -1,4 +1,4 @@
-import { IDbLoadAnimal } from "@data/usecases/load-animal/db-load-animal-protocols";
+import { IDbLoadAnimal } from "@/data/usecases/load-animal/db-load-animal-protocols";
 import { InvalidParamError } from "../../errors";
 import {
 	badRequest,
@@ -12,7 +12,7 @@ import {
 	IHttpResponse,
 	IValidation,
 } from "../../protocols";
-import { IDbRemoveAnimal } from "@domain/usecases/remove-animal";
+import { IDbRemoveAnimal } from "@/domain/usecases/remove-animal";
 
 export class RemoveAnimalController implements IController {
 	constructor(

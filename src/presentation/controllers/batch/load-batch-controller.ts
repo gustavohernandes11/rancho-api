@@ -4,8 +4,8 @@ import {
 	ok,
 	serverError,
 } from "../../helpers/http-helpers";
-import { IController, IHttpRequest } from "@presentation/protocols";
-import { IDbListAnimalsByBatch } from "@domain/usecases/batch/list-animals-by-batch";
+import { IController, IHttpRequest } from "@/presentation/protocols";
+import { IDbListAnimalsByBatch } from "@/domain/usecases/batch/list-animals-by-batch";
 
 export class LoadBatchController implements IController {
 	constructor(private readonly dbListAnimalsByBatch: IDbListAnimalsByBatch) {}

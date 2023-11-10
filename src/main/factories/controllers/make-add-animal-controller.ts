@@ -1,8 +1,8 @@
-import { DbAddAnimal } from "@data/usecases/add-animal/db-add-animal";
-import { AccountMongoRepository } from "@infra/db/mongodb/account-mongo-repository";
-import { AnimalMongoRepository } from "@infra/db/mongodb/animal-mongo-repository";
-import { AddAnimalController } from "@presentation/controllers/animals/add-animal-controller";
-import { IController } from "@presentation/protocols";
+import { DbAddAnimal } from "@/data/usecases/add-animal/db-add-animal";
+import { AccountMongoRepository } from "@/infra/db/mongodb/account-mongo-repository";
+import { AnimalMongoRepository } from "@/infra/db/mongodb/animal-mongo-repository";
+import { AddAnimalController } from "@/presentation/controllers/animals/add-animal-controller";
+import { IController } from "@/presentation/protocols";
 import { makeAddAnimalValidations } from "../validation/make-add-animal-validations";
 
 export const makeAddAnimalController = (): IController => {

@@ -1,6 +1,6 @@
-import { ILoadAnimalByIdRepository } from "@data/protocols/db/animals/load-animal-by-id-repository";
+import { ILoadAnimalByIdRepository } from "@/data/protocols/db/animals/load-animal-by-id-repository";
 import { IAnimalModel } from "../update-animal/db-update-animal-protocols";
-import { IDbLoadAnimal } from "@domain/usecases/load-animal";
+import { IDbLoadAnimal } from "@/domain/usecases/load-animal";
 import { DbLoadAnimal } from "./db-load-animal";
 
 describe("DbLoadAnimals", () => {

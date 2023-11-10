@@ -1,4 +1,4 @@
-import { ICheckBatchByNameRepository } from "@data/protocols/db/batch/check-batch-by-name-repository";
+import { ICheckBatchByNameRepository } from "@/data/protocols/db/batch/check-batch-by-name-repository";
 import { DbAddBatch } from "./db-add-batch";
 import {
 	IAddBatchModel,

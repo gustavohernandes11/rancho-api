@@ -1,15 +1,15 @@
-import { IAddAnimalModel } from "@domain/usecases/add-animal";
+import { IAddAnimalModel } from "@/domain/usecases/add-animal";
 import { MongoHelper } from "./mongo-helper";
-import { IAddAnimalRepository } from "@data/usecases/add-animal/db-add-animal-protocols";
-import { IRemoveAnimalByIdRepository } from "@data/protocols/db/animals/remove-animal-by-id-repository";
+import { IAddAnimalRepository } from "@/data/usecases/add-animal/db-add-animal-protocols";
+import { IRemoveAnimalByIdRepository } from "@/data/protocols/db/animals/remove-animal-by-id-repository";
 import { ObjectId } from "mongodb";
 import { parseToObjectId } from "./utils/parse-to-object-id";
-import { IListAnimalsByOwnerIdRepository } from "@data/protocols/db/animals/list-animals-by-owner-repository";
-import { IAnimalModel } from "@domain/models/animals";
-import { IUpdateAnimalByIdRepository } from "@data/protocols/db/animals/update-animal-by-id-repository";
-import { IUpdateAnimalModel } from "@domain/usecases/update-animal";
-import { ILoadAnimalByIdRepository } from "@data/protocols/db/animals/load-animal-by-id-repository";
-import { IListAnimalsByBatchRepository } from "@data/protocols/db/animals/list-animals-by-batch-repository";
+import { IListAnimalsByOwnerIdRepository } from "@/data/protocols/db/animals/list-animals-by-owner-repository";
+import { IAnimalModel } from "@/domain/models/animals";
+import { IUpdateAnimalByIdRepository } from "@/data/protocols/db/animals/update-animal-by-id-repository";
+import { IUpdateAnimalModel } from "@/domain/usecases/update-animal";
+import { ILoadAnimalByIdRepository } from "@/data/protocols/db/animals/load-animal-by-id-repository";
+import { IListAnimalsByBatchRepository } from "@/data/protocols/db/animals/list-animals-by-batch-repository";
 
 export class AnimalMongoRepository
 	implements

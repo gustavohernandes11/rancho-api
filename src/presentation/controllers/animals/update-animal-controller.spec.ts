@@ -3,9 +3,9 @@ import {
 	IAnimalModel,
 	IDbUpdateAnimal,
 	IUpdateAnimalModel,
-} from "@data/usecases/update-animal/db-update-animal-protocols";
-import { makeUpdateAnimalValidations } from "@main/factories/validation/make-update-animal-validations";
-import { InvalidDateFormatError } from "@presentation/errors/invalid-date-format-error";
+} from "@/data/usecases/update-animal/db-update-animal-protocols";
+import { makeUpdateAnimalValidations } from "@/main/factories/validation/make-update-animal-validations";
+import { InvalidDateFormatError } from "@/presentation/errors/invalid-date-format-error";
 
 describe("UpdateAnimalController", () => {
 	const mockDate = new Date().toISOString();

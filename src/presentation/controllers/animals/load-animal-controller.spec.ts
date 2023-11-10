@@ -1,7 +1,7 @@
 import { LoadAnimalController } from "./load-animal-controller";
-import { IAnimalModel } from "@domain/models/animals";
-import { notFound } from "@presentation/helpers/http-helpers";
-import { IDbLoadAnimal } from "@domain/usecases/load-animal";
+import { IAnimalModel } from "@/domain/models/animals";
+import { notFound } from "@/presentation/helpers/http-helpers";
+import { IDbLoadAnimal } from "@/domain/usecases/load-animal";
 
 describe("LoadAnimalController", () => {
 	const mockDate = new Date().toISOString();

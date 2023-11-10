@@ -1,5 +1,5 @@
 import { Collection } from "mongodb";
-import { IAddAnimalModel } from "@domain/usecases/add-animal";
+import { IAddAnimalModel } from "@/domain/usecases/add-animal";
 import { AnimalMongoRepository } from "./animal-mongo-repository";
 import { MongoHelper } from "./mongo-helper";
 
@@ -39,7 +39,7 @@ describe("Animal Mongo Repository", () => {
 	const mockDatabaseUser = async (): Promise<IMockDatabaseUserType> => {
 		const { insertedId } = await accountCollection.insertOne({
 			name: "any_name",
-			email: "any.email@gmail.com",
+			email: "any.email@/gmail.com",
 			password: "123",
 		});
 		const id = insertedId.toHexString();

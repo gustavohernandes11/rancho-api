@@ -1,4 +1,4 @@
-import { IAuthentication } from "@domain/usecases/authentication";
+import { IAuthentication } from "@/domain/usecases/authentication";
 import { IEncrypter } from "../../protocols/criptography/encrypter";
 import { IHashComparer } from "../../protocols/criptography/hash-comparer";
 import { IUpdateAccessTokenRepository } from "../../protocols/db/accounts/update-access-token-repository";

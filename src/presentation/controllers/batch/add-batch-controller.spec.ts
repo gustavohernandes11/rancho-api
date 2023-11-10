@@ -1,5 +1,5 @@
-import { IDbAddBatch, IAddBatchModel } from "@domain/usecases/batch/add-batch";
-import { makeAddBatchValidations } from "@main/factories/validation/make-add-batch-validations";
+import { IDbAddBatch, IAddBatchModel } from "@/domain/usecases/batch/add-batch";
+import { makeAddBatchValidations } from "@/main/factories/validation/make-add-batch-validations";
 import { InvalidParamError, MissingParamError } from "../../errors";
 import { badRequest, ok } from "../../helpers/http-helpers";
 import { AddBatchController } from "./add-batch-controller";
