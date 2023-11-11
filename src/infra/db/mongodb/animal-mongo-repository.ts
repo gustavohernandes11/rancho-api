@@ -10,6 +10,7 @@ import { IUpdateAnimalByIdRepository } from "@/data/protocols/db/animals/update-
 import { IUpdateAnimalModel } from "@/domain/usecases/update-animal";
 import { ILoadAnimalByIdRepository } from "@/data/protocols/db/animals/load-animal-by-id-repository";
 import { IListAnimalsByBatchRepository } from "@/data/protocols/db/animals/list-animals-by-batch-repository";
+import { ICheckAnimalByIdRepository } from "@/data/protocols/db/animals/check-animal-by-id-repository";
 
 export class AnimalMongoRepository
 	implements
@@ -19,8 +20,25 @@ export class AnimalMongoRepository
 		IListAnimalsByBatchRepository,
 		IUpdateAnimalByIdRepository,
 		ILoadAnimalByIdRepository,
-		IListAnimalsByBatchRepository
+		IListAnimalsByBatchRepository,
+		ICheckAnimalByIdRepository
 {
+	async checkById(id: string): Promise<boolean> {
+		const animalsCollection = MongoHelper.getCollection("animals");
+
+		const result = await animalsCollection.findOne(
+			{
+				_id: parseToObjectId(id),
+			},
+			{
+				projection: {
+					_id: 1,
+				},
+			}
+		);
+
+		return !!result;
+	}
 	async listByBatch(batchId: string): Promise<IAnimalModel[] | null> {
 		const animalsCollection = MongoHelper.getCollection("animals");
 		const result = (await animalsCollection
