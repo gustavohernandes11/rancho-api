@@ -4,11 +4,10 @@ export interface IDbAddAnimal {
 
 export interface IAddAnimalModel {
 	ownerId: string;
+	age: string;
 	name?: string;
 	maternityId?: string;
 	paternityId?: string;
-	age?: string;
-	birthdayDate?: Date;
 	code?: number;
 	observation?: string;
 }
