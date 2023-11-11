@@ -29,11 +29,11 @@ export class AnimalMongoRepository
 
 		return MongoHelper.mapCollection(result);
 	}
-	async loadAnimal(ownerId: string): Promise<IAnimalModel | null> {
+	async loadAnimal(animalId: string): Promise<IAnimalModel | null> {
 		const animalsCollection = MongoHelper.getCollection("animals");
 
 		const result = await animalsCollection.findOne({
-			_id: parseToObjectId(ownerId),
+			_id: parseToObjectId(animalId),
 		});
 
 		return result ? MongoHelper.map(result) : null;
@@ -45,16 +45,22 @@ export class AnimalMongoRepository
 	): Promise<IAnimalModel | null> {
 		const animalsCollection = MongoHelper.getCollection("animals");
 		const parsedId = parseToObjectId(id);
-		const { ok } = await animalsCollection.findOneAndUpdate(
+
+		const { modifiedCount } = await animalsCollection.updateOne(
 			{ _id: parsedId },
 			{
-				$set: props,
+				$set: {
+					ownerId: props.ownerId,
+					age: props.age,
+					name: props.name,
+					batchId: props.batchId,
+				},
 			},
 			{
-				upsert: false,
+				ignoreUndefined: true,
 			}
 		);
-		if (ok) {
+		if (modifiedCount) {
 			const updated = await animalsCollection.findOne({
 				_id: parsedId,
 			});

@@ -1,5 +1,3 @@
-import { IDbAddAnimal } from "@/domain/usecases/add-animal";
-import { InvalidParamError } from "../../errors";
 import { badRequest, ok, serverError } from "../../helpers/http-helpers";
 import {
 	IController,
@@ -8,6 +6,7 @@ import {
 	IValidation,
 } from "../../protocols";
 import { IDbAddBatch } from "@/domain/usecases/batch/add-batch";
+import { ParamInUseError } from "@/presentation/errors";
 
 export class AddBatchController implements IController {
 	constructor(
@@ -22,7 +21,7 @@ export class AddBatchController implements IController {
 			const { name, ownerId } = request.body;
 
 			const wasAdded = await this.dbAddBatch.add({ name, ownerId });
-			if (!wasAdded) return badRequest(new InvalidParamError("ownerId"));
+			if (!wasAdded) return badRequest(new ParamInUseError("name"));
 			return ok();
 		} catch (error) {
 			return serverError(error as Error);

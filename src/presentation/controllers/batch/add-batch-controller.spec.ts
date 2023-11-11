@@ -1,6 +1,6 @@
 import { IDbAddBatch, IAddBatchModel } from "@/domain/usecases/batch/add-batch";
 import { makeAddBatchValidations } from "@/main/factories/validation/make-add-batch-validations";
-import { InvalidParamError, MissingParamError } from "../../errors";
+import { MissingParamError, ParamInUseError } from "../../errors";
 import { badRequest, ok } from "../../helpers/http-helpers";
 import { AddBatchController } from "./add-batch-controller";
 
@@ -50,9 +50,7 @@ describe("Add Batch Controller", () => {
 
 			const response = await sut.handle(makeFakeRequest());
 
-			expect(response).toEqual(
-				badRequest(new InvalidParamError("ownerId"))
-			);
+			expect(response).toEqual(badRequest(new ParamInUseError("name")));
 		});
 
 		it("should return 500 if DbAddBatch throws", async () => {

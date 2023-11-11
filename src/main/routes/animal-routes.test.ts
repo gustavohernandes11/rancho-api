@@ -158,7 +158,7 @@ describe("Animal routes", () => {
 			await request(app)
 				.put(`/api/animals/${animalId}`)
 				.set("x-access-token", accessToken)
-				.send({})
+				.send({ name: "any_updated_name" })
 				.expect(200);
 		});
 		it("it should update the animal in the database when return 200", async () => {

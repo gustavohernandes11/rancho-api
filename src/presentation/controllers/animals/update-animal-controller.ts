@@ -23,12 +23,13 @@ export class UpdateAnimalController implements IController {
 			const error = this.validations.validate(request.body);
 			if (error) return badRequest(error);
 
-			const { name, ownerId, age } = request.body;
+			const { name, ownerId, age, batchId } = request.body;
 			const { animalId } = request as any;
 
 			const updatedAnimal = await this.dbUpdateAnimal.update(animalId, {
 				name,
 				ownerId,
+				batchId,
 				age,
 			});
 			if (!updatedAnimal)
