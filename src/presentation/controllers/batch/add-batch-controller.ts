@@ -18,9 +18,13 @@ export class AddBatchController implements IController {
 			const error = this.validations.validate(request.body);
 			if (error) return badRequest(error);
 
-			const { name, ownerId } = request.body;
+			const { name } = request.body;
+			const { accountId } = request as any;
 
-			const wasAdded = await this.dbAddBatch.add({ name, ownerId });
+			const wasAdded = await this.dbAddBatch.add({
+				name,
+				ownerId: accountId,
+			});
 			if (!wasAdded) return badRequest(new ParamInUseError("name"));
 			return ok();
 		} catch (error) {

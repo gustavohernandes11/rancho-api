@@ -23,12 +23,12 @@ export class UpdateBatchController implements IController {
 			const error = this.validations.validate(request.body);
 			if (error) return badRequest(error);
 
-			const { name, ownerId } = request.body;
-			const { batchId } = request as any;
+			const { name } = request.body;
+			const { batchId, accountId } = request as any;
 
 			const updatedBatch = await this.dbUpdateBatch.update(batchId, {
 				name,
-				ownerId,
+				ownerId: accountId,
 			});
 			if (!updatedBatch)
 				return badRequest(new InvalidParamError("batchId"));

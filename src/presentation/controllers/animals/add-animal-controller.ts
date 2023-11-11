@@ -18,10 +18,24 @@ export class AddAnimalController implements IController {
 			const error = this.validations.validate(request.body);
 			if (error) return badRequest(error);
 
-			const { name, ownerId, age } = request.body;
+			const { name, age, code, maternityId, observation, paternityId } =
+				request.body;
+			const { accountId } = request as any;
 
-			const wasAdded = await this.dbAddAnimal.add({ name, ownerId, age });
-			if (!wasAdded) return badRequest(new InvalidParamError("ownerId"));
+			const wasAdded = await this.dbAddAnimal.add({
+				name,
+				ownerId: accountId,
+				age,
+				code,
+				maternityId,
+				observation,
+				paternityId,
+			});
+
+			if (!wasAdded)
+				return badRequest(
+					new Error("Was not possible to insert in the database")
+				);
 			return ok();
 		} catch (error) {
 			return serverError(error as Error);

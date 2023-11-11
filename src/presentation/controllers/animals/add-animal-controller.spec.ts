@@ -36,18 +36,7 @@ describe("Add Animal Controller", () => {
 			await sut.handle(makeFakeRequest());
 			expect(dbAddSpy).toHaveBeenCalled();
 		});
-		it("should return 400 if the ownerId is not valid", async () => {
-			const { sut, dbAddAnimalStub } = makeSut();
-			jest.spyOn(dbAddAnimalStub, "add").mockImplementationOnce(() => {
-				return new Promise((resolve) => resolve(false));
-			});
 
-			const response = await sut.handle(makeFakeRequest());
-
-			expect(response).toEqual(
-				badRequest(new InvalidParamError("ownerId"))
-			);
-		});
 		it("should return 500 if DbAddAnimal throws", async () => {
 			const { sut, dbAddAnimalStub } = makeSut();
 			jest.spyOn(dbAddAnimalStub, "add").mockImplementationOnce(() => {
@@ -68,18 +57,6 @@ describe("Add Animal Controller", () => {
 
 			expect(response.statusCode).toBe(400);
 			expect(response.body).toEqual(new MissingParamError("name"));
-		});
-		it("should return 400 when no ownerId is provided", async () => {
-			const { sut } = makeSut();
-			const response = await sut.handle({
-				body: {
-					name: "any_animal_name",
-					age: new Date("12/12/2019"),
-				},
-			});
-
-			expect(response.statusCode).toBe(400);
-			expect(response.body).toEqual(new MissingParamError("ownerId"));
 		});
 		it("should return 400 when no animal age is provided", async () => {
 			const { sut } = makeSut();

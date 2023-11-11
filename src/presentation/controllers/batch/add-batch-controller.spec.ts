@@ -25,8 +25,8 @@ describe("Add Batch Controller", () => {
 	const makeFakeRequest = () => ({
 		body: {
 			name: "any_batch_name",
-			ownerId: "any_id",
 		},
+		accountId: "any_id",
 	});
 
 	describe("DbAddBatch", () => {
@@ -69,21 +69,11 @@ describe("Add Batch Controller", () => {
 		it("should return 400 when no batch name is provided", async () => {
 			const { sut } = makeSut();
 			const response = await sut.handle({
-				body: { ownerId: "any_id" },
+				body: {},
 			});
 
 			expect(response.statusCode).toBe(400);
 			expect(response.body).toEqual(new MissingParamError("name"));
-		});
-
-		it("should return 400 when no ownerId is provided", async () => {
-			const { sut } = makeSut();
-			const response = await sut.handle({
-				body: { name: "any_batch_name" },
-			});
-
-			expect(response.statusCode).toBe(400);
-			expect(response.body).toEqual(new MissingParamError("ownerId"));
 		});
 	});
 

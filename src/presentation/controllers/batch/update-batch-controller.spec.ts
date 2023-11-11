@@ -46,9 +46,9 @@ describe("Update Batch Controller", () => {
 	const makeFakeRequest = () => ({
 		body: {
 			name: "updated_batch_name",
-			ownerId: "updated_owner_id",
 		},
 		batchId: "valid_batch_id",
+		accountId: "updated_owner_id",
 	});
 
 	it("should call DbUpdateBatch with correct data", async () => {

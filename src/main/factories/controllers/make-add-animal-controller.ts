@@ -11,6 +11,7 @@ export const makeAddAnimalController = (): IController => {
 	const animalMongoRepository = new AnimalMongoRepository();
 	const dbAddAnimal = new DbAddAnimal(
 		accountMongoRepoisitory,
+		animalMongoRepository,
 		animalMongoRepository
 	);
 

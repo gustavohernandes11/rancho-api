@@ -5,9 +5,7 @@ import { AtLeastOneOfTheseFieldsValidation } from "@/validation/validators/at-le
 export const makeUpdateBatchValidations = () => {
 	const validations: IValidation[] = [];
 
-	validations.push(
-		new AtLeastOneOfTheseFieldsValidation(["ownerId", "name"])
-	);
+	validations.push(new AtLeastOneOfTheseFieldsValidation(["name"]));
 
 	return new ValidationComposite(validations);
 };

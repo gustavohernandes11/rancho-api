@@ -4,10 +4,7 @@ import {
 } from "@/validation/validators";
 
 export const makeAddBatchValidations = () => {
-	const validations = [
-		new RequiredFieldValidation("name"),
-		new RequiredFieldValidation("ownerId"),
-	];
+	const validations = [new RequiredFieldValidation("name")];
 
 	return new ValidationComposite(validations);
 };
