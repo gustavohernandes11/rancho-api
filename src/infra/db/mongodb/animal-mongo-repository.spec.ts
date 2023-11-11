@@ -46,7 +46,23 @@ describe("Animal Mongo Repository", () => {
 
 		return { userId: id };
 	};
-
+	describe("checkAnimalById", () => {
+		it("should return false if the animals do not exists", async () => {
+			const sut = new AnimalMongoRepository();
+			const result = await sut.checkById("any_id");
+			expect(result).toBeFalsy();
+		});
+		it("should return true if the animals exists", async () => {
+			const sut = new AnimalMongoRepository();
+			const { insertedId } = await animalsCollection.insertOne({
+				name: "animal_1",
+				ownerId: "any_ownerId",
+				age: new Date("01/01/2000").toISOString(),
+			});
+			const result = await sut.checkById(insertedId.toHexString());
+			expect(result).toBeTruthy();
+		});
+	});
 	describe("listByBatch()", () => {
 		it("should return an empty array when there is no batch with the given ID", async () => {
 			const sut = new AnimalMongoRepository();
