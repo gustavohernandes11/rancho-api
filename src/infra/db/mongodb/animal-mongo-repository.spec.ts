@@ -11,6 +11,7 @@ const makeFakeAnimal = (): IAddAnimalModel => ({
 describe("Animal Mongo Repository", () => {
 	let animalsCollection: Collection;
 	let accountCollection: Collection;
+	let batchesCollection: Collection;
 
 	beforeAll(async () => {
 		await MongoHelper.connect(
@@ -25,8 +26,11 @@ describe("Animal Mongo Repository", () => {
 	beforeEach(async () => {
 		animalsCollection = MongoHelper.getCollection("animals");
 		accountCollection = MongoHelper.getCollection("accounts");
+		batchesCollection = MongoHelper.getCollection("batches");
+
 		await animalsCollection.deleteMany({});
 		await accountCollection.deleteMany({});
+		await batchesCollection.deleteMany({});
 	});
 
 	interface IMockDatabaseUserType {
@@ -42,6 +46,63 @@ describe("Animal Mongo Repository", () => {
 
 		return { userId: id };
 	};
+
+	describe("listByBatch()", () => {
+		it("should return an empty array when there is no batch with the given ID", async () => {
+			const sut = new AnimalMongoRepository();
+			const result = await sut.listByBatch("non_existent_batch_id");
+
+			expect(Array.isArray(result)).toBe(true);
+			expect(result?.length).toBe(0);
+		});
+
+		it("should return only the animals from the correct batch", async () => {
+			const sut = new AnimalMongoRepository();
+
+			const { insertedIds } = await batchesCollection.insertMany([
+				{ name: "batch_1", ownerId: "any_ownerId" },
+				{ name: "batch_2", ownerId: "any_ownerId" },
+			]);
+
+			await animalsCollection.insertMany([
+				{
+					name: "animal_1",
+					ownerId: "any_ownerId",
+					batchId: insertedIds[0].toHexString(),
+					age: new Date("01/01/2000").toISOString(),
+				},
+				{
+					name: "animal_2",
+					ownerId: "any_ownerId",
+					batchId: insertedIds[0].toHexString(),
+					age: new Date("01/01/2000").toISOString(),
+				},
+				{
+					name: "animal_3",
+					ownerId: "any_ownerId",
+					batchId: insertedIds[1].toHexString(),
+					age: new Date("01/01/2000").toISOString(),
+				},
+				{
+					name: "animal_4",
+					ownerId: "any_ownerId",
+					batchId: insertedIds[1].toHexString(),
+					age: new Date("01/01/2000").toISOString(),
+				},
+			]);
+
+			const animalsFromBatch1 = await sut.listByBatch(
+				insertedIds[0].toHexString()
+			);
+			const animalsFromBatch2 = await sut.listByBatch(
+				insertedIds[1].toHexString()
+			);
+
+			expect(animalsFromBatch1?.length).toBe(2);
+			expect(animalsFromBatch2?.length).toBe(2);
+		});
+	});
+
 	describe("loadAnimal()", () => {
 		it("should return null if the animal is not in the database", async () => {
 			const sut = new AnimalMongoRepository();
@@ -124,21 +185,26 @@ describe("Animal Mongo Repository", () => {
 			expect(animal?.name).toEqual("any_animal_name");
 			expect(animal?.ownerId).toEqual("modified_ownerId");
 		});
-		it("should return true when the update is correctly done", async () => {
+		it("should return the updated animal when the update is correctly done", async () => {
 			const sut = new AnimalMongoRepository();
+			const mockedDate = new Date("02/12/2019").toISOString();
+
 			const { insertedId } = await animalsCollection.insertOne({
 				name: "any_animal_name",
 				ownerId: "any_id",
-				age: new Date("12/12/2019"),
+				age: new Date("12/12/2019").toISOString(),
 			});
 
 			const result = await sut.updateAnimal(insertedId.toHexString(), {
 				name: "modified_animal_name",
 				ownerId: "modified_ownerId",
-				age: new Date("02/12/2019").toISOString(),
+				age: mockedDate,
 			});
 
 			expect(result).toBeTruthy();
+			expect(result?.name).toBe("modified_animal_name");
+			expect(result?.ownerId).toBe("modified_ownerId");
+			expect(result?.age).toBe(mockedDate);
 		});
 		it("should return null when the animal do not exists in the database", async () => {
 			const sut = new AnimalMongoRepository();

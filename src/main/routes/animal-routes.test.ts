@@ -53,7 +53,6 @@ describe("Animal routes", () => {
 				},
 			}
 		);
-		console.log("mockDatabaseUser: " + accessToken);
 		return { accessToken, userId: id };
 	};
 	type IMockDatabaseAnimalAndUserType = {

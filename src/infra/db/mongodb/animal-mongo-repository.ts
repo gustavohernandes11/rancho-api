@@ -9,15 +9,26 @@ import { IAnimalModel } from "@domain/models/animals";
 import { IUpdateAnimalByIdRepository } from "@data/protocols/db/animals/update-animal-by-id-repository";
 import { IUpdateAnimalModel } from "@domain/usecases/update-animal";
 import { ILoadAnimalByIdRepository } from "@data/protocols/db/animals/load-animal-by-id-repository";
+import { IListAnimalsByBatchRepository } from "@data/protocols/db/animals/list-animals-by-batch-repository";
 
 export class AnimalMongoRepository
 	implements
 		IAddAnimalRepository,
 		IRemoveAnimalByIdRepository,
 		IListAnimalsByOwnerIdRepository,
+		IListAnimalsByBatchRepository,
 		IUpdateAnimalByIdRepository,
-		ILoadAnimalByIdRepository
+		ILoadAnimalByIdRepository,
+		IListAnimalsByBatchRepository
 {
+	async listByBatch(batchId: string): Promise<IAnimalModel[] | null> {
+		const animalsCollection = MongoHelper.getCollection("animals");
+		const result = (await animalsCollection
+			.aggregate([{ $match: { batchId } }])
+			.toArray()) as IAnimalModel[];
+
+		return MongoHelper.mapCollection(result);
+	}
 	async loadAnimal(ownerId: string): Promise<IAnimalModel | null> {
 		const animalsCollection = MongoHelper.getCollection("animals");
 
@@ -33,8 +44,9 @@ export class AnimalMongoRepository
 		props: IUpdateAnimalModel
 	): Promise<IAnimalModel | null> {
 		const animalsCollection = MongoHelper.getCollection("animals");
-		const { value } = await animalsCollection.findOneAndUpdate(
-			{ _id: parseToObjectId(id) },
+		const parsedId = parseToObjectId(id);
+		const { ok } = await animalsCollection.findOneAndUpdate(
+			{ _id: parsedId },
 			{
 				$set: props,
 			},
@@ -42,7 +54,13 @@ export class AnimalMongoRepository
 				upsert: false,
 			}
 		);
-		return value ? MongoHelper.map(value) : null;
+		if (ok) {
+			const updated = await animalsCollection.findOne({
+				_id: parsedId,
+			});
+			if (updated) return MongoHelper.map(updated);
+		}
+		return null;
 	}
 	async listAnimals(ownerId: string): Promise<IAnimalModel[]> {
 		const animalsCollection = MongoHelper.getCollection("animals");
