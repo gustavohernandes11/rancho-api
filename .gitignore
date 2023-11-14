@@ -5,3 +5,4 @@ dist
 .env
 globalConfig.json
 settings.json
+todo.md

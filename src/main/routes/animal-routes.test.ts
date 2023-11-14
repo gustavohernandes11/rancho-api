@@ -2,10 +2,10 @@ import request from "supertest";
 import { Express } from "express";
 import { setupApp } from "../config/app";
 import { Collection } from "mongodb";
-import { MongoHelper } from "@infra/db/mongodb/mongo-helper";
+import { MongoHelper } from "@/infra/db/mongodb/mongo-helper";
 import { sign } from "jsonwebtoken";
 import env from "../config/env";
-import { parseToObjectId } from "@infra/db/mongodb/utils/parse-to-object-id";
+import { parseToObjectId } from "@/infra/db/mongodb/utils/parse-to-object-id";
 jest.setTimeout(15000);
 
 let app: Express;
@@ -38,7 +38,7 @@ describe("Animal routes", () => {
 	const mockDatabaseUser = async (): Promise<IMockDatabaseUserType> => {
 		const { insertedId } = await accountCollection.insertOne({
 			name: "any_name",
-			email: "any.email@gmail.com",
+			email: "any.email@/gmail.com",
 			password: "123",
 		});
 		const id = insertedId.toHexString();
@@ -158,7 +158,7 @@ describe("Animal routes", () => {
 			await request(app)
 				.put(`/api/animals/${animalId}`)
 				.set("x-access-token", accessToken)
-				.send({})
+				.send({ name: "any_updated_name" })
 				.expect(200);
 		});
 		it("it should update the animal in the database when return 200", async () => {

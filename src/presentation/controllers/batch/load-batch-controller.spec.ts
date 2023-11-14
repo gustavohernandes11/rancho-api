@@ -1,7 +1,7 @@
 import { LoadBatchController } from "./load-batch-controller";
-import { IDbListAnimalsByBatch } from "@domain/usecases/batch/list-animals-by-batch";
+import { IDbListAnimalsByBatch } from "@/domain/usecases/batch/list-animals-by-batch";
 import { noContent, notFound, ok } from "../../helpers/http-helpers";
-import { IAnimalModel } from "@domain/models/animals";
+import { IAnimalModel } from "@/domain/models/animals";
 
 describe("Load Batch Controller", () => {
 	class DbListAnimalsByBatchStub implements IDbListAnimalsByBatch {

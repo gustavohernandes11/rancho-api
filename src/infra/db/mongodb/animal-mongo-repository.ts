@@ -1,15 +1,16 @@
-import { IAddAnimalModel } from "@domain/usecases/add-animal";
+import { IAddAnimalModel } from "@/domain/usecases/add-animal";
 import { MongoHelper } from "./mongo-helper";
-import { IAddAnimalRepository } from "@data/usecases/add-animal/db-add-animal-protocols";
-import { IRemoveAnimalByIdRepository } from "@data/protocols/db/animals/remove-animal-by-id-repository";
+import { IAddAnimalRepository } from "@/data/usecases/add-animal/db-add-animal-protocols";
+import { IRemoveAnimalByIdRepository } from "@/data/protocols/db/animals/remove-animal-by-id-repository";
 import { ObjectId } from "mongodb";
 import { parseToObjectId } from "./utils/parse-to-object-id";
-import { IListAnimalsByOwnerIdRepository } from "@data/protocols/db/animals/list-animals-by-owner-repository";
-import { IAnimalModel } from "@domain/models/animals";
-import { IUpdateAnimalByIdRepository } from "@data/protocols/db/animals/update-animal-by-id-repository";
-import { IUpdateAnimalModel } from "@domain/usecases/update-animal";
-import { ILoadAnimalByIdRepository } from "@data/protocols/db/animals/load-animal-by-id-repository";
-import { IListAnimalsByBatchRepository } from "@data/protocols/db/animals/list-animals-by-batch-repository";
+import { IListAnimalsByOwnerIdRepository } from "@/data/protocols/db/animals/list-animals-by-owner-repository";
+import { IAnimalModel } from "@/domain/models/animals";
+import { IUpdateAnimalByIdRepository } from "@/data/protocols/db/animals/update-animal-by-id-repository";
+import { IUpdateAnimalModel } from "@/domain/usecases/update-animal";
+import { ILoadAnimalByIdRepository } from "@/data/protocols/db/animals/load-animal-by-id-repository";
+import { IListAnimalsByBatchRepository } from "@/data/protocols/db/animals/list-animals-by-batch-repository";
+import { ICheckAnimalByIdRepository } from "@/data/protocols/db/animals/check-animal-by-id-repository";
 
 export class AnimalMongoRepository
 	implements
@@ -19,8 +20,25 @@ export class AnimalMongoRepository
 		IListAnimalsByBatchRepository,
 		IUpdateAnimalByIdRepository,
 		ILoadAnimalByIdRepository,
-		IListAnimalsByBatchRepository
+		IListAnimalsByBatchRepository,
+		ICheckAnimalByIdRepository
 {
+	async checkById(id: string): Promise<boolean> {
+		const animalsCollection = MongoHelper.getCollection("animals");
+
+		const result = await animalsCollection.findOne(
+			{
+				_id: parseToObjectId(id),
+			},
+			{
+				projection: {
+					_id: 1,
+				},
+			}
+		);
+
+		return !!result;
+	}
 	async listByBatch(batchId: string): Promise<IAnimalModel[] | null> {
 		const animalsCollection = MongoHelper.getCollection("animals");
 		const result = (await animalsCollection
@@ -29,11 +47,11 @@ export class AnimalMongoRepository
 
 		return MongoHelper.mapCollection(result);
 	}
-	async loadAnimal(ownerId: string): Promise<IAnimalModel | null> {
+	async loadAnimal(animalId: string): Promise<IAnimalModel | null> {
 		const animalsCollection = MongoHelper.getCollection("animals");
 
 		const result = await animalsCollection.findOne({
-			_id: parseToObjectId(ownerId),
+			_id: parseToObjectId(animalId),
 		});
 
 		return result ? MongoHelper.map(result) : null;
@@ -45,16 +63,26 @@ export class AnimalMongoRepository
 	): Promise<IAnimalModel | null> {
 		const animalsCollection = MongoHelper.getCollection("animals");
 		const parsedId = parseToObjectId(id);
-		const { ok } = await animalsCollection.findOneAndUpdate(
+
+		const { modifiedCount } = await animalsCollection.updateOne(
 			{ _id: parsedId },
 			{
-				$set: props,
+				$set: {
+					ownerId: props.ownerId,
+					age: props.age,
+					name: props.name,
+					batchId: props.batchId,
+					paternityId: props.paternityId,
+					maternityId: props.maternityId,
+					observation: props.observation,
+					code: props.code,
+				},
 			},
 			{
-				upsert: false,
+				ignoreUndefined: true,
 			}
 		);
-		if (ok) {
+		if (modifiedCount) {
 			const updated = await animalsCollection.findOne({
 				_id: parsedId,
 			});

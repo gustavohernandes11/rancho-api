@@ -1,5 +1,5 @@
 import { Collection } from "mongodb";
-import { IAddAnimalModel } from "@domain/usecases/add-animal";
+import { IAddAnimalModel } from "@/domain/usecases/add-animal";
 import { AnimalMongoRepository } from "./animal-mongo-repository";
 import { MongoHelper } from "./mongo-helper";
 
@@ -39,14 +39,30 @@ describe("Animal Mongo Repository", () => {
 	const mockDatabaseUser = async (): Promise<IMockDatabaseUserType> => {
 		const { insertedId } = await accountCollection.insertOne({
 			name: "any_name",
-			email: "any.email@gmail.com",
+			email: "any.email@/gmail.com",
 			password: "123",
 		});
 		const id = insertedId.toHexString();
 
 		return { userId: id };
 	};
-
+	describe("checkAnimalById", () => {
+		it("should return false if the animals do not exists", async () => {
+			const sut = new AnimalMongoRepository();
+			const result = await sut.checkById("any_id");
+			expect(result).toBeFalsy();
+		});
+		it("should return true if the animals exists", async () => {
+			const sut = new AnimalMongoRepository();
+			const { insertedId } = await animalsCollection.insertOne({
+				name: "animal_1",
+				ownerId: "any_ownerId",
+				age: new Date("01/01/2000").toISOString(),
+			});
+			const result = await sut.checkById(insertedId.toHexString());
+			expect(result).toBeTruthy();
+		});
+	});
 	describe("listByBatch()", () => {
 		it("should return an empty array when there is no batch with the given ID", async () => {
 			const sut = new AnimalMongoRepository();
@@ -132,29 +148,30 @@ describe("Animal Mongo Repository", () => {
 	describe("updateAnimal()", () => {
 		it("should update only the age when required", async () => {
 			const sut = new AnimalMongoRepository();
+			const updatedDate = new Date("11/11/2019").toISOString();
 			const { insertedId } = await animalsCollection.insertOne({
 				name: "any_animal_name",
 				ownerId: "any_id",
 				age: new Date("12/12/2019").toISOString(),
 			});
 			await sut.updateAnimal(insertedId.toHexString(), {
-				age: new Date("11/11/2019").toISOString(),
+				age: updatedDate,
 			});
 
 			const animal = await animalsCollection.findOne({
 				_id: insertedId,
 			});
 
-			expect(animal?.age).toEqual(new Date("11/11/2019").toISOString());
-			expect(animal?.name).toEqual("any_animal_name");
-			expect(animal?.ownerId).toEqual("any_id");
+			expect(animal!.age).toBe(updatedDate);
+			expect(animal!.name).toBe("any_animal_name");
+			expect(animal!.ownerId).toBe("any_id");
 		});
 		it("should update only the name when required", async () => {
 			const sut = new AnimalMongoRepository();
 			const { insertedId } = await animalsCollection.insertOne({
 				name: "any_animal_name",
 				ownerId: "any_id",
-				age: new Date("12/12/2019"),
+				age: new Date("12/12/2019").toISOString(),
 			});
 			await sut.updateAnimal(insertedId.toHexString(), {
 				name: "modified_name",
@@ -163,9 +180,9 @@ describe("Animal Mongo Repository", () => {
 				_id: insertedId,
 			});
 
-			expect(animal?.age).toEqual(new Date("12/12/2019"));
-			expect(animal?.name).toEqual("modified_name");
-			expect(animal?.ownerId).toEqual("any_id");
+			expect(animal!.age).toBe(new Date("12/12/2019").toISOString());
+			expect(animal!.name).toBe("modified_name");
+			expect(animal!.ownerId).toBe("any_id");
 		});
 		it("should update only the ownerId when required", async () => {
 			const sut = new AnimalMongoRepository();
@@ -181,9 +198,9 @@ describe("Animal Mongo Repository", () => {
 
 			const animal = await animalsCollection.findOne({ _id: insertedId });
 
-			expect(animal?.age).toEqual(new Date("12/12/2019").toISOString());
-			expect(animal?.name).toEqual("any_animal_name");
-			expect(animal?.ownerId).toEqual("modified_ownerId");
+			expect(animal!.ownerId).toBe("modified_ownerId");
+			expect(animal!.age).toBe(new Date("12/12/2019").toISOString());
+			expect(animal!.name).toBe("any_animal_name");
 		});
 		it("should return the updated animal when the update is correctly done", async () => {
 			const sut = new AnimalMongoRepository();

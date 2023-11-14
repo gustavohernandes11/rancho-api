@@ -3,20 +3,26 @@ import {
 	IAnimalModel,
 	IDbUpdateAnimal,
 	IUpdateAnimalModel,
-} from "@data/usecases/update-animal/db-update-animal-protocols";
-import { makeUpdateAnimalValidations } from "@main/factories/validation/make-update-animal-validations";
-import { InvalidDateFormatError } from "@presentation/errors/invalid-date-format-error";
+} from "@/data/usecases/update-animal/db-update-animal-protocols";
+import { makeUpdateAnimalValidations } from "@/main/factories/validation/make-update-animal-validations";
+import { InvalidDateFormatError } from "@/presentation/errors/invalid-date-format-error";
 
 describe("UpdateAnimalController", () => {
 	const mockDate = new Date().toISOString();
-	const makeFakeUpdateData = () => ({
+	const makeFakeUpdateData = (): IUpdateAnimalModel => ({
 		name: "any_name",
-		ownerId: "any_ownerId",
 		age: mockDate,
+		paternityId: "any_paternity_id",
+		maternityId: "any_maternity_id",
+		batchId: "any_batch_id",
+		code: 123,
+		observation: "any_observation",
+		ownerId: "any_ownerId",
 	});
 	const makeFakeRequest = () => ({
 		body: makeFakeUpdateData(),
 		animalId: "any_id",
+		accountId: "any_ownerId",
 	});
 
 	class DbUpdateAnimalStub implements IDbUpdateAnimal {
@@ -27,9 +33,14 @@ describe("UpdateAnimalController", () => {
 			return new Promise((resolve) =>
 				resolve({
 					id: id,
-					name: props.name || "any_name",
 					ownerId: props.ownerId || "any_ownerId",
 					age: props.age || mockDate,
+					name: props.name || "any_name",
+					paternityId: props.paternityId || "any_paternity_id",
+					maternityId: props.maternityId || "any_maternity_id",
+					batchId: props.batchId || "any_batch_id",
+					code: props.code || 123,
+					observation: props.observation || "any_observation",
 				})
 			);
 		}
@@ -60,9 +71,14 @@ describe("UpdateAnimalController", () => {
 
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toEqual({
-			id: "any_id",
+			batchId: "any_batch_id",
+			code: 123,
+			maternityId: "any_maternity_id",
 			name: "any_name",
+			observation: "any_observation",
 			ownerId: "any_ownerId",
+			paternityId: "any_paternity_id",
+			id: "any_id",
 			age: mockDate,
 		});
 	});
@@ -76,8 +92,13 @@ describe("UpdateAnimalController", () => {
 		await sut.handle(request);
 
 		expect(dbUpdateSpy).toHaveBeenCalledWith("any_id", {
+			batchId: "any_batch_id",
+			code: 123,
+			maternityId: "any_maternity_id",
 			name: "any_name",
+			observation: "any_observation",
 			ownerId: "any_ownerId",
+			paternityId: "any_paternity_id",
 			age: mockDate,
 		});
 	});

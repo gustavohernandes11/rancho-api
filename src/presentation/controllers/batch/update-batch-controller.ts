@@ -1,16 +1,16 @@
-import { IDbUpdateBatch } from "@domain/usecases/batch/update-batch";
-import { InvalidParamError } from "@presentation/errors";
+import { IDbUpdateBatch } from "@/domain/usecases/batch/update-batch";
+import { InvalidParamError } from "@/presentation/errors";
 import {
 	badRequest,
 	ok,
 	serverError,
-} from "@presentation/helpers/http-helpers";
+} from "@/presentation/helpers/http-helpers";
 import {
 	IController,
 	IHttpRequest,
 	IHttpResponse,
 	IValidation,
-} from "@presentation/protocols";
+} from "@/presentation/protocols";
 
 export class UpdateBatchController implements IController {
 	constructor(
@@ -23,12 +23,12 @@ export class UpdateBatchController implements IController {
 			const error = this.validations.validate(request.body);
 			if (error) return badRequest(error);
 
-			const { name, ownerId } = request.body;
-			const { batchId } = request as any;
+			const { name } = request.body;
+			const { batchId, accountId } = request as any;
 
 			const updatedBatch = await this.dbUpdateBatch.update(batchId, {
 				name,
-				ownerId,
+				ownerId: accountId,
 			});
 			if (!updatedBatch)
 				return badRequest(new InvalidParamError("batchId"));

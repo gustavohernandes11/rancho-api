@@ -1,8 +1,8 @@
 import request from "supertest";
 import { Express } from "express";
-import { setupApp } from "@main/config/app";
+import { setupApp } from "@/main/config/app";
 import { Collection } from "mongodb";
-import { MongoHelper } from "@infra/db/mongodb/mongo-helper";
+import { MongoHelper } from "@/infra/db/mongodb/mongo-helper";
 import { hash } from "bcrypt";
 jest.setTimeout(15000);
 

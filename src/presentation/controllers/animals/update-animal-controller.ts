@@ -1,16 +1,16 @@
-import { IDbUpdateAnimal } from "@data/usecases/update-animal/db-update-animal-protocols";
-import { InvalidParamError } from "@presentation/errors";
+import { IDbUpdateAnimal } from "@/data/usecases/update-animal/db-update-animal-protocols";
+import { InvalidParamError } from "@/presentation/errors";
 import {
 	badRequest,
 	ok,
 	serverError,
-} from "@presentation/helpers/http-helpers";
+} from "@/presentation/helpers/http-helpers";
 import {
 	IController,
 	IHttpRequest,
 	IHttpResponse,
 	IValidation,
-} from "@presentation/protocols";
+} from "@/presentation/protocols";
 
 export class UpdateAnimalController implements IController {
 	constructor(
@@ -23,13 +23,26 @@ export class UpdateAnimalController implements IController {
 			const error = this.validations.validate(request.body);
 			if (error) return badRequest(error);
 
-			const { name, ownerId, age } = request.body;
-			const { animalId } = request as any;
+			const {
+				name,
+				age,
+				batchId,
+				code,
+				maternityId,
+				paternityId,
+				observation,
+			} = request.body;
+			const { animalId, accountId } = request as any;
 
 			const updatedAnimal = await this.dbUpdateAnimal.update(animalId, {
 				name,
-				ownerId,
+				ownerId: accountId,
 				age,
+				batchId,
+				code,
+				paternityId,
+				maternityId,
+				observation,
 			});
 			if (!updatedAnimal)
 				return badRequest(new InvalidParamError("animalId"));

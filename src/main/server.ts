@@ -1,6 +1,6 @@
-import { MongoHelper } from "@infra/db/mongodb/mongo-helper";
+import "module-alias/register";
+import { MongoHelper } from "@/infra/db/mongodb/mongo-helper";
 import env from "./config/env";
-
 MongoHelper.connect(env.mongoUrl)
 	.then(async () => {
 		const { setupApp } = await import("./config/app");

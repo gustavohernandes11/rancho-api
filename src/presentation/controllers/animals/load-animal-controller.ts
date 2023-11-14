@@ -4,8 +4,8 @@ import {
 	ok,
 	serverError,
 } from "../../helpers/http-helpers";
-import { IHttpRequest } from "@presentation/protocols";
-import { IDbLoadAnimal } from "@domain/usecases/load-animal";
+import { IHttpRequest } from "@/presentation/protocols";
+import { IDbLoadAnimal } from "@/domain/usecases/load-animal";
 
 export class LoadAnimalController {
 	constructor(private readonly dbLoadAnimal: IDbLoadAnimal) {}

@@ -29,7 +29,7 @@ describe("Account Mongo Repository", () => {
 
 	const makeFakeAccount = () => ({
 		name: "any_name",
-		email: "any_email@gmail.com",
+		email: "any_email@/gmail.com",
 		password: "any_hashed_password",
 	});
 
@@ -45,10 +45,10 @@ describe("Account Mongo Repository", () => {
 			const { sut } = makeSut();
 			await sut.add({
 				name: "any_name",
-				email: "any_email@gmail.com",
+				email: "any_email@/gmail.com",
 				password: "any_hashed_password",
 			});
-			const account = await sut.loadByEmail("any_email@gmail.com");
+			const account = await sut.loadByEmail("any_email@/gmail.com");
 			expect(account).not.toBeNull();
 			expect(account?.id).toBeTruthy();
 			expect(account?.name).toBe("any_name");
@@ -56,7 +56,7 @@ describe("Account Mongo Repository", () => {
 		});
 		it("should return null if the account do not exists", async () => {
 			const { sut } = makeSut();
-			const account = await sut.loadByEmail("any_email@gmail.com");
+			const account = await sut.loadByEmail("any_email@/gmail.com");
 			expect(account).toBeNull();
 		});
 	});
@@ -71,7 +71,7 @@ describe("Account Mongo Repository", () => {
 			});
 			expect(fakeAccount?.accessToken).toBeFalsy();
 			const accessToken = "any_token";
-			await sut.updateAccessToken(insertedId, accessToken);
+			await sut.updateAccessToken(insertedId.toHexString(), accessToken);
 
 			const account = await accountCollection.findOne({
 				_id: insertedId,
@@ -85,7 +85,7 @@ describe("Account Mongo Repository", () => {
 		it("should return false if the account do not exists", async () => {
 			const { sut } = makeSut();
 			const response = await sut.checkByEmail(
-				"non_existent_email@gmail.com"
+				"non_existent_email@/gmail.com"
 			);
 			expect(response).toBe(false);
 		});
@@ -93,10 +93,10 @@ describe("Account Mongo Repository", () => {
 			const { sut } = makeSut();
 			await sut.add({
 				name: "any_name",
-				email: "any_email@gmail.com",
+				email: "any_email@/gmail.com",
 				password: "any_hashed_password",
 			});
-			const response = await sut.checkByEmail("any_email@gmail.com");
+			const response = await sut.checkByEmail("any_email@/gmail.com");
 			expect(response).toBe(true);
 		});
 	});
@@ -110,7 +110,7 @@ describe("Account Mongo Repository", () => {
 			const { sut } = makeSut();
 			const { insertedId } = await accountCollection.insertOne({
 				name: "any_name",
-				email: "any_email@gmail.com",
+				email: "any_email@/gmail.com",
 				password: "any_hashed_password",
 			});
 
@@ -121,7 +121,7 @@ describe("Account Mongo Repository", () => {
 			const { sut } = makeSut();
 			const { insertedId } = await accountCollection.insertOne({
 				name: "any_name",
-				email: "any_email@gmail.com",
+				email: "any_email@/gmail.com",
 				password: "any_hashed_password",
 			});
 

@@ -1,6 +1,6 @@
-import { IDbAddBatch, IAddBatchModel } from "@domain/usecases/batch/add-batch";
-import { makeAddBatchValidations } from "@main/factories/validation/make-add-batch-validations";
-import { InvalidParamError, MissingParamError } from "../../errors";
+import { IDbAddBatch, IAddBatchModel } from "@/domain/usecases/batch/add-batch";
+import { makeAddBatchValidations } from "@/main/factories/validation/make-add-batch-validations";
+import { MissingParamError, ParamInUseError } from "../../errors";
 import { badRequest, ok } from "../../helpers/http-helpers";
 import { AddBatchController } from "./add-batch-controller";
 
@@ -25,8 +25,8 @@ describe("Add Batch Controller", () => {
 	const makeFakeRequest = () => ({
 		body: {
 			name: "any_batch_name",
-			ownerId: "any_id",
 		},
+		accountId: "any_id",
 	});
 
 	describe("DbAddBatch", () => {
@@ -50,9 +50,7 @@ describe("Add Batch Controller", () => {
 
 			const response = await sut.handle(makeFakeRequest());
 
-			expect(response).toEqual(
-				badRequest(new InvalidParamError("ownerId"))
-			);
+			expect(response).toEqual(badRequest(new ParamInUseError("name")));
 		});
 
 		it("should return 500 if DbAddBatch throws", async () => {
@@ -71,21 +69,11 @@ describe("Add Batch Controller", () => {
 		it("should return 400 when no batch name is provided", async () => {
 			const { sut } = makeSut();
 			const response = await sut.handle({
-				body: { ownerId: "any_id" },
+				body: {},
 			});
 
 			expect(response.statusCode).toBe(400);
 			expect(response.body).toEqual(new MissingParamError("name"));
-		});
-
-		it("should return 400 when no ownerId is provided", async () => {
-			const { sut } = makeSut();
-			const response = await sut.handle({
-				body: { name: "any_batch_name" },
-			});
-
-			expect(response.statusCode).toBe(400);
-			expect(response.body).toEqual(new MissingParamError("ownerId"));
 		});
 	});
 

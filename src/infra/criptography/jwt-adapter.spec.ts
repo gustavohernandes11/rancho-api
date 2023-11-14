@@ -1,5 +1,5 @@
-import { IDecrypter } from "@data/protocols/criptography/decrypter";
-import { IEncrypter } from "@data/protocols/criptography/encrypter";
+import { IDecrypter } from "@/data/protocols/criptography/decrypter";
+import { IEncrypter } from "@/data/protocols/criptography/encrypter";
 import { JwtAdapter } from "./jwt-adapter";
 import jwt from "jsonwebtoken";
 

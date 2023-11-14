@@ -1,6 +1,6 @@
-import { InvalidParamError } from "@presentation/errors";
-import { InvalidDateFormatError } from "@presentation/errors/invalid-date-format-error";
-import { IValidation } from "@presentation/protocols";
+import { InvalidParamError } from "@/presentation/errors";
+import { InvalidDateFormatError } from "@/presentation/errors/invalid-date-format-error";
+import { IValidation } from "@/presentation/protocols";
 
 export class GlobalDateFormatValidation implements IValidation {
 	constructor(private readonly dateField: string) {}
