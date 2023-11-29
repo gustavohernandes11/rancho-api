@@ -1,5 +1,4 @@
 import { IDbAddAnimal } from "@/domain/usecases/add-animal";
-import { InvalidParamError } from "../../errors";
 import { badRequest, ok, serverError } from "../../helpers/http-helpers";
 import {
 	IController,

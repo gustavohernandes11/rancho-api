@@ -69,6 +69,7 @@ const mockDatabaseBatchAndUser =
 
 		const { insertedId } = await batchCollection.insertOne({
 			name: "any_batch_name",
+			observation: "any_batch_observation",
 			ownerId: userId,
 		});
 
@@ -224,6 +225,7 @@ describe("Batch routes", () => {
 				.set("x-access-token", accessToken)
 				.send({
 					name: "any_name",
+					observation: "any_observation",
 					ownerId: userId,
 				})
 				.expect(200);
@@ -261,18 +263,22 @@ describe("Batch routes", () => {
 			batchCollection.insertMany([
 				{
 					name: "name_1",
+					observation: "observation_1",
 					ownerId: userId,
 				},
 				{
 					name: "name_2",
+					observation: "observation_2",
 					ownerId: userId,
 				},
 				{
 					name: "name_3",
+					observation: "observation_3",
 					ownerId: userId,
 				},
 				{
 					name: "name_4",
+					observation: "observation_4",
 					ownerId: userId,
 				},
 			]);
@@ -285,9 +291,13 @@ describe("Batch routes", () => {
 					expect(response.body).toHaveLength(4);
 
 					expect(response.body[0].name).toBe("name_1");
+					expect(response.body[0].observation).toBe("observation_1");
 					expect(response.body[1].name).toBe("name_2");
+					expect(response.body[1].observation).toBe("observation_2");
 					expect(response.body[2].name).toBe("name_3");
+					expect(response.body[2].observation).toBe("observation_3");
 					expect(response.body[3].name).toBe("name_4");
+					expect(response.body[3].observation).toBe("observation_4");
 				});
 		});
 

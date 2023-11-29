@@ -1,6 +1,8 @@
-import { IUpdateBatchByIdRepository } from "@/data/protocols/db/batch/update-batch-by-id-repository";
-import { IDbUpdateBatch } from "@/domain/usecases/batch/update-batch";
-import { IUpdateAnimalModel } from "../update-animal/db-update-animal-protocols";
+import {
+	IDbUpdateBatch,
+	IUpdateAnimalModel,
+	IUpdateBatchByIdRepository,
+} from "./db-update-batch-protocols";
 
 export class DbUpdateBatch implements IDbUpdateBatch {
 	constructor(

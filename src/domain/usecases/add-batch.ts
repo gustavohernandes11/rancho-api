@@ -3,6 +3,7 @@ export interface IDbAddBatch {
 }
 
 export interface IAddBatchModel {
-	ownerId: string;
 	name: string;
+	observation?: string;
+	ownerId: string;
 }

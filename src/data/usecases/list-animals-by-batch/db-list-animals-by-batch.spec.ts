@@ -1,6 +1,4 @@
-import { IListAnimalsByOwnerIdRepository } from "@/data/protocols/db/animals/list-animals-by-owner-repository";
 import { IDbListAnimals } from "@/domain/usecases/list-animals";
-import { ICheckAccountByIdRepository } from "../add-animal/db-add-animal-protocols";
 import { IAnimalModel } from "../update-animal/db-update-animal-protocols";
 import { DbListAnimalsByBatch } from "./db-list-animals-by-batch";
 import { ICheckBatchByIdRepository } from "../remove-batch/db-remove-batch-protocols";

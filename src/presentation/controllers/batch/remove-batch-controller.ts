@@ -1,6 +1,6 @@
 import { notFound, ok, serverError } from "../../helpers/http-helpers";
 import { IController, IHttpRequest, IHttpResponse } from "../../protocols";
-import { IDbRemoveBatch } from "@/domain/usecases/batch/remove-batch";
+import { IDbRemoveBatch } from "@/domain/usecases/remove-batch";
 
 export class RemoveBatchController implements IController {
 	constructor(private readonly dbRemoveBatch: IDbRemoveBatch) {}

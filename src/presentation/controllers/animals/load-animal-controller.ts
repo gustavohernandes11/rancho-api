@@ -1,9 +1,4 @@
-import {
-	noContent,
-	notFound,
-	ok,
-	serverError,
-} from "../../helpers/http-helpers";
+import { notFound, ok, serverError } from "../../helpers/http-helpers";
 import { IHttpRequest } from "@/presentation/protocols";
 import { IDbLoadAnimal } from "@/domain/usecases/load-animal";
 

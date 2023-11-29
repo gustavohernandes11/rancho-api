@@ -1,5 +1,5 @@
 import { RemoveBatchController } from "./remove-batch-controller";
-import { IDbRemoveBatch } from "@/domain/usecases/batch/remove-batch";
+import { IDbRemoveBatch } from "@/domain/usecases/remove-batch";
 import { notFound, ok, serverError } from "../../helpers/http-helpers";
 
 describe("Remove Batch Controller", () => {

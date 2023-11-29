@@ -1,4 +1,4 @@
-import { IDbAddBatch, IAddBatchModel } from "@/domain/usecases/batch/add-batch";
+import { IDbAddBatch, IAddBatchModel } from "@/domain/usecases/add-batch";
 import { makeAddBatchValidations } from "@/main/factories/validation/make-add-batch-validations";
 import { MissingParamError, ParamInUseError } from "../../errors";
 import { badRequest, ok } from "../../helpers/http-helpers";
@@ -25,6 +25,7 @@ describe("Add Batch Controller", () => {
 	const makeFakeRequest = () => ({
 		body: {
 			name: "any_batch_name",
+			observation: "any_batch_observation",
 		},
 		accountId: "any_id",
 	});
@@ -38,6 +39,7 @@ describe("Add Batch Controller", () => {
 
 			expect(dbAddSpy).toHaveBeenCalledWith({
 				name: "any_batch_name",
+				observation: "any_batch_observation",
 				ownerId: "any_id",
 			});
 		});

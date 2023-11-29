@@ -4,10 +4,10 @@ import { ICheckBatchByNameRepository } from "@/data/protocols/db/batch/check-bat
 import { IListBatchesByOwnerIdRepository } from "@/data/protocols/db/batch/list-batches-repository";
 import { IRemoveBatchByIdRepository } from "@/data/protocols/db/batch/remove-batch-by-id-repository";
 import { IUpdateBatchByIdRepository } from "@/data/protocols/db/batch/update-batch-by-id-repository";
-import { IAddBatchModel } from "@/domain/usecases/batch/add-batch";
+import { IAddBatchModel } from "@/domain/usecases/add-batch";
 import { ObjectId } from "mongodb";
 import { IBatchModel } from "@/domain/models/batch";
-import { IUpdateBatchModel } from "@/domain/usecases/batch/update-batch";
+import { IUpdateBatchModel } from "@/domain/usecases/update-batch";
 import { MongoHelper } from "./mongo-helper";
 import { parseToObjectId } from "./utils/parse-to-object-id";
 
