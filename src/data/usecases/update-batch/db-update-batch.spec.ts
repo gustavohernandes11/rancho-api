@@ -1,10 +1,10 @@
-import { IUpdateBatchByIdRepository } from "@/data/protocols/db/batch/update-batch-by-id-repository";
-import { IBatchModel } from "@/domain/models/batch";
+import { IBatchModel } from "../list-batches/db-list-batches-protocols";
+import { DbUpdateBatch } from "./db-update-batch";
 import {
 	IDbUpdateBatch,
+	IUpdateBatchByIdRepository,
 	IUpdateBatchModel,
-} from "@/domain/usecases/batch/update-batch";
-import { DbUpdateBatch } from "./db-update-batch";
+} from "./db-update-batch-protocols";
 
 describe("DbUpdateBatch", () => {
 	const makeFakeUpdateBatchModel = (): IUpdateBatchModel => ({

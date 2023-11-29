@@ -1,8 +1,8 @@
 import { Collection } from "mongodb";
 import { BatchMongoRepository } from "./batch-mongo-repository";
 import { MongoHelper } from "./mongo-helper";
-import { IAddBatchModel } from "@/domain/usecases/batch/add-batch";
-import { IUpdateBatchModel } from "@/domain/usecases/batch/update-batch";
+import { IAddBatchModel } from "@/domain/usecases/add-batch";
+import { IUpdateBatchModel } from "@/domain/usecases/update-batch";
 
 const makeFakeBatch = (): IAddBatchModel => ({
 	name: "any_batch_name",

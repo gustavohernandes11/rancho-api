@@ -1,4 +1,4 @@
-import { IDbUpdateBatch } from "@/domain/usecases/batch/update-batch";
+import { IDbUpdateBatch } from "@/domain/usecases/update-batch";
 import { InvalidParamError } from "@/presentation/errors";
 import {
 	badRequest,

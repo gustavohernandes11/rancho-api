@@ -2,7 +2,7 @@ import { UpdateBatchController } from "./update-batch-controller";
 import {
 	IDbUpdateBatch,
 	IUpdateBatchModel,
-} from "@/domain/usecases/batch/update-batch";
+} from "@/domain/usecases/update-batch";
 import { InvalidParamError } from "@/presentation/errors";
 import { badRequest, ok } from "@/presentation/helpers/http-helpers";
 import { IValidation } from "@/presentation/protocols";

@@ -5,7 +5,7 @@ import {
 	IHttpResponse,
 	IValidation,
 } from "../../protocols";
-import { IDbAddBatch } from "@/domain/usecases/batch/add-batch";
+import { IDbAddBatch } from "@/domain/usecases/add-batch";
 import { ParamInUseError } from "@/presentation/errors";
 
 export class AddBatchController implements IController {

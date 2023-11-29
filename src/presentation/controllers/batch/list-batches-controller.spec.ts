@@ -1,5 +1,5 @@
 import { ListBatchesController } from "./list-batches-controller";
-import { IDbListBatches } from "@/domain/usecases/batch/list-batches";
+import { IDbListBatches } from "@/domain/usecases/list-batches";
 import { noContent, ok, serverError } from "../../helpers/http-helpers";
 import { IBatchModel } from "@/domain/models/batch";
 
