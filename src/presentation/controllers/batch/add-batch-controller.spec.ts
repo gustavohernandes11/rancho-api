@@ -25,6 +25,7 @@ describe("Add Batch Controller", () => {
 	const makeFakeRequest = () => ({
 		body: {
 			name: "any_batch_name",
+			observation: "any_batch_observation",
 		},
 		accountId: "any_id",
 	});
@@ -38,6 +39,7 @@ describe("Add Batch Controller", () => {
 
 			expect(dbAddSpy).toHaveBeenCalledWith({
 				name: "any_batch_name",
+				observation: "any_batch_observation",
 				ownerId: "any_id",
 			});
 		});
