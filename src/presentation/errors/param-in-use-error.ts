@@ -1,6 +1,6 @@
 export class ParamInUseError extends Error {
 	constructor(param: string) {
-		super(`${param} is already in use`);
+		super(`${param} Já está em uso`);
 		this.name = "ParamInUseError";
 	}
 }
