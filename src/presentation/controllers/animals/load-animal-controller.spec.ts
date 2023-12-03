@@ -11,6 +11,7 @@ describe("LoadAnimalController", () => {
 			return Promise.resolve({
 				id: "1",
 				name: "any_name",
+				gender: "F",
 				ownerId: "any_ownerId",
 				age: mockDate,
 			});
@@ -67,6 +68,7 @@ describe("LoadAnimalController", () => {
 			expect.objectContaining({
 				id: "1",
 				name: "any_name",
+				gender: "F",
 				ownerId: "any_ownerId",
 				age: mockDate,
 			})

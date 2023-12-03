@@ -22,6 +22,7 @@ describe("DbRemoveBatch", () => {
 			return {
 				id: id || "any_id",
 				name: animal.name || "original_animal_name",
+				gender: animal.gender || "F",
 				age: animal.age || new Date("2019-01-01").toISOString(),
 				ownerId: "any_ownerId",
 			};
@@ -36,12 +37,14 @@ describe("DbRemoveBatch", () => {
 				{
 					age: new Date().toISOString(),
 					id: "any_id_1",
+					gender: "F",
 					name: "any-name",
 					ownerId: "any-ownerId",
 				},
 				{
 					age: new Date().toISOString(),
 					id: "any_id_2",
+					gender: "F",
 					name: "any-name",
 					ownerId: "any-ownerId",
 				},

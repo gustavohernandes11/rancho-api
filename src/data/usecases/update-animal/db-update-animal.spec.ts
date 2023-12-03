@@ -22,6 +22,7 @@ describe("DbUpdateAnimal", () => {
 			return {
 				id: id || "any_id",
 				name: animal.name || "original_animal_name",
+				gender: animal.gender || "F",
 				age: animal.age || new Date("2019-01-01").toISOString(),
 				ownerId: "any_ownerId",
 			};

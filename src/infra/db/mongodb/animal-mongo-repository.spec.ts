@@ -6,6 +6,7 @@ import { MongoHelper } from "./mongo-helper";
 const makeFakeAnimal = (): IAddAnimalModel => ({
 	name: "any_animal_name",
 	ownerId: "any_id",
+	gender: "F",
 	age: new Date("12/12/2019").toISOString(),
 });
 describe("Animal Mongo Repository", () => {
@@ -57,6 +58,7 @@ describe("Animal Mongo Repository", () => {
 			const { insertedId } = await animalsCollection.insertOne({
 				name: "animal_1",
 				ownerId: "any_ownerId",
+				gender: "F",
 				age: new Date("01/01/2000").toISOString(),
 			});
 			const result = await sut.checkById(insertedId.toHexString());
@@ -84,24 +86,28 @@ describe("Animal Mongo Repository", () => {
 				{
 					name: "animal_1",
 					ownerId: "any_ownerId",
+					gender: "F",
 					batchId: insertedIds[0].toHexString(),
 					age: new Date("01/01/2000").toISOString(),
 				},
 				{
 					name: "animal_2",
 					ownerId: "any_ownerId",
+					gender: "F",
 					batchId: insertedIds[0].toHexString(),
 					age: new Date("01/01/2000").toISOString(),
 				},
 				{
 					name: "animal_3",
 					ownerId: "any_ownerId",
+					gender: "F",
 					batchId: insertedIds[1].toHexString(),
 					age: new Date("01/01/2000").toISOString(),
 				},
 				{
 					name: "animal_4",
 					ownerId: "any_ownerId",
+					gender: "F",
 					batchId: insertedIds[1].toHexString(),
 					age: new Date("01/01/2000").toISOString(),
 				},

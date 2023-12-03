@@ -13,12 +13,14 @@ describe("DbListAnimal", () => {
 				{
 					id: "animal_id_1",
 					ownerId: ownerId,
+					gender: "M",
 					age: new Date("2020-01-01").toISOString(),
 					name: "animal_1",
 				},
 				{
 					id: "animal_id_2",
 					ownerId: ownerId,
+					gender: "M",
 					age: new Date("2019-01-01").toISOString(),
 					name: "animal_2",
 				},

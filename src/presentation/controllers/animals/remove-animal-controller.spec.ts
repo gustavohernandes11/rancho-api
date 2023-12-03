@@ -4,6 +4,7 @@ import { badRequest, ok } from "../../helpers/http-helpers";
 import { IDbRemoveAnimal } from "@/domain/usecases/remove-animal";
 import { IController, IValidation } from "@/presentation/protocols";
 import { IDbLoadAnimal } from "@/domain/usecases/load-animal";
+import { IAnimalModel } from "@/domain/models/animals";
 
 describe("Remove Animal Controller", () => {
 	const makeFakeRequest = () => ({
@@ -18,8 +19,13 @@ describe("Remove Animal Controller", () => {
 	}
 
 	class DbLoadAnimalStub implements IDbLoadAnimal {
-		async load() {
-			return { id: "any_id", age: "any_age", ownerId: "any_ownerId" };
+		async load(id: string): Promise<IAnimalModel | null> {
+			return {
+				id: "any_id",
+				age: "any_age",
+				gender: "F",
+				ownerId: "any_ownerId",
+			};
 		}
 	}
 	class ValidationStub implements IValidation {

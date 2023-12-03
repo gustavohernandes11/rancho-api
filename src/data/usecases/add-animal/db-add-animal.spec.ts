@@ -10,6 +10,7 @@ describe("Db Add Animal", () => {
 	const makeFakeAnimal = (): IAddAnimalModel => ({
 		name: "any_animal_name",
 		ownerId: "any_id",
+		gender: "M",
 		age: new Date("12/12/2019").toISOString(),
 	});
 	class CheckAccountByIdRepositoryStub

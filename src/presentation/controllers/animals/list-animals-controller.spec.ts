@@ -14,18 +14,21 @@ describe("ListAnimalsController", () => {
 						id: "1",
 						name: "any_name",
 						ownerId: "any_ownerId",
+						gender: "F",
 						age: mockDate,
 					},
 					{
 						id: "2",
 						name: "any_other_name",
 						ownerId: "any_ownerId",
+						gender: "M",
 						age: mockDate,
 					},
 					{
 						id: "3",
 						name: "any_other_name_again",
 						ownerId: "any_ownerId",
+						gender: "F",
 						age: mockDate,
 					},
 				]);
@@ -84,18 +87,21 @@ describe("ListAnimalsController", () => {
 				{
 					id: "1",
 					name: "any_name",
+					gender: "F",
 					ownerId: "any_ownerId",
 					age: mockDate,
 				},
 				{
 					id: "2",
 					name: "any_other_name",
+					gender: "M",
 					ownerId: "any_ownerId",
 					age: mockDate,
 				},
 				{
 					id: "3",
 					name: "any_other_name_again",
+					gender: "F",
 					ownerId: "any_ownerId",
 					age: mockDate,
 				},

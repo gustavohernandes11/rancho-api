@@ -11,6 +11,7 @@ describe("UpdateAnimalController", () => {
 	const mockDate = new Date().toISOString();
 	const makeFakeUpdateData = (): IUpdateAnimalModel => ({
 		name: "any_name",
+		gender: "F",
 		age: mockDate,
 		paternityId: "any_paternity_id",
 		maternityId: "any_maternity_id",
@@ -36,6 +37,7 @@ describe("UpdateAnimalController", () => {
 					ownerId: props.ownerId || "any_ownerId",
 					age: props.age || mockDate,
 					name: props.name || "any_name",
+					gender: props.gender || "F",
 					paternityId: props.paternityId || "any_paternity_id",
 					maternityId: props.maternityId || "any_maternity_id",
 					batchId: props.batchId || "any_batch_id",
@@ -75,6 +77,7 @@ describe("UpdateAnimalController", () => {
 			code: 123,
 			maternityId: "any_maternity_id",
 			name: "any_name",
+			gender: "F",
 			observation: "any_observation",
 			ownerId: "any_ownerId",
 			paternityId: "any_paternity_id",
@@ -96,6 +99,7 @@ describe("UpdateAnimalController", () => {
 			code: 123,
 			maternityId: "any_maternity_id",
 			name: "any_name",
+			gender: "F",
 			observation: "any_observation",
 			ownerId: "any_ownerId",
 			paternityId: "any_paternity_id",
@@ -110,6 +114,7 @@ describe("UpdateAnimalController", () => {
 			body: {
 				name: "any_name",
 				ownerId: "any_ownerId",
+				gender: "F",
 				age: "INVALID_DATE_FORMAT",
 			},
 			animalId: "any_id",

@@ -22,6 +22,7 @@ describe("DbRemoveAnimal", () => {
 			return {
 				age: this.mockedAge,
 				id: "any_id",
+				gender: "M",
 				ownerId: "any_owner_id",
 			};
 		}
@@ -88,6 +89,7 @@ describe("DbRemoveAnimal", () => {
 				Promise.resolve({
 					age: "any_age",
 					id: "any_id",
+					gender: "F",
 					ownerId: "INVALID_OWNER_ID",
 				})
 			);

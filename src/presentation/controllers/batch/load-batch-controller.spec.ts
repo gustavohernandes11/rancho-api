@@ -9,18 +9,21 @@ describe("Load Batch Controller", () => {
 			return [
 				{
 					id: "any",
+					gender: "F",
 					batchId,
 					age: new Date("01/01/2000").toISOString(),
 					ownerId: "any_ownerId",
 				},
 				{
 					id: "any",
+					gender: "F",
 					batchId,
 					age: new Date("01/01/2000").toISOString(),
 					ownerId: "any_ownerId",
 				},
 				{
 					id: "any",
+					gender: "F",
 					batchId,
 					age: new Date("01/01/2000").toISOString(),
 					ownerId: "any_ownerId",
@@ -85,18 +88,21 @@ describe("Load Batch Controller", () => {
 				{
 					id: "any",
 					batchId: "valid_batch_id",
+					gender: "F",
 					age: new Date("01/01/2000").toISOString(),
 					ownerId: "any_ownerId",
 				},
 				{
 					id: "any",
 					batchId: "valid_batch_id",
+					gender: "F",
 					age: new Date("01/01/2000").toISOString(),
 					ownerId: "any_ownerId",
 				},
 				{
 					id: "any",
 					batchId: "valid_batch_id",
+					gender: "F",
 					age: new Date("01/01/2000").toISOString(),
 					ownerId: "any_ownerId",
 				},

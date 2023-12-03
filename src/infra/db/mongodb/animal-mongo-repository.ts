@@ -71,6 +71,7 @@ export class AnimalMongoRepository
 					ownerId: props.ownerId,
 					age: props.age,
 					name: props.name,
+					gender: props.gender,
 					batchId: props.batchId,
 					paternityId: props.paternityId,
 					maternityId: props.maternityId,

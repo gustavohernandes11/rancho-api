@@ -17,13 +17,21 @@ export class AddAnimalController implements IController {
 			const error = this.validations.validate(request.body);
 			if (error) return badRequest(error);
 
-			const { name, age, code, maternityId, observation, paternityId } =
-				request.body;
+			const {
+				name,
+				gender,
+				age,
+				code,
+				maternityId,
+				observation,
+				paternityId,
+			} = request.body;
 			const { accountId } = request as any;
 
 			const wasAdded = await this.dbAddAnimal.add({
-				name,
 				ownerId: accountId,
+				name,
+				gender,
 				age,
 				code,
 				maternityId,

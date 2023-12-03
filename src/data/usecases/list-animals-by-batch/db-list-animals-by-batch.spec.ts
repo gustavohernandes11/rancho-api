@@ -19,12 +19,14 @@ describe("DbListAnimalsByBatch", () => {
 				{
 					id: "animal_id_1",
 					ownerId: "any_ownerId",
+					gender: "F",
 					age: new Date("2020-01-01").toISOString(),
 					name: "animal_1",
 				},
 				{
 					id: "animal_id_2",
 					ownerId: "any_ownerId",
+					gender: "F",
 					age: new Date("2019-01-01").toISOString(),
 					name: "animal_2",
 				},

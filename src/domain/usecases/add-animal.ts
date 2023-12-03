@@ -5,6 +5,7 @@ export interface IDbAddAnimal {
 export interface IAddAnimalModel {
 	ownerId: string;
 	age: string;
+	gender: "F" | "M";
 	name?: string;
 	maternityId?: string;
 	paternityId?: string;

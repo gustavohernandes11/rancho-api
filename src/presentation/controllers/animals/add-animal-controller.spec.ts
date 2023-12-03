@@ -1,6 +1,6 @@
 import { IDbAddAnimal, IAddAnimalModel } from "@/domain/usecases/add-animal";
 import { makeAddAnimalValidations } from "@/main/factories/validation/make-add-animal-validations";
-import { MissingParamError } from "../../errors";
+import { InvalidParamValue, MissingParamError } from "../../errors";
 import { ok } from "../../helpers/http-helpers";
 import { AddAnimalController } from "./add-animal-controller";
 
@@ -25,6 +25,7 @@ describe("Add Animal Controller", () => {
 		body: {
 			name: "any_animal_name",
 			ownerId: "any_id",
+			gender: "F",
 			age: new Date("12/12/2019").toISOString(),
 		},
 	});
@@ -69,6 +70,35 @@ describe("Add Animal Controller", () => {
 
 			expect(response.statusCode).toBe(400);
 			expect(response.body).toEqual(new MissingParamError("age"));
+		});
+		it("should return 400 when no animal gender is provided", async () => {
+			const { sut } = makeSut();
+			const response = await sut.handle({
+				body: {
+					name: "any_animal_name",
+					ownerId: "any_id",
+					age: new Date().toISOString(),
+				},
+			});
+
+			expect(response.statusCode).toBe(400);
+			expect(response.body).toEqual(new MissingParamError("gender"));
+		});
+		it("should return 400 when gender is provided with invalid value", async () => {
+			const { sut } = makeSut();
+			const response = await sut.handle({
+				body: {
+					name: "any_animal_name",
+					ownerId: "any_id",
+					age: new Date().toISOString(),
+					gender: "INVALID_VALUE",
+				},
+			});
+
+			expect(response.statusCode).toBe(400);
+			expect(response.body).toEqual(
+				new InvalidParamValue("gender", ["F", "M"])
+			);
 		});
 	});
 	it("should return 200 when the data is correct added", async () => {

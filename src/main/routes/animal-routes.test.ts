@@ -66,6 +66,7 @@ describe("Animal routes", () => {
 			const { insertedId } = await animalColletion.insertOne({
 				name: "any_animal_name",
 				age: new Date("10/10/2000").toISOString(),
+				gender: "F",
 				ownerId: userId,
 			});
 
@@ -194,6 +195,7 @@ describe("Animal routes", () => {
 				.send({
 					name: "any_name",
 					ownerId: userId,
+					gender: "F",
 					age: mockISODate,
 				})
 				.expect(200);
