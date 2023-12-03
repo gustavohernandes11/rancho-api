@@ -1,5 +1,5 @@
 import { AllowedFieldValueOptions } from "./allowed-field-value-options";
-import { InvalidParamValue } from "@/presentation/errors/invalid-param-value";
+import { InvalidParamValue } from "@/presentation/errors";
 
 describe("Allowed field value options", () => {
 	it("It should return an error if the value is not in the options", () => {

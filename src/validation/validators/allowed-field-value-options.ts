@@ -1,4 +1,4 @@
-import { InvalidParamValue } from "@/presentation/errors/invalid-param-value";
+import { InvalidParamValue } from "@/presentation/errors";
 import { IValidation } from "@/presentation/protocols";
 
 export class AllowedFieldValueOptions implements IValidation {
