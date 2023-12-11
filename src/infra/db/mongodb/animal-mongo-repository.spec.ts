@@ -7,6 +7,7 @@ const makeFakeAnimal = (): IAddAnimalModel => ({
 	name: "any_animal_name",
 	ownerId: "any_id",
 	gender: "F",
+	batchId: "any_id",
 	age: new Date("12/12/2019").toISOString(),
 });
 describe("Animal Mongo Repository", () => {

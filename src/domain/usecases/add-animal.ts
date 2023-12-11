@@ -8,6 +8,7 @@ export interface IAddAnimalModel {
 	gender: "F" | "M";
 	name?: string;
 	maternityId?: string;
+	batchId: string;
 	paternityId?: string;
 	code?: number;
 	observation?: string;

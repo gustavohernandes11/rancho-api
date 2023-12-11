@@ -11,6 +11,7 @@ describe("Db Add Animal", () => {
 		name: "any_animal_name",
 		ownerId: "any_id",
 		gender: "M",
+		batchId: "any_id",
 		age: new Date("12/12/2019").toISOString(),
 	});
 	class CheckAccountByIdRepositoryStub

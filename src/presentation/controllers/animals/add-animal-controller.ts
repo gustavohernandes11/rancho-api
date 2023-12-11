@@ -25,6 +25,7 @@ export class AddAnimalController implements IController {
 				maternityId,
 				observation,
 				paternityId,
+				batchId,
 			} = request.body;
 			const { accountId } = request as any;
 
@@ -37,6 +38,7 @@ export class AddAnimalController implements IController {
 				maternityId,
 				observation,
 				paternityId,
+				batchId,
 			});
 
 			if (!wasAdded)
