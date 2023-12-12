@@ -24,5 +24,6 @@ export default (router: Router) => {
 		adaptRoute(makeRemoveAnimalController())
 	);
 	router.post("/animals", auth, adaptRoute(makeAddAnimalController()));
+	// router.put("/animals", auth, adaptRoute(makeUpdateAnimalsController()));
 	router.get("/animals", auth, adaptRoute(makeListAnimalsController()));
 };
