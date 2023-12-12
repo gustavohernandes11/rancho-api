@@ -20,9 +20,9 @@ export class BatchMongoRepository
 		IRemoveBatchByIdRepository,
 		IUpdateBatchByIdRepository
 {
-	async checkByName(name: string): Promise<boolean> {
+	async checkByName(name: string, ownerId: string): Promise<boolean> {
 		const batchesCollection = MongoHelper.getCollection("batches");
-		const batch = await batchesCollection.findOne({ name });
+		const batch = await batchesCollection.findOne({ name, ownerId });
 		return !!batch;
 	}
 

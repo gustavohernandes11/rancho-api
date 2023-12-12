@@ -1,3 +1,3 @@
 export interface ICheckBatchByNameRepository {
-	checkByName(name: string): Promise<boolean>;
+	checkByName(name: string, ownerId: string): Promise<boolean>;
 }

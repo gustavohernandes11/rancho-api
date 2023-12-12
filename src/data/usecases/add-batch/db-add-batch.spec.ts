@@ -105,7 +105,10 @@ describe("DbAddBatch", () => {
 			);
 			const fakeBatch = makeFakeBatch();
 			await sut.add(fakeBatch);
-			expect(checkByNameSpy).toHaveBeenCalledWith(fakeBatch.name);
+			expect(checkByNameSpy).toHaveBeenCalledWith(
+				fakeBatch.name,
+				fakeBatch.ownerId
+			);
 		});
 		it("should return false if the name is already in use", async () => {
 			const { sut, checkBatchByNameRepositoryStub } = makeSut();

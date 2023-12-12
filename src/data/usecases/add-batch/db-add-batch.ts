@@ -18,7 +18,10 @@ export class DbAddBatch implements IDbAddBatch {
 			batch.ownerId
 		);
 		const alreadyInUseName =
-			await this.checkBatchByNameRepository.checkByName(batch.name);
+			await this.checkBatchByNameRepository.checkByName(
+				batch.name,
+				batch.ownerId
+			);
 
 		if (isValidOwner && !alreadyInUseName) {
 			return await this.addBatchRepository.addBatch(batch);

@@ -44,14 +44,32 @@ describe("Batch Mongo Repository", () => {
 			const sut = new BatchMongoRepository();
 			await batchesCollection.insertOne({
 				name: "any_batch_name",
-				ownerId: "any_ownerId",
+				ownerId: "any_owner_id",
 			});
-			const result = await sut.checkByName("any_batch_name");
+			const result = await sut.checkByName(
+				"any_batch_name",
+				"any_owner_id"
+			);
 			expect(result).toBeTruthy();
 		});
-		it("should return false when the batch do not exists in the database with this name", async () => {
+		it("should return false when the batch do not exists in the database with this name and ownerId", async () => {
 			const sut = new BatchMongoRepository();
-			const result = await sut.checkByName("invalid_batch_name");
+			const result = await sut.checkByName(
+				"invalid_batch_name",
+				"any_owner_id"
+			);
+			expect(result).toBeFalsy();
+		});
+		it("should return false when the batch do exists in the database but with other owner", async () => {
+			const sut = new BatchMongoRepository();
+			await batchesCollection.insertOne({
+				name: "any_batch_name",
+				ownerId: "any_owner_id",
+			});
+			const result = await sut.checkByName(
+				"any_batch_name",
+				"OTHER_OWNER_ID"
+			);
 			expect(result).toBeFalsy();
 		});
 	});
