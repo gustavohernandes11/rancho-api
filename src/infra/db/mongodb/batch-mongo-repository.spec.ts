@@ -225,14 +225,14 @@ describe("Batch Mongo Repository", () => {
 					ownerId: "any_id",
 					age: "any_date",
 					gender: "M",
-					batchId: insertedIds[0],
+					batchId: insertedIds[0].toHexString(),
 				},
 				{
 					name: "second_batch",
 					ownerId: "any_id2",
 					age: "any_date",
 					gender: "M",
-					batchId: insertedIds[0],
+					batchId: insertedIds[0].toHexString(),
 				},
 			]);
 			let result = await sut.loadBatch(insertedIds[0].toHexString());

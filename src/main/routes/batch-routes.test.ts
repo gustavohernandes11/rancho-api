@@ -77,6 +77,61 @@ const mockDatabaseBatchAndUser =
 	};
 
 describe("Batch routes", () => {
+	describe("GET /api/batches/:batchId/info", () => {
+		it("should return 403 when not sending an accessToken", async () => {
+			const { batchId } = await mockDatabaseBatchAndUser();
+			await request(app).get(`/api/batches/${batchId}/info`).expect(403);
+		});
+
+		it("should return 404 when trying to get information about a non-existing batch", async () => {
+			const { accessToken } = await mockDatabaseUser();
+			const nonExistingBatchId = "non_existing_batch_id";
+			await request(app)
+				.get(`/api/batches/${nonExistingBatchId}/info`)
+				.set("x-access-token", accessToken)
+				.expect(404);
+		});
+
+		it("should return 200 with the batch info when the batch exists and accessToken is provided", async () => {
+			const { batchId, accessToken, userId } =
+				await mockDatabaseBatchAndUser();
+
+			await animalsCollection.insertMany([
+				{
+					name: "animal_name_1",
+					age: "any_age",
+					ownerId: userId,
+					batchId: batchId,
+				},
+				{
+					name: "animal_name_2",
+					age: "any_age",
+					ownerId: userId,
+					batchId: batchId,
+				},
+				{
+					name: "animal_name_3",
+					age: "any_age",
+					ownerId: userId,
+					batchId: batchId,
+				},
+			]);
+
+			await request(app)
+				.get(`/api/batches/${batchId}/info`)
+				.set("x-access-token", accessToken)
+				.expect(200)
+				.then(({ body }) => {
+					expect(body).toEqual({
+						name: "any_batch_name",
+						observation: "any_batch_observation",
+						id: batchId,
+						ownerId: userId,
+						count: 3,
+					});
+				});
+		});
+	});
 	describe("GET /api/batches/:batchId", () => {
 		it("should return 403 when not sending an accessToken", async () => {
 			const { batchId } = await mockDatabaseBatchAndUser();

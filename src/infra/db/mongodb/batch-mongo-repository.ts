@@ -51,7 +51,7 @@ export class BatchMongoRepository
 		if (!batch) return null;
 
 		const count = await animalsCollection.countDocuments({
-			batchId: parseToObjectId(batchId),
+			batchId: batchId,
 		});
 
 		return {

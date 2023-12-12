@@ -6,8 +6,14 @@ import { makeRemoveBatchController } from "@/main/factories/controllers/make-rem
 import { makeUpdateBatchController } from "@/main/factories/controllers/make-udpate-batch-controller";
 import { auth } from "@/main/middlewares/auth";
 import { Router } from "express";
+import { makeLoadBatchController } from "../factories/controllers/make-load-batch-controller";
 
 export default (router: Router) => {
+	router.get(
+		"/batches/:batchId/info",
+		auth,
+		adaptRoute(makeLoadBatchController())
+	);
 	router.get(
 		"/batches/:batchId",
 		auth,
