@@ -4,7 +4,7 @@ import { UpdateManyAnimalsController } from "@/presentation/controllers/animals/
 import { DbUpdateManyAnimals } from "@/data/usecases/update-many-animals/db-update-many-animals";
 import { makeUpdateManyAnimalsValidations } from "../validation/make-update-many-animals-validations";
 
-export const makeUpdateAnimalController = (): IController => {
+export const makeUpdateManyAnimalsController = (): IController => {
 	const validations = makeUpdateManyAnimalsValidations();
 	const animalMongoRepository = new AnimalMongoRepository();
 	const dbUpdateAnimal = new DbUpdateManyAnimals(animalMongoRepository);

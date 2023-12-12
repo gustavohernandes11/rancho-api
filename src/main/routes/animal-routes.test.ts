@@ -289,4 +289,61 @@ describe("Animal routes", () => {
 				.expect(200);
 		});
 	});
+	describe("PUT /api/animals", () => {
+		it("should return 200 when sending valid animal data and accessToken", async () => {
+			const { accessToken, animalId } = await mockDatabaseAnimalAndUser();
+			await request(app)
+				.put("/api/animals")
+				.set("x-access-token", accessToken)
+				.send([
+					{
+						id: animalId,
+						props: {
+							name: "any_name",
+							gender: "F",
+							age: mockISODate,
+						},
+					},
+				])
+				.expect(200);
+		});
+		it("should return 403 when not sending a accessToken", async () => {
+			await request(app).post("/api/animals").send([]).expect(403);
+		});
+		it("it should update all the animals in the database when return 200", async () => {
+			const { animalId, accessToken } = await mockDatabaseAnimalAndUser();
+			const newAge = new Date("01/01/2002").toISOString();
+			const changedName = "changed_animal_name";
+			const changedBatchId = "changed_batch_id";
+
+			await request(app)
+				.put("/api/animals/")
+				.set("x-access-token", accessToken)
+				.send([
+					{
+						id: animalId,
+						props: {
+							name: changedName,
+							age: newAge,
+						},
+					},
+					{
+						id: animalId,
+						props: {
+							batchId: changedBatchId,
+						},
+					},
+				])
+				.expect(200);
+
+			const changed = MongoHelper.map(
+				await animalColletion.findOne({
+					_id: parseToObjectId(animalId),
+				})
+			);
+			expect(changed.age).toBe(newAge);
+			expect(changed.name).toBe(changedName);
+			expect(changed.batchId).toBe(changedBatchId);
+		});
+	});
 });
