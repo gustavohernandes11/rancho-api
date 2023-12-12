@@ -12,6 +12,7 @@ const makeFakeBatch = (): IAddBatchModel => ({
 describe("Batch Mongo Repository", () => {
 	let batchesCollection: Collection;
 	let accountCollection: Collection;
+	let animalsCollection: Collection;
 
 	beforeAll(async () => {
 		await MongoHelper.connect(
@@ -25,9 +26,11 @@ describe("Batch Mongo Repository", () => {
 
 	beforeEach(async () => {
 		batchesCollection = MongoHelper.getCollection("batches");
+		animalsCollection = MongoHelper.getCollection("animals");
 		accountCollection = MongoHelper.getCollection("batches");
 		await batchesCollection.deleteMany({});
 		await accountCollection.deleteMany({});
+		await animalsCollection.deleteMany({});
 	});
 
 	describe("addBatch()", () => {
@@ -196,6 +199,47 @@ describe("Batch Mongo Repository", () => {
 			expect(result?.name).toBe("updated_name");
 			expect(result?.ownerId).toBe("updated_owner_id");
 			expect(result?.id).toBeTruthy();
+		});
+	});
+	describe("loadBatch()", () => {
+		it("should return null if the batch is not in the database", async () => {
+			const sut = new BatchMongoRepository();
+			const batch = await sut.loadBatch("any_id");
+			expect(batch).toBeNull();
+		});
+		it("should return the batch from the correct batch from the database", async () => {
+			const sut = new BatchMongoRepository();
+			const { insertedIds } = await batchesCollection.insertMany([
+				{
+					name: "first_batch",
+					ownerId: "any_id",
+				},
+				{
+					name: "second_batch",
+					ownerId: "any_id2",
+				},
+			]);
+			await animalsCollection.insertMany([
+				{
+					name: "first_batch",
+					ownerId: "any_id",
+					age: "any_date",
+					gender: "M",
+					batchId: insertedIds[0],
+				},
+				{
+					name: "second_batch",
+					ownerId: "any_id2",
+					age: "any_date",
+					gender: "M",
+					batchId: insertedIds[0],
+				},
+			]);
+			let result = await sut.loadBatch(insertedIds[0].toHexString());
+			expect(result?.name).toBe("first_batch");
+			expect(result?.count).toBe(2);
+			result = await sut.loadBatch(insertedIds[1].toHexString());
+			expect(result?.count).toBe(0);
 		});
 	});
 });

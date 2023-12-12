@@ -10,6 +10,7 @@ import { IBatchModel } from "@/domain/models/batch";
 import { IUpdateBatchModel } from "@/domain/usecases/update-batch";
 import { MongoHelper } from "./mongo-helper";
 import { parseToObjectId } from "./utils/parse-to-object-id";
+import { IBatchInfo } from "@/domain/models/batch-info";
 
 export class BatchMongoRepository
 	implements
@@ -40,7 +41,24 @@ export class BatchMongoRepository
 		const { acknowledged } = await batchesCollection.insertOne(batch);
 		return acknowledged;
 	}
+	async loadBatch(batchId: string): Promise<IBatchInfo | null> {
+		const batchesCollection = MongoHelper.getCollection("batches");
+		const animalsCollection = MongoHelper.getCollection("animals");
 
+		const batch = await batchesCollection.findOne({
+			_id: parseToObjectId(batchId),
+		});
+		if (!batch) return null;
+
+		const count = await animalsCollection.countDocuments({
+			batchId: parseToObjectId(batchId),
+		});
+
+		return {
+			...MongoHelper.map(batch),
+			count,
+		};
+	}
 	async checkById(id: string): Promise<boolean> {
 		const batchesCollection = MongoHelper.getCollection("batches");
 		const batch = await batchesCollection.findOne({
