@@ -1,123 +1,74 @@
 import { LoadBatchController } from "./load-batch-controller";
-import { IDbListAnimalsByBatch } from "@/domain/usecases/list-animals-by-batch";
-import { noContent, notFound, ok } from "../../helpers/http-helpers";
-import { IAnimalModel } from "@/domain/models/animals";
+import { notFound } from "@/presentation/helpers/http-helpers";
+import { IBatchInfo } from "@/domain/models/batch-info";
+import { IDbLoadBatch } from "@/domain/usecases/load-batch";
 
-describe("Load Batch Controller", () => {
-	class DbListAnimalsByBatchStub implements IDbListAnimalsByBatch {
-		async list(batchId: string): Promise<IAnimalModel[] | null> {
-			return [
-				{
-					id: "any",
-					gender: "F",
-					batchId,
-					age: new Date("01/01/2000").toISOString(),
-					ownerId: "any_ownerId",
-				},
-				{
-					id: "any",
-					gender: "F",
-					batchId,
-					age: new Date("01/01/2000").toISOString(),
-					ownerId: "any_ownerId",
-				},
-				{
-					id: "any",
-					gender: "F",
-					batchId,
-					age: new Date("01/01/2000").toISOString(),
-					ownerId: "any_ownerId",
-				},
-			];
+describe("LoadBatchController", () => {
+	class DbLoadBatchStub implements IDbLoadBatch {
+		load(id: string): Promise<IBatchInfo | null> {
+			return Promise.resolve({
+				id: "1",
+				name: "any_name",
+				ownerId: "any_ownerId",
+				count: 0,
+			});
 		}
 	}
 
 	interface ISutTypes {
 		sut: LoadBatchController;
-		dbListAnimalsByBatchStub: DbListAnimalsByBatchStub;
+		dbLoadBatchStub: DbLoadBatchStub;
 	}
 
 	const makeSut = (): ISutTypes => {
-		const dbListAnimalsByBatchStub = new DbListAnimalsByBatchStub();
-		const sut = new LoadBatchController(dbListAnimalsByBatchStub);
-		return { sut, dbListAnimalsByBatchStub };
+		const dbLoadBatchStub = new DbLoadBatchStub();
+		const sut = new LoadBatchController(dbLoadBatchStub);
+		return { sut, dbLoadBatchStub };
 	};
 
-	const makeFakeRequest = () => ({
-		batchId: "valid_batch_id", // request param
-		body: null,
-	});
-
-	it("should call DbListAnimalsByBatch with correct data", async () => {
-		const { sut, dbListAnimalsByBatchStub } = makeSut();
-		const dbListSpy = jest.spyOn(dbListAnimalsByBatchStub, "list");
-
-		await sut.handle(makeFakeRequest());
-
-		expect(dbListSpy).toHaveBeenCalledWith("valid_batch_id");
-	});
-
-	it("should return 204 if DbListAnimalsByBatch returns an empty array", async () => {
-		const { sut, dbListAnimalsByBatchStub } = makeSut();
-		jest.spyOn(dbListAnimalsByBatchStub, "list").mockResolvedValueOnce([]);
-
-		const response = await sut.handle(makeFakeRequest());
-
-		expect(response).toEqual(noContent());
-	});
-
-	it("should return 404 if DbListAnimalsByBatch returns null", async () => {
-		const { sut, dbListAnimalsByBatchStub } = makeSut();
-		jest.spyOn(dbListAnimalsByBatchStub, "list").mockResolvedValueOnce(
-			null
+	it("should return 404 if the IDbLoadBatch return null", async () => {
+		const { sut, dbLoadBatchStub } = makeSut();
+		jest.spyOn(dbLoadBatchStub, "load").mockReturnValue(
+			Promise.resolve(null)
 		);
 
-		const response = await sut.handle(makeFakeRequest());
-
+		const response = await sut.handle({ body: null });
 		expect(response).toEqual(notFound());
 	});
 
-	it("should return 200 with the animals data if DbListAnimalsByBatch returns data", async () => {
-		const { sut } = makeSut();
+	it("should call the IDbLoadBatch", async () => {
+		const { sut, dbLoadBatchStub } = makeSut();
+		const loadBatchSpy = jest.spyOn(dbLoadBatchStub, "load");
 
-		const response = await sut.handle(makeFakeRequest());
+		await sut.handle({ body: null });
 
-		expect(response.statusCode).toBe(200);
-		expect(response).toEqual(
-			ok([
-				{
-					id: "any",
-					batchId: "valid_batch_id",
-					gender: "F",
-					age: new Date("01/01/2000").toISOString(),
-					ownerId: "any_ownerId",
-				},
-				{
-					id: "any",
-					batchId: "valid_batch_id",
-					gender: "F",
-					age: new Date("01/01/2000").toISOString(),
-					ownerId: "any_ownerId",
-				},
-				{
-					id: "any",
-					batchId: "valid_batch_id",
-					gender: "F",
-					age: new Date("01/01/2000").toISOString(),
-					ownerId: "any_ownerId",
-				},
-			])
-		);
+		expect(loadBatchSpy).toHaveBeenCalledTimes(1);
 	});
 
-	it("should return 500 if DbListAnimalsByBatch throws", async () => {
-		const { sut, dbListAnimalsByBatchStub } = makeSut();
-		jest.spyOn(dbListAnimalsByBatchStub, "list").mockRejectedValueOnce(
-			new Error()
-		);
+	it("should return 500 if listBatchs method throws", async () => {
+		const { sut, dbLoadBatchStub } = makeSut();
+		jest.spyOn(dbLoadBatchStub, "load").mockImplementationOnce(() => {
+			throw new Error();
+		});
 
-		const result = await sut.handle(makeFakeRequest());
+		const result = await sut.handle({ body: null });
 
 		expect(result.statusCode).toBe(500);
+	});
+
+	it("should return 200 with the batch data", async () => {
+		const { sut } = makeSut();
+
+		const response = await sut.handle({ body: null });
+
+		expect(response.body).toEqual(
+			expect.objectContaining({
+				id: "1",
+				name: "any_name",
+				ownerId: "any_ownerId",
+				count: 0,
+			})
+		);
+		expect(response.statusCode).toBe(200);
 	});
 });

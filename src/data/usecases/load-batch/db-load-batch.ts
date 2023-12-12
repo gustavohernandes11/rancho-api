@@ -1,5 +1,4 @@
 import { IDbLoadBatch } from "@/domain/usecases/load-batch";
-import { IBatchModel } from "../list-batches/db-list-batches-protocols";
 import { ILoadBatchByIdRepository } from "@/data/protocols/db/batch/load-batch-by-id-repository";
 import { IBatchInfo } from "@/domain/models/batch-info";
 
