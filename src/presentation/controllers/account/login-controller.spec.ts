@@ -6,6 +6,19 @@ import {
 import { makeLoginValidations } from "@/main/factories/validation/make-login-validation";
 import { MissingParamError } from "../../errors";
 import { LoginController } from "./login-controller";
+import { IHttpRequest } from "@/presentation/protocols";
+
+export const mockLoginRequest = (bodyOverride?: any): IHttpRequest => {
+	return {
+		body: Object.assign(
+			{
+				email: "valid_email@gmail.com",
+				password: "valid_password",
+			},
+			bodyOverride || {}
+		),
+	};
+};
 
 describe("Login", () => {
 	class DbAuthenticationStub implements IAuthentication {
@@ -28,26 +41,21 @@ describe("Login", () => {
 		const sut = new LoginController(loginValidations, authenticationStub);
 		return { sut, authenticationStub };
 	};
-	const makeFakeRequest = () => ({
-		body: {
-			email: "valid_email@gmail.com",
-			password: "valid_password",
-		},
-	});
+
 	describe("Validations", () => {
 		it("should return 400 when no email is provided", async () => {
 			const { sut } = makeSut();
-			const response = await sut.handle({
-				body: { password: "any_password" },
-			});
+			const response = await sut.handle(
+				mockLoginRequest({ email: null })
+			);
 			expect(response.statusCode).toBe(400);
 			expect(response.body).toEqual(new MissingParamError("email"));
 		});
 		it("should return 400 when no password is provided", async () => {
 			const { sut } = makeSut();
-			const response = await sut.handle({
-				body: { email: "any_email@gmail.com" },
-			});
+			const response = await sut.handle(
+				mockLoginRequest({ password: null })
+			);
 			expect(response.statusCode).toBe(400);
 			expect(response.body).toEqual(new MissingParamError("password"));
 		});
@@ -56,9 +64,8 @@ describe("Login", () => {
 		it("should call the authentication method with the correct params", async () => {
 			const { sut, authenticationStub } = makeSut();
 			const authSpy = jest.spyOn(authenticationStub, "auth");
-			const request = makeFakeRequest();
 
-			await sut.handle(request);
+			await sut.handle(mockLoginRequest());
 
 			expect(authSpy).toHaveBeenCalledTimes(1);
 			expect(authSpy).toHaveBeenCalledWith({
@@ -73,7 +80,7 @@ describe("Login", () => {
 					throw new Error();
 				}
 			);
-			const result = await sut.handle(makeFakeRequest());
+			const result = await sut.handle(mockLoginRequest());
 			expect(result.statusCode).toBe(500);
 		});
 		it("should return 401 if authentication return null", async () => {
@@ -81,14 +88,13 @@ describe("Login", () => {
 			jest.spyOn(authenticationStub, "auth").mockReturnValueOnce(
 				new Promise((resolve) => resolve(null))
 			);
-			const result = await sut.handle(makeFakeRequest());
+			const result = await sut.handle(mockLoginRequest());
 			expect(result.statusCode).toBe(401);
 		});
 		it("should return 200 with accessToken and name params in the body on success", async () => {
 			const { sut } = makeSut();
-			const request = makeFakeRequest();
 
-			const response = await sut.handle(request);
+			const response = await sut.handle(mockLoginRequest());
 
 			expect(response.body).toEqual({
 				accessToken: "valid_acess_token",
