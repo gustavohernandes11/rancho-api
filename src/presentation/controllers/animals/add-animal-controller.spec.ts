@@ -3,6 +3,21 @@ import { makeAddAnimalValidations } from "@/main/factories/validation/make-add-a
 import { InvalidParamValue, MissingParamError } from "../../errors";
 import { ok } from "../../helpers/http-helpers";
 import { AddAnimalController } from "./add-animal-controller";
+import { IHttpRequest } from "@/presentation/protocols";
+
+const mockAddAnimalRequest = (bodyOverride?: any): IHttpRequest => {
+	return {
+		body: Object.assign(
+			{
+				name: "any_animal_name",
+				ownerId: "any_id",
+				gender: "F",
+				age: new Date("12/12/2019").toISOString(),
+			},
+			bodyOverride || {}
+		),
+	};
+};
 
 describe("Add Animal Controller", () => {
 	class DbAddAnimalStub implements IDbAddAnimal {
@@ -21,20 +36,12 @@ describe("Add Animal Controller", () => {
 		const sut = new AddAnimalController(loginValidations, dbAddAnimalStub);
 		return { sut, dbAddAnimalStub };
 	};
-	const makeFakeRequest = () => ({
-		body: {
-			name: "any_animal_name",
-			ownerId: "any_id",
-			gender: "F",
-			age: new Date("12/12/2019").toISOString(),
-		},
-	});
 	describe("DbAddAnimal", () => {
 		it("should call the DbAddAnimal", async () => {
 			const { sut, dbAddAnimalStub } = makeSut();
 			const dbAddSpy = jest.spyOn(dbAddAnimalStub, "add");
 
-			await sut.handle(makeFakeRequest());
+			await sut.handle(mockAddAnimalRequest());
 			expect(dbAddSpy).toHaveBeenCalled();
 		});
 
@@ -44,7 +51,7 @@ describe("Add Animal Controller", () => {
 				throw new Error();
 			});
 
-			const result = await sut.handle(makeFakeRequest());
+			const result = await sut.handle(mockAddAnimalRequest());
 
 			expect(result.statusCode).toBe(500);
 		});
@@ -52,48 +59,36 @@ describe("Add Animal Controller", () => {
 	describe("Validations", () => {
 		it("should return 400 when no animal name is provided", async () => {
 			const { sut } = makeSut();
-			const response = await sut.handle({
-				body: { ownerId: "any_id", age: new Date("12/12/2019") },
-			});
+			const response = await sut.handle(
+				mockAddAnimalRequest({ name: undefined })
+			);
 
 			expect(response.statusCode).toBe(400);
 			expect(response.body).toEqual(new MissingParamError("name"));
 		});
 		it("should return 400 when no animal age is provided", async () => {
 			const { sut } = makeSut();
-			const response = await sut.handle({
-				body: {
-					name: "any_animal_name",
-					ownerId: "any_id",
-				},
-			});
+			const response = await sut.handle(
+				mockAddAnimalRequest({ age: undefined })
+			);
 
 			expect(response.statusCode).toBe(400);
 			expect(response.body).toEqual(new MissingParamError("age"));
 		});
 		it("should return 400 when no animal gender is provided", async () => {
 			const { sut } = makeSut();
-			const response = await sut.handle({
-				body: {
-					name: "any_animal_name",
-					ownerId: "any_id",
-					age: new Date().toISOString(),
-				},
-			});
+			const response = await sut.handle(
+				mockAddAnimalRequest({ gender: undefined })
+			);
 
 			expect(response.statusCode).toBe(400);
 			expect(response.body).toEqual(new MissingParamError("gender"));
 		});
 		it("should return 400 when gender is provided with invalid value", async () => {
 			const { sut } = makeSut();
-			const response = await sut.handle({
-				body: {
-					name: "any_animal_name",
-					ownerId: "any_id",
-					age: new Date().toISOString(),
-					gender: "INVALID_VALUE",
-				},
-			});
+			const response = await sut.handle(
+				mockAddAnimalRequest({ gender: "INVALID_VALUE" })
+			);
 
 			expect(response.statusCode).toBe(400);
 			expect(response.body).toEqual(
@@ -103,7 +98,7 @@ describe("Add Animal Controller", () => {
 	});
 	it("should return 200 when the data is correct added", async () => {
 		const { sut } = makeSut();
-		const response = await sut.handle(makeFakeRequest());
+		const response = await sut.handle(mockAddAnimalRequest());
 
 		expect(response.statusCode).toBe(200);
 		expect(response).toEqual(ok());

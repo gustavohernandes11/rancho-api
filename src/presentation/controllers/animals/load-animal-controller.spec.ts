@@ -2,19 +2,14 @@ import { LoadAnimalController } from "./load-animal-controller";
 import { IAnimalModel } from "@/domain/models/animals";
 import { notFound } from "@/presentation/helpers/http-helpers";
 import { IDbLoadAnimal } from "@/domain/usecases/load-animal";
+import { mockAnimalModel } from "./list-animals-controller.spec";
 
 describe("LoadAnimalController", () => {
 	const mockDate = new Date().toISOString();
 
 	class DbLoadAnimalStub implements IDbLoadAnimal {
 		load(id: string): Promise<IAnimalModel | null> {
-			return Promise.resolve({
-				id: "1",
-				name: "any_name",
-				gender: "F",
-				ownerId: "any_ownerId",
-				age: mockDate,
-			});
+			return Promise.resolve(mockAnimalModel({ id: "1", age: mockDate }));
 		}
 	}
 
@@ -69,7 +64,7 @@ describe("LoadAnimalController", () => {
 				id: "1",
 				name: "any_name",
 				gender: "F",
-				ownerId: "any_ownerId",
+				ownerId: "any_owner_id",
 				age: mockDate,
 			})
 		);

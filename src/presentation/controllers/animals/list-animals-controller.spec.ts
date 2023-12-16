@@ -3,36 +3,28 @@ import { IDbListAnimals } from "@/domain/usecases/list-animals";
 import { IAnimalModel } from "@/domain/models/animals";
 import { noContent } from "@/presentation/helpers/http-helpers";
 
-describe("ListAnimalsController", () => {
-	const mockDate = new Date().toISOString();
+const mockDate = new Date().toISOString();
+export const mockAnimalModel = (override?: any): IAnimalModel => {
+	return Object.assign(
+		{
+			id: "any_id",
+			name: "any_name",
+			ownerId: "any_owner_id",
+			gender: "F",
+			age: mockDate,
+		},
+		override || {}
+	) as IAnimalModel;
+};
 
+describe("ListAnimalsController", () => {
 	class DbListAnimalsStub implements IDbListAnimals {
 		list(accountId: string): Promise<IAnimalModel[] | null> {
-			return new Promise((resolve) => {
-				resolve([
-					{
-						id: "1",
-						name: "any_name",
-						ownerId: "any_ownerId",
-						gender: "F",
-						age: mockDate,
-					},
-					{
-						id: "2",
-						name: "any_other_name",
-						ownerId: "any_ownerId",
-						gender: "M",
-						age: mockDate,
-					},
-					{
-						id: "3",
-						name: "any_other_name_again",
-						ownerId: "any_ownerId",
-						gender: "F",
-						age: mockDate,
-					},
-				]);
-			});
+			return Promise.resolve([
+				mockAnimalModel({ id: "1" }),
+				mockAnimalModel({ id: "2" }),
+				mockAnimalModel({ id: "3" }),
+			]);
 		}
 	}
 
@@ -71,7 +63,6 @@ describe("ListAnimalsController", () => {
 		jest.spyOn(listAnimalsStub, "list").mockImplementationOnce(() => {
 			throw new Error();
 		});
-
 		const result = await sut.handle({ body: null });
 
 		expect(result.statusCode).toBe(500);
@@ -88,21 +79,21 @@ describe("ListAnimalsController", () => {
 					id: "1",
 					name: "any_name",
 					gender: "F",
-					ownerId: "any_ownerId",
+					ownerId: "any_owner_id",
 					age: mockDate,
 				},
 				{
 					id: "2",
-					name: "any_other_name",
-					gender: "M",
-					ownerId: "any_ownerId",
+					name: "any_name",
+					gender: "F",
+					ownerId: "any_owner_id",
 					age: mockDate,
 				},
 				{
 					id: "3",
-					name: "any_other_name_again",
+					name: "any_name",
 					gender: "F",
-					ownerId: "any_ownerId",
+					ownerId: "any_owner_id",
 					age: mockDate,
 				},
 			])

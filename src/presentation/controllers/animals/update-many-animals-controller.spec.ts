@@ -9,11 +9,14 @@ import { UpdateManyAnimalsController } from "./update-many-animals-controller";
 
 describe("UpdateManyAnimalsController", () => {
 	const mockDate = new Date().toISOString();
-	const makeFakeUpdateData = (): IUpdateManyAnimalsProps[] => {
-		return [
-			{
-				id: "1",
-				props: {
+	const mockUpdateAnimalData = (
+		overrideId?: string,
+		overrideProps?: any
+	): IUpdateManyAnimalsProps => {
+		return {
+			id: overrideId || "1",
+			props: Object.assign(
+				{
 					name: "any_name_updated_1",
 					gender: "M",
 					age: mockDate,
@@ -24,37 +27,20 @@ describe("UpdateManyAnimalsController", () => {
 					observation: "any_observation_updated",
 					ownerId: "any_ownerId_updated",
 				},
-			},
-			{
-				id: "2",
-				props: {
-					name: "any_name_updated_2",
-					gender: "M",
-					age: mockDate,
-					paternityId: "any_paternity_id_updated",
-					maternityId: "any_maternity_id_updated",
-					batchId: "any_batch_id_updated",
-					code: 123,
-					observation: "any_observation_updated",
-					ownerId: "any_ownerId_updated",
-				},
-			},
-			{
-				id: "3",
-				props: {
-					name: "any_name_updated_3",
-					gender: "M",
-					age: mockDate,
-					paternityId: "any_paternity_id_updated",
-					maternityId: "any_maternity_id_updated",
-					batchId: "any_batch_id_updated",
-				},
-			},
+				overrideProps || {}
+			),
+		};
+	};
+	const makeFakeUpdateArray = (): IUpdateManyAnimalsProps[] => {
+		return [
+			mockUpdateAnimalData("id_1"),
+			mockUpdateAnimalData("id_2"),
+			mockUpdateAnimalData("id_3"),
 		];
 	};
+
 	const makeFakeRequest = () => ({
-		body: makeFakeUpdateData(),
-		animalId: "any_id",
+		body: makeFakeUpdateArray(),
 		accountId: "any_ownerId",
 	});
 
@@ -62,18 +48,12 @@ describe("UpdateManyAnimalsController", () => {
 		async updateMany(
 			animals: IUpdateManyAnimalsProps[]
 		): Promise<(IAnimalModel | null)[]> {
-			const resolvedAnimals = animals.map((al) => ({
-				id: al.id,
-				ownerId: al.props.ownerId || "any_ownerId",
-				age: al.props.age || mockDate,
-				name: al.props.name || "any_name",
-				gender: al.props.gender || "F",
-				paternityId: al.props.paternityId || "any_paternity_id",
-				maternityId: al.props.maternityId || "any_maternity_id",
-				batchId: al.props.batchId || "any_batch_id",
-				code: al.props.code || 123,
-				observation: al.props.observation || "any_observation",
-			}));
+			const resolvedAnimals = animals.map(
+				(al) =>
+					Object.assign(mockUpdateAnimalData(), al.props, {
+						id: al.id,
+					}) as IAnimalModel
+			);
 			return new Promise((resolve) => resolve(resolvedAnimals));
 		}
 	}
@@ -104,36 +84,9 @@ describe("UpdateManyAnimalsController", () => {
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toEqual(
 			expect.arrayContaining([
-				expect.objectContaining({
-					name: "any_name_updated_1",
-					gender: "M",
-					age: mockDate,
-					paternityId: "any_paternity_id_updated",
-					maternityId: "any_maternity_id_updated",
-					batchId: "any_batch_id_updated",
-					code: 123,
-					observation: "any_observation_updated",
-					ownerId: "any_ownerId_updated",
-				}),
-				expect.objectContaining({
-					name: "any_name_updated_2",
-					gender: "M",
-					age: mockDate,
-					paternityId: "any_paternity_id_updated",
-					maternityId: "any_maternity_id_updated",
-					batchId: "any_batch_id_updated",
-					code: 123,
-					observation: "any_observation_updated",
-					ownerId: "any_ownerId_updated",
-				}),
-				expect.objectContaining({
-					name: "any_name_updated_3",
-					gender: "M",
-					age: mockDate,
-					paternityId: "any_paternity_id_updated",
-					maternityId: "any_maternity_id_updated",
-					batchId: "any_batch_id_updated",
-				}),
+				expect.objectContaining(mockUpdateAnimalData("id_1")),
+				expect.objectContaining(mockUpdateAnimalData("id_2")),
+				expect.objectContaining(mockUpdateAnimalData("id_3")),
 			])
 		);
 	});
@@ -147,45 +100,9 @@ describe("UpdateManyAnimalsController", () => {
 		await sut.handle(request);
 
 		expect(dbUpdateSpy).toHaveBeenCalledWith([
-			{
-				id: "1",
-				props: {
-					name: "any_name_updated_1",
-					gender: "M",
-					age: mockDate,
-					paternityId: "any_paternity_id_updated",
-					maternityId: "any_maternity_id_updated",
-					batchId: "any_batch_id_updated",
-					code: 123,
-					observation: "any_observation_updated",
-					ownerId: "any_ownerId_updated",
-				},
-			},
-			{
-				id: "2",
-				props: {
-					name: "any_name_updated_2",
-					gender: "M",
-					age: mockDate,
-					paternityId: "any_paternity_id_updated",
-					maternityId: "any_maternity_id_updated",
-					batchId: "any_batch_id_updated",
-					code: 123,
-					observation: "any_observation_updated",
-					ownerId: "any_ownerId_updated",
-				},
-			},
-			{
-				id: "3",
-				props: {
-					name: "any_name_updated_3",
-					gender: "M",
-					age: mockDate,
-					paternityId: "any_paternity_id_updated",
-					maternityId: "any_maternity_id_updated",
-					batchId: "any_batch_id_updated",
-				},
-			},
+			mockUpdateAnimalData("id_1"),
+			mockUpdateAnimalData("id_2"),
+			mockUpdateAnimalData("id_3"),
 		]);
 	});
 

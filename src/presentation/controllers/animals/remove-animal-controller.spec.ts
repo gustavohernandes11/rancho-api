@@ -6,12 +6,13 @@ import { IController, IValidation } from "@/presentation/protocols";
 import { IDbLoadAnimal } from "@/domain/usecases/load-animal";
 import { IAnimalModel } from "@/domain/models/animals";
 
+const mockRemoveAnimalRequest = (animalidOverride?: string) => {
+	return {
+		animalId: animalidOverride || "valid_id",
+		body: null,
+	};
+};
 describe("Remove Animal Controller", () => {
-	const makeFakeRequest = () => ({
-		animalId: "valid_id",
-		body: {},
-	});
-
 	class DbRemoveAnimalStub implements IDbRemoveAnimal {
 		async remove() {
 			return true;
@@ -58,7 +59,7 @@ describe("Remove Animal Controller", () => {
 	};
 	it("should return 200 if the removal is successful", async () => {
 		const { sut } = makeSut();
-		const response = await sut.handle(makeFakeRequest());
+		const response = await sut.handle(mockRemoveAnimalRequest());
 
 		expect(response).toEqual(ok());
 	});
@@ -69,7 +70,7 @@ describe("Remove Animal Controller", () => {
 			new InvalidParamError("animalId")
 		);
 
-		const response = await sut.handle(makeFakeRequest());
+		const response = await sut.handle(mockRemoveAnimalRequest());
 
 		expect(response).toEqual(badRequest(new InvalidParamError("animalId")));
 	});
@@ -78,7 +79,7 @@ describe("Remove Animal Controller", () => {
 		const { sut, dbRemoveAnimalStub } = makeSut();
 		const removeSpy = jest.spyOn(dbRemoveAnimalStub, "remove");
 
-		const response = await sut.handle(makeFakeRequest());
+		const response = await sut.handle(mockRemoveAnimalRequest());
 
 		expect(removeSpy).toHaveBeenCalledWith("valid_id", undefined);
 		expect(response).toEqual(ok());
@@ -90,7 +91,7 @@ describe("Remove Animal Controller", () => {
 			Promise.resolve(false)
 		);
 
-		const response = await sut.handle(makeFakeRequest());
+		const response = await sut.handle(mockRemoveAnimalRequest());
 
 		expect(response).toEqual(badRequest(new InvalidParamError("animalId")));
 	});
@@ -101,7 +102,7 @@ describe("Remove Animal Controller", () => {
 			throw new Error();
 		});
 
-		const response = await sut.handle(makeFakeRequest());
+		const response = await sut.handle(mockRemoveAnimalRequest());
 
 		expect(response.statusCode).toBe(500);
 	});
