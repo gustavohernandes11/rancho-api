@@ -6,6 +6,7 @@ import { MongoHelper } from "@/infra/db/mongodb/mongo-helper";
 import { sign } from "jsonwebtoken";
 import env from "../config/env";
 import { parseToObjectId } from "@/infra/db/mongodb/utils/parse-to-object-id";
+import { mockAddAnimalModel } from "@/infra/db/mongodb/animal-mongo-repository.spec";
 
 let app: Express;
 let accountCollection: Collection;
@@ -62,12 +63,9 @@ describe("Animal routes", () => {
 		async (): Promise<IMockDatabaseAnimalAndUserType> => {
 			const { userId, accessToken } = await mockDatabaseUser();
 
-			const { insertedId } = await animalColletion.insertOne({
-				name: "any_animal_name",
-				age: new Date("10/10/2000").toISOString(),
-				gender: "F",
-				ownerId: userId,
-			});
+			const { insertedId } = await animalColletion.insertOne(
+				mockAddAnimalModel({ ownerId: userId })
+			);
 
 			return { animalId: insertedId.toHexString(), accessToken };
 		};
@@ -163,25 +161,25 @@ describe("Animal routes", () => {
 		});
 		it("it should update the animal in the database when return 200", async () => {
 			const { animalId, accessToken } = await mockDatabaseAnimalAndUser();
-			const newAge = new Date("01/01/2002").toISOString();
-			const changedName = "changed_animal_name";
+			const modifiedAge = new Date("01/01/2002").toISOString();
+			const modifiedName = "MODIFIED_animal_name";
 
 			await request(app)
 				.put("/api/animals/" + animalId)
 				.set("x-access-token", accessToken)
 				.send({
-					name: changedName,
-					age: newAge,
+					name: modifiedName,
+					age: modifiedAge,
 				})
 				.expect(200);
 
-			const changed = MongoHelper.map(
+			const modified = MongoHelper.map(
 				await animalColletion.findOne({
 					_id: parseToObjectId(animalId),
 				})
 			);
-			expect(changed.age).toBe(newAge);
-			expect(changed.name).toBe(changedName);
+			expect(modified.age).toBe(modifiedAge);
+			expect(modified.name).toBe(modifiedName);
 		});
 	});
 
@@ -191,22 +189,13 @@ describe("Animal routes", () => {
 			await request(app)
 				.post("/api/animals")
 				.set("x-access-token", accessToken)
-				.send({
-					name: "any_name",
-					ownerId: userId,
-					gender: "F",
-					age: mockISODate,
-				})
+				.send(mockAddAnimalModel({ ownerId: userId }))
 				.expect(200);
 		});
 		it("should return 403 when not sending a accessToken", async () => {
 			await request(app)
 				.post("/api/animals")
-				.send({
-					name: "any_name",
-					ownerId: "any_id",
-					age: mockISODate,
-				})
+				.send(mockAddAnimalModel())
 				.expect(403);
 		});
 	});
@@ -237,26 +226,26 @@ describe("Animal routes", () => {
 			const { accessToken, userId } = await mockDatabaseUser();
 			const mockedDate = new Date().toISOString();
 			animalColletion.insertMany([
-				{
-					name: "name_1",
+				mockAddAnimalModel({
+					name: "A1",
 					age: mockedDate,
 					ownerId: userId,
-				},
-				{
-					name: "name_2",
+				}),
+				mockAddAnimalModel({
+					name: "A2",
 					age: mockedDate,
 					ownerId: userId,
-				},
-				{
-					name: "name_3",
+				}),
+				mockAddAnimalModel({
+					name: "A3",
 					age: mockedDate,
 					ownerId: userId,
-				},
-				{
-					name: "name_4",
+				}),
+				mockAddAnimalModel({
+					name: "A4",
 					age: mockedDate,
 					ownerId: userId,
-				},
+				}),
 			]);
 
 			await request(app)
@@ -266,20 +255,21 @@ describe("Animal routes", () => {
 				.then((response: any) => {
 					expect(response.body).toHaveLength(4);
 
-					expect(response.body[0].name).toBe("name_1");
-					expect(response.body[1].name).toBe("name_2");
-					expect(response.body[2].name).toBe("name_3");
-					expect(response.body[3].name).toBe("name_4");
+					expect(response.body[0].name).toBe("A1");
+					expect(response.body[1].name).toBe("A2");
+					expect(response.body[2].name).toBe("A3");
+					expect(response.body[3].name).toBe("A4");
 				});
 		});
 		it("should return 200 when the account and animals exists in the database", async () => {
 			const { accessToken, userId } = await mockDatabaseUser();
 			const mockedDate = new Date().toISOString();
-			animalColletion.insertOne({
-				name: "any_name",
-				age: mockedDate,
-				ownerId: userId,
-			});
+			animalColletion.insertOne(
+				mockAddAnimalModel({
+					age: mockedDate,
+					ownerId: userId,
+				})
+			);
 
 			await request(app)
 				.get("/api/animals")
@@ -311,9 +301,9 @@ describe("Animal routes", () => {
 		});
 		it("it should update all the animals in the database when return 200", async () => {
 			const { animalId, accessToken } = await mockDatabaseAnimalAndUser();
-			const newAge = new Date("01/01/2002").toISOString();
-			const changedName = "changed_animal_name";
-			const changedBatchId = "changed_batch_id";
+			const modifiedAge = new Date("01/01/2002").toISOString();
+			const modifiedName = "MODIFIED_animal_name";
+			const modifiedBatchId = "MODIFIED_batch_id";
 
 			await request(app)
 				.put("/api/animals/")
@@ -322,27 +312,27 @@ describe("Animal routes", () => {
 					{
 						id: animalId,
 						props: {
-							name: changedName,
-							age: newAge,
+							name: modifiedName,
+							age: modifiedAge,
 						},
 					},
 					{
 						id: animalId,
 						props: {
-							batchId: changedBatchId,
+							batchId: modifiedBatchId,
 						},
 					},
 				])
 				.expect(200);
 
-			const changed = MongoHelper.map(
+			const modified = MongoHelper.map(
 				await animalColletion.findOne({
 					_id: parseToObjectId(animalId),
 				})
 			);
-			expect(changed.age).toBe(newAge);
-			expect(changed.name).toBe(changedName);
-			expect(changed.batchId).toBe(changedBatchId);
+			expect(modified.age).toBe(modifiedAge);
+			expect(modified.name).toBe(modifiedName);
+			expect(modified.batchId).toBe(modifiedBatchId);
 		});
 	});
 });
