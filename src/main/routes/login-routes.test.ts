@@ -4,7 +4,6 @@ import { setupApp } from "@/main/config/app";
 import { Collection } from "mongodb";
 import { MongoHelper } from "@/infra/db/mongodb/mongo-helper";
 import { hash } from "bcrypt";
-jest.setTimeout(15000);
 
 let app: Express;
 let accountCollection: Collection;

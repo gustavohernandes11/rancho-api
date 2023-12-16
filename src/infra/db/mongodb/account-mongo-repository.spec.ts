@@ -3,6 +3,17 @@ import { AccountMongoRepository } from "./account-mongo-repository";
 import { MongoHelper } from "./mongo-helper";
 import { IAddAccountModel } from "@/domain/usecases/add-account";
 
+export const mockAccountModel = (override?: any): IAddAccountModel => {
+	return Object.assign(
+		{
+			name: "any_name",
+			email: "any_email@/gmail.com",
+			password: "any_hashed_password",
+		},
+		override || {}
+	) as IAddAccountModel;
+};
+
 describe("Account Mongo Repository", () => {
 	let accountCollection: Collection;
 	beforeAll(async () => {
@@ -26,17 +37,6 @@ describe("Account Mongo Repository", () => {
 
 	const makeSut = (): ISutTypes => {
 		return { sut: new AccountMongoRepository() };
-	};
-
-	const mockAccountModel = (override?: any): IAddAccountModel => {
-		return Object.assign(
-			{
-				name: "any_name",
-				email: "any_email@/gmail.com",
-				password: "any_hashed_password",
-			},
-			override || {}
-		) as IAddAccountModel;
 	};
 
 	describe("add()", () => {

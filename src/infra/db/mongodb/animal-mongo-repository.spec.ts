@@ -2,12 +2,12 @@ import { Collection } from "mongodb";
 import { IAddAnimalModel } from "@/domain/usecases/add-animal";
 import { AnimalMongoRepository } from "./animal-mongo-repository";
 import { MongoHelper } from "./mongo-helper";
-import { IAddBatchModel } from "@/domain/usecases/add-batch";
+import { mockAddBatchModel } from "./batch-mongo-repository.spec";
 
 export const mockAddAnimalModel = (override?: any): IAddAnimalModel => {
 	return Object.assign(
 		{
-			nome: "any_animal_name",
+			name: "any_animal_name",
 			ownerId: "any_owner_id",
 			gender: "F",
 			batchId: "any_id",
@@ -15,16 +15,6 @@ export const mockAddAnimalModel = (override?: any): IAddAnimalModel => {
 		},
 		override || {}
 	) as IAddAnimalModel;
-};
-const mockAddBatchModel = (override?: any): IAddBatchModel => {
-	return Object.assign(
-		{
-			name: "any_batch_name",
-			observation: "any_description",
-			ownerId: "any_owner_id",
-		},
-		override || {}
-	) as IAddBatchModel;
 };
 
 describe("Animal Mongo Repository", () => {

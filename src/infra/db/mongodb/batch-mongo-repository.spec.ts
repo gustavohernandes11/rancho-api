@@ -5,7 +5,7 @@ import { IAddBatchModel } from "@/domain/usecases/add-batch";
 import { IUpdateBatchModel } from "@/domain/usecases/update-batch";
 import { mockAddAnimalModel } from "./animal-mongo-repository.spec";
 
-const mockAddBatchModel = (override?: any): IAddBatchModel => {
+export const mockAddBatchModel = (override?: any): IAddBatchModel => {
 	return Object.assign(
 		{
 			name: "any_batch_name",
@@ -15,6 +15,7 @@ const mockAddBatchModel = (override?: any): IAddBatchModel => {
 		override || {}
 	) as IAddBatchModel;
 };
+
 describe("Batch Mongo Repository", () => {
 	let batchesCollection: Collection;
 	let accountCollection: Collection;

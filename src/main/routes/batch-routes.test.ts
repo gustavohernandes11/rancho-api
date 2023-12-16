@@ -6,30 +6,13 @@ import { MongoHelper } from "@/infra/db/mongodb/mongo-helper";
 import { sign } from "jsonwebtoken";
 import env from "../config/env";
 import { parseToObjectId } from "@/infra/db/mongodb/utils/parse-to-object-id";
-jest.setTimeout(15000);
+import { mockAddAnimalModel } from "@/infra/db/mongodb/animal-mongo-repository.spec";
+import { mockAddBatchModel } from "@/infra/db/mongodb/batch-mongo-repository.spec";
 
 let app: Express;
-let batchCollection: Collection;
+let batchesCollection: Collection;
 let accountCollection: Collection;
 let animalsCollection: Collection;
-
-beforeAll(async () => {
-	app = await setupApp();
-	await MongoHelper.connect(process.env.MONGO_URL!);
-});
-
-afterAll(async () => {
-	await MongoHelper.disconnect();
-});
-
-beforeEach(async () => {
-	batchCollection = MongoHelper.getCollection("batches");
-	accountCollection = MongoHelper.getCollection("accounts");
-	animalsCollection = MongoHelper.getCollection("animals");
-	await batchCollection.deleteMany({});
-	await batchCollection.deleteMany({});
-	await animalsCollection.deleteMany({});
-});
 
 interface IMockDatabaseUserType {
 	userId: string;
@@ -67,7 +50,7 @@ const mockDatabaseBatchAndUser =
 	async (): Promise<IMockDatabaseBatchAndUserType> => {
 		const { userId, accessToken } = await mockDatabaseUser();
 
-		const { insertedId } = await batchCollection.insertOne({
+		const { insertedId } = await batchesCollection.insertOne({
 			name: "any_batch_name",
 			observation: "any_batch_observation",
 			ownerId: userId,
@@ -77,6 +60,25 @@ const mockDatabaseBatchAndUser =
 	};
 
 describe("Batch routes", () => {
+	beforeAll(async () => {
+		app = await setupApp();
+		await MongoHelper.connect(process.env.MONGO_URL!);
+	});
+
+	afterAll(async () => {
+		await MongoHelper.disconnect();
+	});
+
+	beforeEach(async () => {
+		animalsCollection = MongoHelper.getCollection("animals");
+		accountCollection = MongoHelper.getCollection("accounts");
+		batchesCollection = MongoHelper.getCollection("batches");
+
+		await animalsCollection.deleteMany({});
+		await accountCollection.deleteMany({});
+		await batchesCollection.deleteMany({});
+	});
+
 	describe("GET /api/batches/:batchId/info", () => {
 		it("should return 403 when not sending an accessToken", async () => {
 			const { batchId } = await mockDatabaseBatchAndUser();
@@ -85,7 +87,7 @@ describe("Batch routes", () => {
 
 		it("should return 404 when trying to get information about a non-existing batch", async () => {
 			const { accessToken } = await mockDatabaseUser();
-			const nonExistingBatchId = "non_existing_batch_id";
+			const nonExistingBatchId = "NONEXISTENT_batch_id";
 			await request(app)
 				.get(`/api/batches/${nonExistingBatchId}/info`)
 				.set("x-access-token", accessToken)
@@ -97,24 +99,9 @@ describe("Batch routes", () => {
 				await mockDatabaseBatchAndUser();
 
 			await animalsCollection.insertMany([
-				{
-					name: "animal_name_1",
-					age: "any_age",
-					ownerId: userId,
-					batchId: batchId,
-				},
-				{
-					name: "animal_name_2",
-					age: "any_age",
-					ownerId: userId,
-					batchId: batchId,
-				},
-				{
-					name: "animal_name_3",
-					age: "any_age",
-					ownerId: userId,
-					batchId: batchId,
-				},
+				mockAddAnimalModel({ ownerId: userId, batchId }),
+				mockAddAnimalModel({ ownerId: userId, batchId }),
+				mockAddAnimalModel({ ownerId: userId, batchId }),
 			]);
 
 			await request(app)
@@ -140,7 +127,7 @@ describe("Batch routes", () => {
 
 		it("should return 404 when trying to get information about a non-existing batch", async () => {
 			const { accessToken } = await mockDatabaseUser();
-			const nonExistingBatchId = "non_existing_batch_id";
+			const nonExistingBatchId = "NONEXISTENT_batch_id";
 			await request(app)
 				.get(`/api/batches/${nonExistingBatchId}`)
 				.set("x-access-token", accessToken)
@@ -152,24 +139,9 @@ describe("Batch routes", () => {
 				await mockDatabaseBatchAndUser();
 
 			animalsCollection.insertMany([
-				{
-					name: "animal_name_1",
-					age: "any_age",
-					ownerId: userId,
-					batchId: batchId,
-				},
-				{
-					name: "animal_name_2",
-					age: "any_age",
-					ownerId: userId,
-					batchId: batchId,
-				},
-				{
-					name: "animal_name_3",
-					age: "any_age",
-					ownerId: userId,
-					batchId: batchId,
-				},
+				mockAddAnimalModel({ ownerId: userId, batchId }),
+				mockAddAnimalModel({ ownerId: userId, batchId }),
+				mockAddAnimalModel({ ownerId: userId, batchId }),
 			]);
 
 			await request(app)
@@ -194,7 +166,7 @@ describe("Batch routes", () => {
 
 		it("should return 404 when trying to delete a non-existing batch", async () => {
 			const { accessToken } = await mockDatabaseUser();
-			const nonExistingBatchId = "non_existing_batch_id";
+			const nonExistingBatchId = "NONEXISTENT_batch_id";
 			await request(app)
 				.delete(`/api/batches/${nonExistingBatchId}`)
 				.set("x-access-token", accessToken)
@@ -216,7 +188,7 @@ describe("Batch routes", () => {
 				.set("x-access-token", accessToken)
 				.expect(200);
 
-			const deletedBatch = await batchCollection.findOne({
+			const deletedBatch = await batchesCollection.findOne({
 				_id: parseToObjectId(batchId),
 			});
 
@@ -253,22 +225,22 @@ describe("Batch routes", () => {
 
 		it("should update the batch in the database when returning 200", async () => {
 			const { batchId, accessToken } = await mockDatabaseBatchAndUser();
-			const changedName = "changed_batch_name";
+			const modifiedName = "MODIFIED_batch_name";
 
 			await request(app)
 				.put(`/api/batches/${batchId}`)
 				.set("x-access-token", accessToken)
 				.send({
-					name: changedName,
+					name: modifiedName,
 				})
 				.expect(200);
 
 			const changed = MongoHelper.map(
-				await batchCollection.findOne({
+				await batchesCollection.findOne({
 					_id: parseToObjectId(batchId),
 				})
 			);
-			expect(changed.name).toBe(changedName);
+			expect(changed.name).toBe(modifiedName);
 		});
 	});
 
@@ -278,21 +250,14 @@ describe("Batch routes", () => {
 			await request(app)
 				.post("/api/batches")
 				.set("x-access-token", accessToken)
-				.send({
-					name: "any_name",
-					observation: "any_observation",
-					ownerId: userId,
-				})
+				.send(mockAddBatchModel({ ownerId: userId }))
 				.expect(200);
 		});
 
 		it("should return 403 when not sending an accessToken", async () => {
 			await request(app)
 				.post("/api/batches")
-				.send({
-					name: "any_name",
-					ownerId: "any_id",
-				})
+				.send(mockAddBatchModel())
 				.expect(403);
 		});
 	});
@@ -315,27 +280,27 @@ describe("Batch routes", () => {
 		it("should list the batches when they exist", async () => {
 			const { accessToken, userId } = await mockDatabaseUser();
 
-			batchCollection.insertMany([
-				{
-					name: "name_1",
-					observation: "observation_1",
+			batchesCollection.insertMany([
+				mockAddBatchModel({
+					name: "B1",
+					observation: "Obs1",
 					ownerId: userId,
-				},
-				{
-					name: "name_2",
-					observation: "observation_2",
+				}),
+				mockAddBatchModel({
+					name: "B2",
+					observation: "Obs2",
 					ownerId: userId,
-				},
-				{
-					name: "name_3",
-					observation: "observation_3",
+				}),
+				mockAddBatchModel({
+					name: "B3",
+					observation: "Obs3",
 					ownerId: userId,
-				},
-				{
-					name: "name_4",
-					observation: "observation_4",
+				}),
+				mockAddBatchModel({
+					name: "B4",
+					observation: "Obs4",
 					ownerId: userId,
-				},
+				}),
 			]);
 
 			await request(app)
@@ -344,25 +309,21 @@ describe("Batch routes", () => {
 				.send({})
 				.then((response: any) => {
 					expect(response.body).toHaveLength(4);
-
-					expect(response.body[0].name).toBe("name_1");
-					expect(response.body[0].observation).toBe("observation_1");
-					expect(response.body[1].name).toBe("name_2");
-					expect(response.body[1].observation).toBe("observation_2");
-					expect(response.body[2].name).toBe("name_3");
-					expect(response.body[2].observation).toBe("observation_3");
-					expect(response.body[3].name).toBe("name_4");
-					expect(response.body[3].observation).toBe("observation_4");
+					expect(response.body[0].name).toBe("B1");
+					expect(response.body[0].observation).toBe("Obs1");
+					expect(response.body[1].name).toBe("B2");
+					expect(response.body[1].observation).toBe("Obs2");
+					expect(response.body[2].name).toBe("B3");
+					expect(response.body[2].observation).toBe("Obs3");
+					expect(response.body[3].name).toBe("B4");
+					expect(response.body[3].observation).toBe("Obs4");
 				});
 		});
 
 		it("should return 200 when the account and batches exist in the database", async () => {
 			const { accessToken, userId } = await mockDatabaseUser();
 
-			batchCollection.insertOne({
-				name: "any_name",
-				ownerId: userId,
-			});
+			batchesCollection.insertOne(mockAddBatchModel({ ownerId: userId }));
 
 			await request(app)
 				.get("/api/batches")

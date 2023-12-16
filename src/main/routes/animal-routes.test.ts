@@ -6,7 +6,6 @@ import { MongoHelper } from "@/infra/db/mongodb/mongo-helper";
 import { sign } from "jsonwebtoken";
 import env from "../config/env";
 import { parseToObjectId } from "@/infra/db/mongodb/utils/parse-to-object-id";
-jest.setTimeout(15000);
 
 let app: Express;
 let accountCollection: Collection;
@@ -79,7 +78,7 @@ describe("Animal routes", () => {
 		});
 		it("should return 404 when trying to get information about a non-existing animal", async () => {
 			const { accessToken } = await mockDatabaseUser();
-			const nonExistingAnimalId = "non_existing_animal_id";
+			const nonExistingAnimalId = "NONEXISTENT_animal_id";
 			await request(app)
 				.get(`/api/animals/${nonExistingAnimalId}`)
 				.set("x-access-token", accessToken)
@@ -108,7 +107,7 @@ describe("Animal routes", () => {
 
 		it("should return 404 when trying to delete a non-existing animal", async () => {
 			const { accessToken } = await mockDatabaseUser();
-			const nonExistingAnimalId = "non_existing_animal_id";
+			const nonExistingAnimalId = "NONEXISTENT_animal_id";
 			await request(app)
 				.delete(`/api/animals/${nonExistingAnimalId}`)
 				.set("x-access-token", accessToken)
