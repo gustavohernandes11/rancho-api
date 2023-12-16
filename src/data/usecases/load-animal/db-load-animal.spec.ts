@@ -61,7 +61,7 @@ describe("DbLoadAnimals", () => {
 				"loadAnimal"
 			).mockReturnValueOnce(new Promise((resolve) => resolve(null)));
 
-			const fakeAnimalId = "non_existing_id";
+			const fakeAnimalId = "NONEXISTENT_id";
 			const result = await sut.load(fakeAnimalId);
 
 			expect(result).toBeNull();

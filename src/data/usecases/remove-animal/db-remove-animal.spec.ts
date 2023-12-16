@@ -76,7 +76,7 @@ describe("DbRemoveAnimal", () => {
 				removeAnimalByIdRepositoryStub,
 				"removeAnimal"
 			).mockReturnValueOnce(Promise.resolve(false));
-			const result = await sut.remove("non_existing_id", "any_owner_id");
+			const result = await sut.remove("NONEXISTENT_id", "any_owner_id");
 
 			expect(result).toBe(false);
 		});

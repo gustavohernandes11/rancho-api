@@ -107,7 +107,7 @@ describe("Account Mongo Repository", () => {
 	describe("checkById()", () => {
 		it("should return false if the account do not exists", async () => {
 			const { sut } = makeSut();
-			const response = await sut.checkById("non_existent_id");
+			const response = await sut.checkById("NON_EXISTENT_id");
 			expect(response).toBe(false);
 		});
 		it("should return true if the account exists", async () => {
@@ -188,7 +188,7 @@ describe("Account Mongo Repository", () => {
 					role: "admin",
 				})
 			);
-			const account = await sut.loadByToken("invalid_access_token");
+			const account = await sut.loadByToken("INVALID_access_token");
 			expect(account).toBeNull();
 		});
 

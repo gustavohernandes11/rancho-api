@@ -83,7 +83,7 @@ describe("Animal Mongo Repository", () => {
 	describe("listByBatch()", () => {
 		it("should return an empty array when there is no batch with the given ID", async () => {
 			const sut = new AnimalMongoRepository();
-			const result = await sut.listByBatch("non_existent_batch_id");
+			const result = await sut.listByBatch("NON_EXISTENT_batch_id");
 
 			expect(Array.isArray(result)).toBe(true);
 			expect(result?.length).toBe(0);
@@ -148,7 +148,7 @@ describe("Animal Mongo Repository", () => {
 
 			const { insertedId } = await animalsCollection.insertOne(
 				mockAddAnimalModel({
-					name: "original_animal_name",
+					name: "ORIGINAL_animal_name",
 					ownerId: "any_owner_id",
 				})
 			);
@@ -161,7 +161,7 @@ describe("Animal Mongo Repository", () => {
 			});
 
 			expect(animal!.age).toBe(updatedDate);
-			expect(animal!.name).toBe("original_animal_name");
+			expect(animal!.name).toBe("ORIGINAL_animal_name");
 			expect(animal!.ownerId).toBe("any_owner_id");
 		});
 		it("should update only the name when required", async () => {
@@ -169,20 +169,20 @@ describe("Animal Mongo Repository", () => {
 			const originalDate = new Date("12/12/2019").toISOString();
 			const { insertedId } = await animalsCollection.insertOne(
 				mockAddAnimalModel({
-					name: "original_animal_name",
+					name: "ORIGINAL_animal_name",
 					ownerId: "any_owner_id",
 					age: originalDate,
 				})
 			);
 			await sut.updateAnimal(insertedId.toHexString(), {
-				name: "modified_name",
+				name: "MODIFIED_name",
 			});
 			const animal = await animalsCollection.findOne({
 				_id: insertedId,
 			});
 
 			expect(animal!.age).toBe(originalDate);
-			expect(animal!.name).toBe("modified_name");
+			expect(animal!.name).toBe("MODIFIED_name");
 			expect(animal!.ownerId).toBe("any_owner_id");
 		});
 		it("should update only the ownerId when required", async () => {
@@ -190,21 +190,21 @@ describe("Animal Mongo Repository", () => {
 			const originalDate = new Date("12/12/2019").toISOString();
 			const { insertedId } = await animalsCollection.insertOne(
 				mockAddAnimalModel({
-					name: "original_animal_name",
+					name: "ORIGINAL_animal_name",
 					ownerId: "any_owner_id",
 					age: originalDate,
 				})
 			);
 
 			await sut.updateAnimal(insertedId.toHexString(), {
-				ownerId: "modified_ownerId",
+				ownerId: "MODIFIED_ownerId",
 			});
 
 			const animal = await animalsCollection.findOne({ _id: insertedId });
 
-			expect(animal!.ownerId).toBe("modified_ownerId");
+			expect(animal!.ownerId).toBe("MODIFIED_ownerId");
 			expect(animal!.age).toBe(originalDate);
-			expect(animal!.name).toBe("original_animal_name");
+			expect(animal!.name).toBe("ORIGINAL_animal_name");
 		});
 		it("should return the updated animal when the update is correctly done", async () => {
 			const sut = new AnimalMongoRepository();
@@ -215,21 +215,21 @@ describe("Animal Mongo Repository", () => {
 			);
 
 			const result = await sut.updateAnimal(insertedId.toHexString(), {
-				name: "modified_animal_name",
-				ownerId: "modified_ownerId",
+				name: "MODIFIED_animal_name",
+				ownerId: "MODIFIED_ownerId",
 				age: mockedDate,
 			});
 
 			expect(result).toBeTruthy();
-			expect(result?.name).toBe("modified_animal_name");
-			expect(result?.ownerId).toBe("modified_ownerId");
+			expect(result?.name).toBe("MODIFIED_animal_name");
+			expect(result?.ownerId).toBe("MODIFIED_ownerId");
 			expect(result?.age).toBe(mockedDate);
 		});
 		it("should return null when the animal do not exists in the database", async () => {
 			const sut = new AnimalMongoRepository();
-			const result = await sut.updateAnimal("invalid_id", {
-				name: "modified_animal_name",
-				ownerId: "modified_ownerId",
+			const result = await sut.updateAnimal("INVALID_id", {
+				name: "MODIFIED_animal_name",
+				ownerId: "MODIFIED_ownerId",
 				age: new Date("02/12/2019").toISOString(),
 			});
 
@@ -274,7 +274,7 @@ describe("Animal Mongo Repository", () => {
 
 		it("should return false when the animal do not exists in the database", async () => {
 			const sut = new AnimalMongoRepository();
-			const result = await sut.removeAnimal("invalid_id");
+			const result = await sut.removeAnimal("INVALID_id");
 
 			expect(result).toBeFalsy();
 		});

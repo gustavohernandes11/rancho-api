@@ -123,7 +123,7 @@ describe("DbRemoveBatch", () => {
 				removeBatchByIdRepositoryStub,
 				"removeBatch"
 			).mockReturnValueOnce(Promise.resolve(false));
-			const result = await sut.remove("non_existing_batch_id");
+			const result = await sut.remove("NONEXISTENT_batch_id");
 
 			expect(result).toBe(false);
 		});

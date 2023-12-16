@@ -60,7 +60,7 @@ describe("DbLoadBatch", () => {
 				"loadBatch"
 			).mockReturnValueOnce(new Promise((resolve) => resolve(null)));
 
-			const fakeBatchId = "non_existing_id";
+			const fakeBatchId = "NONEXISTENT_id";
 			const result = await sut.load(fakeBatchId);
 
 			expect(result).toBeNull();
