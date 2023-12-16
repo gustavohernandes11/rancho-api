@@ -4,7 +4,7 @@ import { AnimalMongoRepository } from "./animal-mongo-repository";
 import { MongoHelper } from "./mongo-helper";
 import { IAddBatchModel } from "@/domain/usecases/add-batch";
 
-const mockAddAnimalModel = (override?: any): IAddAnimalModel => {
+export const mockAddAnimalModel = (override?: any): IAddAnimalModel => {
 	return Object.assign(
 		{
 			nome: "any_animal_name",

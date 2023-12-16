@@ -3,12 +3,18 @@ import { BatchMongoRepository } from "./batch-mongo-repository";
 import { MongoHelper } from "./mongo-helper";
 import { IAddBatchModel } from "@/domain/usecases/add-batch";
 import { IUpdateBatchModel } from "@/domain/usecases/update-batch";
+import { mockAddAnimalModel } from "./animal-mongo-repository.spec";
 
-const makeFakeBatch = (): IAddBatchModel => ({
-	name: "any_batch_name",
-	ownerId: "any_owner_id",
-});
-
+const mockAddBatchModel = (override?: any): IAddBatchModel => {
+	return Object.assign(
+		{
+			name: "any_batch_name",
+			ownerId: "any_owner_id",
+			observation: "any_observation",
+		},
+		override || {}
+	) as IAddBatchModel;
+};
 describe("Batch Mongo Repository", () => {
 	let batchesCollection: Collection;
 	let accountCollection: Collection;
@@ -37,7 +43,7 @@ describe("Batch Mongo Repository", () => {
 		it("should return true if the batch was added", async () => {
 			const sut = new BatchMongoRepository();
 
-			const result = await sut.addBatch(makeFakeBatch());
+			const result = await sut.addBatch(mockAddBatchModel());
 			expect(result).toBeTruthy();
 		});
 	});
@@ -45,10 +51,7 @@ describe("Batch Mongo Repository", () => {
 	describe("checkByName()", () => {
 		it("should return true when the batch exists in the database with this name", async () => {
 			const sut = new BatchMongoRepository();
-			await batchesCollection.insertOne({
-				name: "any_batch_name",
-				ownerId: "any_owner_id",
-			});
+			await batchesCollection.insertOne(mockAddBatchModel());
 			const result = await sut.checkByName(
 				"any_batch_name",
 				"any_owner_id"
@@ -58,17 +61,14 @@ describe("Batch Mongo Repository", () => {
 		it("should return false when the batch do not exists in the database with this name and ownerId", async () => {
 			const sut = new BatchMongoRepository();
 			const result = await sut.checkByName(
-				"invalid_batch_name",
+				"INVALID_batch_name",
 				"any_owner_id"
 			);
 			expect(result).toBeFalsy();
 		});
 		it("should return false when the batch do exists in the database but with other owner", async () => {
 			const sut = new BatchMongoRepository();
-			await batchesCollection.insertOne({
-				name: "any_batch_name",
-				ownerId: "any_owner_id",
-			});
+			await batchesCollection.insertOne(mockAddBatchModel());
 			const result = await sut.checkByName(
 				"any_batch_name",
 				"OTHER_OWNER_ID"
@@ -80,16 +80,15 @@ describe("Batch Mongo Repository", () => {
 	describe("checkById()", () => {
 		it("should return true when the batch exists in the database with this ID", async () => {
 			const sut = new BatchMongoRepository();
-			const { insertedId } = await batchesCollection.insertOne({
-				name: "any_batch_name",
-				ownerId: "any_ownerId",
-			});
+			const { insertedId } = await batchesCollection.insertOne(
+				mockAddBatchModel()
+			);
 			const result = await sut.checkById(insertedId.toHexString());
 			expect(result).toBeTruthy();
 		});
 		it("should return false when the batch do not exists in the database with this ID", async () => {
 			const sut = new BatchMongoRepository();
-			const result = await sut.checkById("invalid_batch_name");
+			const result = await sut.checkById("INVALID_batch_name");
 			expect(result).toBeFalsy();
 		});
 	});
@@ -98,7 +97,7 @@ describe("Batch Mongo Repository", () => {
 		it("should return falsy if the ownerId is not valid", async () => {
 			const sut = new BatchMongoRepository();
 
-			const result = await sut.listBatches("non_existent_owner_id");
+			const result = await sut.listBatches("NON_EXISTENT_owner_id");
 
 			expect(result).toHaveLength(0);
 		});
@@ -106,23 +105,14 @@ describe("Batch Mongo Repository", () => {
 		it("should return an array of batches from the correct ownerId", async () => {
 			const sut = new BatchMongoRepository();
 
-			const ownerId = "valid_owner_id";
+			const userId = "valid_owner_id";
 			await batchesCollection.insertMany([
-				{
-					name: "batch_1",
-					ownerId,
-				},
-				{
-					name: "batch_2",
-					ownerId,
-				},
-				{
-					name: "batch_3",
-					ownerId: "any_other_ownerId",
-				},
+				mockAddBatchModel({ ownerId: userId }),
+				mockAddBatchModel({ ownerId: userId }),
+				mockAddBatchModel({ ownerId: "OTHER_OWNER_ID" }),
 			]);
 
-			const result = await sut.listBatches(ownerId);
+			const result = await sut.listBatches(userId);
 
 			expect(Array.isArray(result)).toBe(true);
 			expect(result.length).toBe(2);
@@ -133,22 +123,22 @@ describe("Batch Mongo Repository", () => {
 		it("should remove the batch from the database", async () => {
 			const sut = new BatchMongoRepository();
 			const { insertedId } = await batchesCollection.insertOne(
-				makeFakeBatch()
+				mockAddBatchModel()
 			);
 			const result = await sut.removeBatch(insertedId.toHexString());
 			expect(result).toBeTruthy();
 		});
 		it("should return false if the batch does not exist", async () => {
 			const sut = new BatchMongoRepository();
-			const result = await sut.removeBatch("non_existent_id");
+			const result = await sut.removeBatch("NON_EXISTENT_ID");
 			expect(result).toBeFalsy();
 		});
 
 		it("should return false if exists batches but with other ID", async () => {
 			const sut = new BatchMongoRepository();
 
-			await batchesCollection.insertOne(makeFakeBatch());
-			const result = await sut.removeBatch("wrong_id");
+			await batchesCollection.insertOne(mockAddBatchModel());
+			const result = await sut.removeBatch("WRONG_ID");
 			expect(result).toBeFalsy();
 		});
 	});
@@ -157,11 +147,11 @@ describe("Batch Mongo Repository", () => {
 		it("should update the batch with the given ID", async () => {
 			const sut = new BatchMongoRepository();
 			const { insertedId } = await batchesCollection.insertOne(
-				makeFakeBatch()
+				mockAddBatchModel()
 			);
 			const updateData: IUpdateBatchModel = {
-				name: "updated_name",
-				ownerId: "updated_owner_id",
+				name: "UPDATED_name",
+				ownerId: "UPDATED_owner_id",
 			};
 			const result = await sut.updateBatch(
 				insertedId.toHexString(),
@@ -177,8 +167,8 @@ describe("Batch Mongo Repository", () => {
 		it("should return null if the batch with the given ID does not exist", async () => {
 			const sut = new BatchMongoRepository();
 			const updateData: IUpdateBatchModel = {
-				name: "updated_name",
-				ownerId: "updated_owner_id",
+				name: "UPDATED_name",
+				ownerId: "UPDATED_owner_id",
 			};
 			const result = await sut.updateBatch("non_existent_id", updateData);
 			expect(result).toBeNull();
@@ -186,18 +176,18 @@ describe("Batch Mongo Repository", () => {
 		it("should return the updated batch when success", async () => {
 			const sut = new BatchMongoRepository();
 			const { insertedId } = await batchesCollection.insertOne(
-				makeFakeBatch()
+				mockAddBatchModel()
 			);
 			const updateData: IUpdateBatchModel = {
-				name: "updated_name",
-				ownerId: "updated_owner_id",
+				name: "UPDATED_name",
+				ownerId: "UPDATED_owner_id",
 			};
 			const result = await sut.updateBatch(
 				insertedId.toHexString(),
 				updateData
 			);
-			expect(result?.name).toBe("updated_name");
-			expect(result?.ownerId).toBe("updated_owner_id");
+			expect(result?.name).toBe("UPDATED_name");
+			expect(result?.ownerId).toBe("UPDATED_owner_id");
 			expect(result?.id).toBeTruthy();
 		});
 	});
@@ -210,30 +200,12 @@ describe("Batch Mongo Repository", () => {
 		it("should return the batch from the correct batch from the database", async () => {
 			const sut = new BatchMongoRepository();
 			const { insertedIds } = await batchesCollection.insertMany([
-				{
-					name: "first_batch",
-					ownerId: "any_id",
-				},
-				{
-					name: "second_batch",
-					ownerId: "any_id2",
-				},
+				mockAddBatchModel({ name: "first_batch" }),
+				mockAddBatchModel({ name: "second_batch" }),
 			]);
 			await animalsCollection.insertMany([
-				{
-					name: "first_batch",
-					ownerId: "any_id",
-					age: "any_date",
-					gender: "M",
-					batchId: insertedIds[0].toHexString(),
-				},
-				{
-					name: "second_batch",
-					ownerId: "any_id2",
-					age: "any_date",
-					gender: "M",
-					batchId: insertedIds[0].toHexString(),
-				},
+				mockAddAnimalModel({ batchId: insertedIds[0].toHexString() }),
+				mockAddAnimalModel({ batchId: insertedIds[0].toHexString() }),
 			]);
 			let result = await sut.loadBatch(insertedIds[0].toHexString());
 			expect(result?.name).toBe("first_batch");
