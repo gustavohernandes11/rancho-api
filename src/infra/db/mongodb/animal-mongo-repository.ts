@@ -99,26 +99,34 @@ export class AnimalMongoRepository
 		queryParams?: IQueryParams
 	): Promise<IAnimalModel[]> {
 		const animalsCollection = MongoHelper.getCollection("animals");
-		const matchQuery: { ownerId: string; name?: { $regex: RegExp } } = {
+		const matchQuery: { ownerId: string; $or?: any[] } = {
 			ownerId,
 		};
 
 		if (queryParams?.search) {
-			matchQuery.name = {
-				$regex: new RegExp(queryParams.search.toString().trim(), "i"),
-			};
+			const searchRegex = new RegExp(
+				queryParams.search.toString().trim(),
+				"i"
+			);
+
+			matchQuery.$or = [
+				{
+					name: {
+						$regex: searchRegex,
+					},
+				},
+				{
+					code: {
+						$regex: searchRegex,
+					},
+				},
+			];
 		}
-		// const result = (await animalsCollection
-		// 	.aggregate([
-		// 		{
-		// 			$match: matchQuery,
-		// 		},
-		// 	])
-		// 	.toArray()) as IAnimalModel[];
 		const result = await animalsCollection.find(matchQuery).toArray();
 
 		return MongoHelper.mapCollection(result);
 	}
+
 	async removeAnimal(animalId: string | ObjectId): Promise<boolean> {
 		const animalsCollection = MongoHelper.getCollection("animals");
 		const { deletedCount } = await animalsCollection.deleteOne({

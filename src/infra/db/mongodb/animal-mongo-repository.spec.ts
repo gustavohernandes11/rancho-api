@@ -346,5 +346,18 @@ describe("Animal Mongo Repository", () => {
 			const result = await sut.listAnimals(userId, { search: "C" });
 			expect(result.length).toBe(0);
 		});
+		it("should search in code and name when search does not match", async () => {
+			const sut = new AnimalMongoRepository();
+			const { userId } = await mockDatabaseUser();
+
+			await animalsCollection.insertMany([
+				mockAddAnimalModel({ ownerId: userId, name: "Animal123" }),
+				mockAddAnimalModel({ ownerId: userId, code: "123" }),
+				mockAddAnimalModel({ ownerId: userId, name: "FOO" }),
+			]);
+
+			const result = await sut.listAnimals(userId, { search: "12" });
+			expect(result.length).toBe(2);
+		});
 	});
 });
