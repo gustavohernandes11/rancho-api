@@ -5,6 +5,7 @@ export const adaptRoute = (controller: IController) => {
 	return async (req: Request, res: Response) => {
 		const request = {
 			body: req.body || {},
+			query: req?.query,
 			...(req.header || {}),
 			...(req.params || {}),
 			accountId: req.accountId,

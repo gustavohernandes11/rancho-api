@@ -307,5 +307,44 @@ describe("Animal Mongo Repository", () => {
 			const result = await sut.listAnimals(userId);
 			expect(result.length).toBe(2);
 		});
+		it("should search the correct animals in case insensitive", async () => {
+			const sut = new AnimalMongoRepository();
+			const { userId } = await mockDatabaseUser();
+
+			await animalsCollection.insertMany([
+				mockAddAnimalModel({ ownerId: userId, name: "FOO" }),
+				mockAddAnimalModel({ ownerId: userId, name: "BAR" }),
+				mockAddAnimalModel({ ownerId: userId, name: "BAZ" }),
+			]);
+
+			const result = await sut.listAnimals(userId, { search: "ba" });
+			expect(result.length).toBe(2);
+		});
+		it("should return all animals when search is empty", async () => {
+			const sut = new AnimalMongoRepository();
+			const { userId } = await mockDatabaseUser();
+
+			await animalsCollection.insertMany([
+				mockAddAnimalModel({ ownerId: userId, name: "FOO" }),
+				mockAddAnimalModel({ ownerId: userId, name: "BAR" }),
+				mockAddAnimalModel({ ownerId: userId, name: "BAZ" }),
+			]);
+
+			const result = await sut.listAnimals(userId, { search: "" });
+			expect(result.length).toBe(3);
+		});
+		it("should return none when search does not match", async () => {
+			const sut = new AnimalMongoRepository();
+			const { userId } = await mockDatabaseUser();
+
+			await animalsCollection.insertMany([
+				mockAddAnimalModel({ ownerId: userId, name: "FOO" }),
+				mockAddAnimalModel({ ownerId: userId, name: "BAR" }),
+				mockAddAnimalModel({ ownerId: userId, name: "BAZ" }),
+			]);
+
+			const result = await sut.listAnimals(userId, { search: "C" });
+			expect(result.length).toBe(0);
+		});
 	});
 });

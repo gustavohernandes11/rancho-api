@@ -9,6 +9,15 @@ export const MongoHelper = {
 		this.client = await MongoClient.connect(uri);
 	},
 
+	async createIndexes(): Promise<void> {
+		const animalsCollection = this.getCollection("animals");
+
+		await animalsCollection.createIndex({
+			name: "text",
+			code: "text",
+		});
+	},
+
 	async disconnect(): Promise<void> {
 		await this.client?.close();
 		this.client = null as unknown as MongoClient;

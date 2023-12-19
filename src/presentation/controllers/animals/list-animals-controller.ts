@@ -7,8 +7,9 @@ export class ListAnimalsController {
 
 	async handle(request: IHttpRequest) {
 		try {
-			const { accountId } = request as any;
-			const animals = await this.dbListAnimals.list(accountId);
+			const { accountId, query } = request as any;
+
+			const animals = await this.dbListAnimals.list(accountId, query);
 
 			if (animals?.length === 0) return noContent();
 			return ok(animals);

@@ -4,7 +4,10 @@ import { IAddAnimalRepository } from "@/data/usecases/add-animal/db-add-animal-p
 import { IRemoveAnimalByIdRepository } from "@/data/protocols/db/animals/remove-animal-by-id-repository";
 import { ObjectId } from "mongodb";
 import { parseToObjectId } from "./utils/parse-to-object-id";
-import { IListAnimalsByOwnerIdRepository } from "@/data/protocols/db/animals/list-animals-by-owner-repository";
+import {
+	IListAnimalsByOwnerIdRepository,
+	IQueryParams,
+} from "@/data/protocols/db/animals/list-animals-by-owner-repository";
 import { IAnimalModel } from "@/domain/models/animals";
 import { IUpdateAnimalByIdRepository } from "@/data/protocols/db/animals/update-animal-by-id-repository";
 import { IUpdateAnimalModel } from "@/domain/models/update-animal";
@@ -91,12 +94,28 @@ export class AnimalMongoRepository
 		}
 		return null;
 	}
-	async listAnimals(ownerId: string): Promise<IAnimalModel[]> {
+	async listAnimals(
+		ownerId: string,
+		queryParams?: IQueryParams
+	): Promise<IAnimalModel[]> {
 		const animalsCollection = MongoHelper.getCollection("animals");
+		const matchQuery: { ownerId: string; name?: { $regex: RegExp } } = {
+			ownerId,
+		};
 
-		const result = (await animalsCollection
-			.aggregate([{ $match: { ownerId } }])
-			.toArray()) as IAnimalModel[];
+		if (queryParams?.search) {
+			matchQuery.name = {
+				$regex: new RegExp(queryParams.search.toString().trim(), "i"),
+			};
+		}
+		// const result = (await animalsCollection
+		// 	.aggregate([
+		// 		{
+		// 			$match: matchQuery,
+		// 		},
+		// 	])
+		// 	.toArray()) as IAnimalModel[];
+		const result = await animalsCollection.find(matchQuery).toArray();
 
 		return MongoHelper.mapCollection(result);
 	}

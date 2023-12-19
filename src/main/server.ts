@@ -9,4 +9,5 @@ MongoHelper.connect(env.mongoUrl)
 			console.log(`Server running at http://localhost:${env.port}`)
 		);
 	})
+	.then(() => MongoHelper.createIndexes())
 	.catch((e) => console.log(e));

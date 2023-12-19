@@ -94,7 +94,7 @@ describe("DbListAnimal", () => {
 			const fakeAccountId = "valid_account_id";
 			await sut.list(fakeAccountId);
 
-			expect(listSpy).toHaveBeenCalledWith(fakeAccountId);
+			expect(listSpy).toHaveBeenCalledWith(fakeAccountId, undefined);
 		});
 
 		it("should return an array of animals if the account is valid", async () => {
