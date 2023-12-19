@@ -1,4 +1,5 @@
 import { IDbUpdateManyAnimals } from "@/domain/usecases/update-many-animals";
+import { BodyIsNotArrayError } from "@/presentation/errors/body-is-not-array-error";
 import {
 	badRequest,
 	ok,
@@ -20,14 +21,12 @@ export class UpdateManyAnimalsController implements IController {
 	//[TODO] simplify
 	async handle(request: IHttpRequest): Promise<IHttpResponse> {
 		try {
-			if (!Array.isArray(request.body)) {
-				return badRequest(
-					new Error("Body should be provided as array")
-				);
-			}
+			if (!Array.isArray(request.body))
+				return badRequest(new BodyIsNotArrayError());
+
 			const errors = [];
 			for (const animal of request.body) {
-				const error = this.validations.validate(animal.props);
+				const error = this.validations.validate(animal);
 
 				if (error) {
 					errors.push(error);
@@ -40,8 +39,8 @@ export class UpdateManyAnimalsController implements IController {
 			let animals = request.body;
 			const { accountId } = request as any;
 
-			animals = animals.map((al: any) =>
-				Object.assign({ props: { ownerId: accountId } }, al)
+			animals = animals.map((animal: any) =>
+				Object.assign({ ownerId: accountId }, animal)
 			);
 
 			const updatedAnimals = await this.dbUpdateManyAnimals.updateMany(

@@ -1,13 +1,10 @@
 import { IAnimalModel } from "@/domain/models/animals";
 import { IUpdateAnimalModel } from "../models/update-animal";
 
-export type IUpdateManyAnimalsProps = {
-	id: string;
-	props: IUpdateAnimalModel;
-};
+export type IUpdateAnimalWithId = IUpdateAnimalModel & { id: string };
 
 export interface IDbUpdateManyAnimals {
 	updateMany: (
-		animals: IUpdateManyAnimalsProps[]
+		animals: IUpdateAnimalWithId[]
 	) => Promise<(IAnimalModel | null)[]>;
 }

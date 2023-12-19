@@ -1,6 +1,6 @@
 import {
 	IDbUpdateManyAnimals,
-	IUpdateManyAnimalsProps,
+	IUpdateAnimalWithId,
 } from "@/domain/usecases/update-many-animals";
 import {
 	IAnimalModel,
@@ -10,14 +10,10 @@ import {
 import { DbUpdateManyAnimals } from "./db-update-many-animals";
 
 describe("DbUpdateAnimal", () => {
-	const makeFakeUpdateAnimalModel = (
-		id?: string
-	): IUpdateManyAnimalsProps => ({
+	const makeFakeUpdateAnimalModel = (id?: string): IUpdateAnimalWithId => ({
 		id: id || "any_id",
-		props: {
-			name: "updated_animal_name",
-			age: new Date("2020-01-01").toISOString(),
-		},
+		name: "updated_animal_name",
+		age: new Date("2020-01-01").toISOString(),
 	});
 
 	class UpdateAnimalByIdRepositoryStub
@@ -66,9 +62,9 @@ describe("DbUpdateAnimal", () => {
 
 			expect(updateSpy).toHaveBeenCalledTimes(3);
 
-			expect(updateSpy).toHaveBeenCalledWith(animal1.id, animal1.props);
-			expect(updateSpy).toHaveBeenCalledWith(animal2.id, animal2.props);
-			expect(updateSpy).toHaveBeenCalledWith(animal3.id, animal3.props);
+			expect(updateSpy).toHaveBeenCalledWith(animal1.id, animal1);
+			expect(updateSpy).toHaveBeenCalledWith(animal2.id, animal2);
+			expect(updateSpy).toHaveBeenCalledWith(animal3.id, animal3);
 		});
 
 		it("should return the updated animal if the update is successful", async () => {
@@ -81,9 +77,9 @@ describe("DbUpdateAnimal", () => {
 			const result = await sut.updateMany([animal1, animal2, animal3]);
 			expect(result).toEqual(
 				expect.arrayContaining([
-					expect.objectContaining(animal1.props),
-					expect.objectContaining(animal2.props),
-					expect.objectContaining(animal3.props),
+					expect.objectContaining(animal1),
+					expect.objectContaining(animal2),
+					expect.objectContaining(animal3),
 				])
 			);
 		});
@@ -103,8 +99,8 @@ describe("DbUpdateAnimal", () => {
 			expect(result).toEqual(
 				expect.arrayContaining([
 					null,
-					expect.objectContaining(animal2.props),
-					expect.objectContaining(animal3.props),
+					expect.objectContaining(animal2),
+					expect.objectContaining(animal3),
 				])
 			);
 		});

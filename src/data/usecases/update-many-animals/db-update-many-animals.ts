@@ -1,6 +1,6 @@
 import {
 	IDbUpdateManyAnimals,
-	IUpdateManyAnimalsProps,
+	IUpdateAnimalWithId,
 } from "@/domain/usecases/update-many-animals";
 import {
 	IAnimalModel,
@@ -12,10 +12,10 @@ export class DbUpdateManyAnimals implements IDbUpdateManyAnimals {
 		private readonly updateAnimalRepository: IUpdateAnimalByIdRepository
 	) {}
 	async updateMany(
-		animals: IUpdateManyAnimalsProps[]
+		animals: IUpdateAnimalWithId[]
 	): Promise<(IAnimalModel | null)[]> {
 		const updatePromises = animals.map((animal) =>
-			this.updateAnimalRepository.updateAnimal(animal.id, animal.props)
+			this.updateAnimalRepository.updateAnimal(animal.id, { ...animal })
 		);
 		return Promise.all(updatePromises);
 	}

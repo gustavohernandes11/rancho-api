@@ -311,16 +311,14 @@ describe("Animal routes", () => {
 				.send([
 					{
 						id: animalId,
-						props: {
-							name: modifiedName,
-							age: modifiedAge,
-						},
+
+						name: modifiedName,
+						age: modifiedAge,
 					},
 					{
 						id: animalId,
-						props: {
-							batchId: modifiedBatchId,
-						},
+
+						batchId: modifiedBatchId,
 					},
 				])
 				.expect(200);

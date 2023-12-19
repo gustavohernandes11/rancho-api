@@ -1,41 +1,38 @@
 import { IAnimalModel } from "@/data/usecases/update-animal/db-update-animal-protocols";
 import {
 	IDbUpdateManyAnimals,
-	IUpdateManyAnimalsProps,
+	IUpdateAnimalWithId,
 } from "@/domain/usecases/update-many-animals";
 import { makeUpdateManyAnimalsValidations } from "@/main/factories/validation/make-update-many-animals-validations";
 import { InvalidDateFormatError } from "@/presentation/errors/invalid-date-format-error";
 import { UpdateManyAnimalsController } from "./update-many-animals-controller";
+import { BodyIsNotArrayError } from "@/presentation/errors/body-is-not-array-error";
+import { MissingParamError } from "@/presentation/errors";
 
 describe("UpdateManyAnimalsController", () => {
 	const mockDate = new Date().toISOString();
-	const mockUpdateAnimalData = (
-		overrideId?: string,
-		overrideProps?: any
-	): IUpdateManyAnimalsProps => {
-		return {
-			id: overrideId || "1",
-			props: Object.assign(
-				{
-					name: "any_name_updated_1",
-					gender: "M",
-					age: mockDate,
-					paternityId: "any_paternity_id_updated",
-					maternityId: "any_maternity_id_updated",
-					batchId: "any_batch_id_updated",
-					code: 123,
-					observation: "any_observation_updated",
-					ownerId: "any_ownerId_updated",
-				},
-				overrideProps || {}
-			),
-		};
-	};
-	const makeFakeUpdateArray = (): IUpdateManyAnimalsProps[] => {
+	const mockUpdateAnimal = (overrideProps?: any): IUpdateAnimalWithId =>
+		Object.assign(
+			{
+				id: "any_id",
+				name: "any_name_updated_1",
+				gender: "M",
+				age: mockDate,
+				paternityId: "any_paternity_id_updated",
+				maternityId: "any_maternity_id_updated",
+				batchId: "any_batch_id_updated",
+				code: 123,
+				observation: "any_observation_updated",
+				ownerId: "any_ownerId_updated",
+			},
+			overrideProps || {}
+		);
+
+	const makeFakeUpdateArray = (): IUpdateAnimalWithId[] => {
 		return [
-			mockUpdateAnimalData("id_1"),
-			mockUpdateAnimalData("id_2"),
-			mockUpdateAnimalData("id_3"),
+			mockUpdateAnimal({ id: "id_1" }),
+			mockUpdateAnimal({ id: "id_2" }),
+			mockUpdateAnimal({ id: "id_3" }),
 		];
 	};
 
@@ -46,12 +43,12 @@ describe("UpdateManyAnimalsController", () => {
 
 	class DbUpdateManyAnimalsStub implements IDbUpdateManyAnimals {
 		async updateMany(
-			animals: IUpdateManyAnimalsProps[]
+			animals: IUpdateAnimalWithId[]
 		): Promise<(IAnimalModel | null)[]> {
 			const resolvedAnimals = animals.map(
-				(al) =>
-					Object.assign(mockUpdateAnimalData(), al.props, {
-						id: al.id,
+				(animal) =>
+					Object.assign(mockUpdateAnimal(), animal, {
+						id: animal.id,
 					}) as IAnimalModel
 			);
 			return new Promise((resolve) => resolve(resolvedAnimals));
@@ -84,9 +81,9 @@ describe("UpdateManyAnimalsController", () => {
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toEqual(
 			expect.arrayContaining([
-				expect.objectContaining(mockUpdateAnimalData("id_1")),
-				expect.objectContaining(mockUpdateAnimalData("id_2")),
-				expect.objectContaining(mockUpdateAnimalData("id_3")),
+				expect.objectContaining(mockUpdateAnimal({ id: "id_1" })),
+				expect.objectContaining(mockUpdateAnimal({ id: "id_2" })),
+				expect.objectContaining(mockUpdateAnimal({ id: "id_3" })),
 			])
 		);
 	});
@@ -100,9 +97,9 @@ describe("UpdateManyAnimalsController", () => {
 		await sut.handle(request);
 
 		expect(dbUpdateSpy).toHaveBeenCalledWith([
-			mockUpdateAnimalData("id_1"),
-			mockUpdateAnimalData("id_2"),
-			mockUpdateAnimalData("id_3"),
+			mockUpdateAnimal({ id: "id_1" }),
+			mockUpdateAnimal({ id: "id_2" }),
+			mockUpdateAnimal({ id: "id_3" }),
 		]);
 	});
 
@@ -122,9 +119,7 @@ describe("UpdateManyAnimalsController", () => {
 		const response = await sut.handle(request);
 
 		expect(response.statusCode).toBe(400);
-		expect(response.body).toEqual(
-			new Error("Body should be provided as array")
-		);
+		expect(response.body).toEqual(new BodyIsNotArrayError());
 	});
 
 	it("should return 400 if the age is not in ISO format", async () => {
@@ -134,12 +129,10 @@ describe("UpdateManyAnimalsController", () => {
 			body: [
 				{
 					id: "any_id",
-					props: {
-						name: "any_name",
-						ownerId: "any_ownerId",
-						gender: "F",
-						age: "INVALID_DATE_FORMAT",
-					},
+					name: "any_name",
+					ownerId: "any_ownerId",
+					gender: "F",
+					age: "INVALID_DATE_FORMAT",
 				},
 			],
 		};
@@ -150,6 +143,22 @@ describe("UpdateManyAnimalsController", () => {
 		expect(response.body).toEqual(new InvalidDateFormatError("age"));
 	});
 
+	it("should return 400 if the id is not provided for all animals in array", async () => {
+		const { sut } = makeSut();
+
+		const request = {
+			body: [
+				mockUpdateAnimal(),
+				mockUpdateAnimal(),
+				mockUpdateAnimal({ id: undefined }),
+			],
+		};
+
+		const response = await sut.handle(request);
+
+		expect(response.statusCode).toBe(400);
+		expect(response.body).toEqual(new MissingParamError("id"));
+	});
 	it("should return 500 if an error occurs", async () => {
 		const { sut, dbUpdateManyAnimalsStub } = makeSut();
 		jest.spyOn(dbUpdateManyAnimalsStub, "updateMany").mockRejectedValueOnce(
