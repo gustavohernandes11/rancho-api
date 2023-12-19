@@ -1,8 +1,10 @@
-import { IDbListAnimals } from "@/domain/usecases/list-animals";
-import { IAnimalModel } from "../update-animal/db-update-animal-protocols";
+import { IDbListAnimals } from "../list-animals/db-list-animals-protocols";
 import { DbListAnimalsByBatch } from "./db-list-animals-by-batch";
-import { ICheckBatchByIdRepository } from "../remove-batch/db-remove-batch-protocols";
-import { IListAnimalsByBatchRepository } from "@/data/protocols/db/animals/list-animals-by-batch-repository";
+import {
+	IAnimalModel,
+	ICheckBatchByIdRepository,
+	IListAnimalsByBatchRepository,
+} from "./db-list-animals-by-batch-protocols";
 
 describe("DbListAnimalsByBatch", () => {
 	class CheckBatchByIdRepositoryStub implements ICheckBatchByIdRepository {

@@ -1,10 +1,8 @@
-import {
-	IAnimalModel,
-	ILoadAnimalByIdRepository,
-} from "../load-animal/db-load-animal-protocols";
 import { DbRemoveAnimal } from "./db-remove-animal";
 import {
+	IAnimalModel,
 	IDbRemoveAnimal,
+	ILoadAnimalByIdRepository,
 	IRemoveAnimalByIdRepository,
 } from "./db-remove-animal-protocols";
 

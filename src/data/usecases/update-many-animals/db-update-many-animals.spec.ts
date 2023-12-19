@@ -1,13 +1,11 @@
-import {
-	IDbUpdateManyAnimals,
-	IUpdateAnimalWithId,
-} from "@/domain/usecases/update-many-animals";
+import { DbUpdateManyAnimals } from "./db-update-many-animals";
 import {
 	IAnimalModel,
+	IDbUpdateManyAnimals,
 	IUpdateAnimalByIdRepository,
 	IUpdateAnimalModel,
+	IUpdateAnimalWithId,
 } from "./db-update-many-animals-protocols";
-import { DbUpdateManyAnimals } from "./db-update-many-animals";
 
 describe("DbUpdateAnimal", () => {
 	const makeFakeUpdateAnimalModel = (id?: string): IUpdateAnimalWithId => ({

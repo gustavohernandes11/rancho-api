@@ -1,12 +1,12 @@
-import { IAuthentication } from "@/domain/usecases/authentication";
-import { IEncrypter } from "../../protocols/criptography/encrypter";
-import { IHashComparer } from "../../protocols/criptography/hash-comparer";
-import { IUpdateAccessTokenRepository } from "../../protocols/db/accounts/update-access-token-repository";
 import {
-	IAccountModel,
+	IAuthentication,
+	IEncrypter,
+	IHashComparer,
 	ILoadAccountByEmailRepository,
-} from "../add-account/db-add-account-protocols";
+	IUpdateAccessTokenRepository,
+} from "./db-authentication-protocols";
 import { DbAuthentication } from "./db-authentication";
+import { IAccountModel } from "../add-account/db-add-account-protocols";
 
 describe("DbAuthentication", () => {
 	class LoadAccountByEmailRepositoryStub

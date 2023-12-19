@@ -1,10 +1,8 @@
 import {
-	IDbUpdateManyAnimals,
-	IUpdateAnimalWithId,
-} from "@/domain/usecases/update-many-animals";
-import {
 	IAnimalModel,
+	IDbUpdateManyAnimals,
 	IUpdateAnimalByIdRepository,
+	IUpdateAnimalWithId,
 } from "./db-update-many-animals-protocols";
 
 export class DbUpdateManyAnimals implements IDbUpdateManyAnimals {

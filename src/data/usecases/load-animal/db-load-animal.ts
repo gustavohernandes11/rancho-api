@@ -1,6 +1,8 @@
-import { ILoadAnimalByIdRepository } from "@/data/protocols/db/animals/load-animal-by-id-repository";
-import { IDbLoadAnimal } from "@/domain/usecases/load-animal";
-import { IAnimalModel } from "@/domain/models/animals";
+import {
+	IAnimalModel,
+	IDbLoadAnimal,
+	ILoadAnimalByIdRepository,
+} from "./db-load-animal-protocols";
 
 export class DbLoadAnimal implements IDbLoadAnimal {
 	constructor(

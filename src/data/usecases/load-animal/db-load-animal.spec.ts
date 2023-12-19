@@ -1,7 +1,9 @@
-import { ILoadAnimalByIdRepository } from "@/data/protocols/db/animals/load-animal-by-id-repository";
-import { IAnimalModel } from "../update-animal/db-update-animal-protocols";
-import { IDbLoadAnimal } from "@/domain/usecases/load-animal";
 import { DbLoadAnimal } from "./db-load-animal";
+import {
+	IAnimalModel,
+	IDbLoadAnimal,
+	ILoadAnimalByIdRepository,
+} from "./db-load-animal-protocols";
 
 describe("DbLoadAnimals", () => {
 	class LoadAnimalByIdRepositoryStub implements ILoadAnimalByIdRepository {

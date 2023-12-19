@@ -1,14 +1,12 @@
-import { IListAnimalsByBatchRepository } from "../list-animals-by-batch/db-list-animals-by-batch-protocols";
-import {
-	IAnimalModel,
-	IUpdateAnimalByIdRepository,
-	IUpdateAnimalModel,
-} from "../update-animal/db-update-animal-protocols";
 import { DbRemoveBatch } from "./db-remove-batch";
 import {
+	IAnimalModel,
 	ICheckBatchByIdRepository,
 	IDbRemoveBatch,
+	IListAnimalsByBatchRepository,
 	IRemoveBatchByIdRepository,
+	IUpdateAnimalByIdRepository,
+	IUpdateAnimalModel,
 } from "./db-remove-batch-protocols";
 
 describe("DbRemoveBatch", () => {

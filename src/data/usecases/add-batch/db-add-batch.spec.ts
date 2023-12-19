@@ -1,9 +1,9 @@
-import { ICheckBatchByNameRepository } from "@/data/protocols/db/batch/check-batch-by-name-repository";
 import { DbAddBatch } from "./db-add-batch";
 import {
 	IAddBatchModel,
 	ICheckAccountByIdRepository,
 	IAddBatchRepository,
+	ICheckBatchByNameRepository,
 } from "./db-add-batch-protocols";
 
 describe("DbAddBatch", () => {

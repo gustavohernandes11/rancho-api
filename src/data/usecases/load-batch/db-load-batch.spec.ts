@@ -1,7 +1,9 @@
 import { DbLoadBatch } from "./db-load-batch";
-import { ILoadBatchByIdRepository } from "@/data/protocols/db/batch/load-batch-by-id-repository";
-import { IDbLoadBatch } from "@/domain/usecases/load-batch";
-import { IBatchInfo } from "@/domain/models/batch-info";
+import {
+	IBatchInfo,
+	IDbLoadBatch,
+	ILoadBatchByIdRepository,
+} from "./db-load-batch-protocols";
 
 describe("DbLoadBatch", () => {
 	class LoadBatchByIdRepository implements ILoadBatchByIdRepository {

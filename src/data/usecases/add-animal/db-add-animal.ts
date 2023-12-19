@@ -1,9 +1,9 @@
-import { ICheckAnimalByIdRepository } from "@/data/protocols/db/animals/check-animal-by-id-repository";
 import {
-	IDbAddAnimal,
 	IAddAnimalModel,
 	IAddAnimalRepository,
 	ICheckAccountByIdRepository,
+	ICheckAnimalByIdRepository,
+	IDbAddAnimal,
 } from "./db-add-animal-protocols";
 
 export class DbAddAnimal implements IDbAddAnimal {

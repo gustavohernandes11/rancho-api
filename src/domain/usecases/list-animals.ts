@@ -1,5 +1,8 @@
-import { IQueryParams } from "@/data/usecases/list-animals/db-list-animals-protocols";
 import { IAnimalModel } from "@/domain/models/animals";
+
+export type IQueryParams = {
+	search?: string;
+};
 
 export interface IDbListAnimals {
 	list(

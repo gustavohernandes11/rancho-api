@@ -1,6 +1,6 @@
-import { ILoadAnimalByIdRepository } from "../load-animal/db-load-animal-protocols";
 import {
 	IDbRemoveAnimal,
+	ILoadAnimalByIdRepository,
 	IRemoveAnimalByIdRepository,
 } from "./db-remove-animal-protocols";
 

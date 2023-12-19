@@ -1,9 +1,9 @@
-import { ICheckAnimalByIdRepository } from "@/data/protocols/db/animals/check-animal-by-id-repository";
 import { DbAddAnimal } from "./db-add-animal";
 import {
 	IAddAnimalModel,
 	IAddAnimalRepository,
 	ICheckAccountByIdRepository,
+	ICheckAnimalByIdRepository,
 } from "./db-add-animal-protocols";
 
 describe("Db Add Animal", () => {

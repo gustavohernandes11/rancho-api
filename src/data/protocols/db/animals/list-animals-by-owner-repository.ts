@@ -1,8 +1,5 @@
 import { IAnimalModel } from "@/domain/models/animals";
-
-export type IQueryParams = {
-	search?: string;
-};
+import { IQueryParams } from "@/domain/usecases/list-animals";
 
 export interface IListAnimalsByOwnerIdRepository {
 	listAnimals(
