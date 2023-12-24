@@ -1,7 +1,7 @@
 import { Express } from "express";
 import { serve, setup } from "swagger-ui-express";
-import { noCache } from "@/main/middlewares/no-cache";
 import swaggerConfig from "@/main/docs";
+import { noCache } from "../middlewares";
 
 export default (app: Express) => {
 	app.use("/docs", noCache, serve, setup(swaggerConfig));
