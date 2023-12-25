@@ -4,7 +4,8 @@ Esse repositório é o Backend do projeto "Rancho" criado para auxiliar no geren
 
 ## Exemplo
 
-![Diagrama de um Controller](controller-diagram.png)
+![image](https://github.com/gustavohernandes11/rancho-api/assets/66632840/d8f8cd46-5375-4a79-a977-b5a993c2f45f)
+
 
 ## Stack
 
