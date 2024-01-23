@@ -1,42 +1,169 @@
-<h1 align="center">Rancho API</h1>
+# Rancho API
 
-Esse repositório é o Backend do projeto "Rancho" criado para auxiliar no gerenciamento de gado de leite. [O frontend está disponível aqui](https://github.com/gustavohernandes11/rancho-web). O projeto está estruturado com uma arquitetura robusta seguindo padrões do Clean Architecture (usecases, divisão em camadas, isolamento das regras de negócio, etc).
+Rancho é uma aplicação backend criada para ajudar criadores de gado a gerenciar seus animais.
 
-## Exemplo
+## Instalação local
+1. Clone este repositório:
 
-![image](https://github.com/gustavohernandes11/rancho-api/assets/66632840/d8f8cd46-5375-4a79-a977-b5a993c2f45f)
+    ```bash
+    git clone https://github.com/gustavohernandes11/rancho-mobile
+    ```
 
+2. Navegue até o diretório e instale as dependências:
 
-## Stack
+    ```bash
+    cd rancho-mobile
+    yarn
+    ```
 
--   Typescript.
--   Express.
--   Mongodb: banco de dados não relacional.
--   Jest: testes unitários.
--   Supertest: testes de integração.
--   JWT.
--   Bcrypt.
--   Husky: assegurar que o código não esteja falhando ao fazer commits.
--   Swagger: documentação.
+3. Crie um arquivo `.env` com os campos conforme o exemplo em `.env.exemple`.
 
-## Funcionalidades
+4. Inicie o projeto:
 
-Versão 1.0.0 - Minimum Viable Product (MVP):
+    ```bash
+    yarn start
+    ```
+## Tecnologias utilizadas no projeto
+- **Linguagem de Programação:**
+  - TypeScript
 
-[x] Sistema de autenticação de usuários.
+- **Framework Web:**
+  - Express
 
-[x] Registrar lotes.
+- **Banco de Dados:**
+  - MongoDB (Banco de dados não relacional)
 
-[x] Registrar animais com informações como sexo, nome, data de nascimento, código, lote, observação, etc.
+- **Testes:**
+  - Jest (Testes unitários)
+  - Supertest (Testes de integração)
 
-[x] Separação dos animais por lotes.
+- **Segurança:**
+  - JWT (JSON Web Tokens)
+  - Bcrypt (Para hash de senhas)
 
-## Próximas funcionalidades
+- **Ferramentas de Desenvolvimento:**
+  - Husky (Garante que o código não esteja falhando ao fazer commits)
 
-[ ] Registrar medicamentos e vacinas dos animais.
+- **Documentação:**
+  - Swagger (Ferramenta de documentação)
 
-[ ] Registrar produção de leite com relatórios estatísticos.
+## Arquitetura do projeto
+O projeto, apesar de simples, possui uma arquitetura bem estruturada e segue os princípíos da "Clean Architecture". Suas partes são desacopladas e não dependem de um framework específico. Há 6 camadas, as camadas mais externas não tem conhecimento das camadas mais externas, e portanto não são dependentes.
+### Domain
+A camada mais interna, conhecida como o "núcleo" da aplicação. Aqui, residem os modelos que representam os conceitos centrais da aplicação e os casos de uso, que definem as regras de negócio fundamentais. Esta camada é independente de frameworks externos e serve como a base que orienta toda a lógica de negócio.
 
-[ ] Gerar dados em Excel.
+``` 
+│   ├───domain/
+│   │   ├───models/
+│   │   │   ├───account.ts
+│   │   │   ├───animals.ts
+│   │   │   ├─── ...
+│   │   │   └───update-animal.ts
+│   │   └───usecases/
+│   │       ├───add-account.ts
+│   │       ├───add-animal.ts
+│   │       ├─── ...
+│   │       └───update-many-animals.ts
+```
 
-[ ] Gerar relatório do gado total divido em categorias para conformidade legislativas, como notas fiscais, vacinação e medicamentos.
+### Data
+Responsável por definir interfaces que representam contratos entre as regras de negócio da camada Domain e a implementação concreta na camada Infra. As interfaces nesta camada descrevem como os casos de uso devem interagir com o armazenamento de dados.
+
+```
+│   ├───data/
+│   │   ├───protocols/
+│   │   │   ├───criptography/
+│   │   │   └───db/
+│   │   └───usecases/
+│   │       ├───add-account/
+│   │       ├───add-animal/
+│   │       ├─── ...
+│   │       └───update-many-animals/
+```
+
+### Infra
+Implementa as interfaces definidas na camada Data. Aqui, as tecnologias específicas, como bancos de dados e serviços externos, são integradas à aplicação. A camada Infra fornece os meios para persistência e recuperação de dados, mas sem conhecimento sobre o que esses dados representam em termos de regras de negócio.
+
+```
+│   ├───infra/
+│   │   ├───criptography/
+│   │   │   ├───bcrypt-adapter.spec.ts
+│   │   │   ├───bcrypt-adapter.ts
+│   │   │   ├───jwt-adapter.spec.ts
+│   │   │   └───jwt-adapter.ts
+│   │   └───db/
+│   │       └───mongodb/
+```
+
+### Presentation
+Camada responsável por lidar com as requisições dos usuários. Os controladores nesta camada recebem as solicitações HTTP e interagem com os casos de uso definidos na camada Domain. A Presentation não contém lógica de negócio, mas coordena as interações entre o usuário e o núcleo da aplicação.
+
+```
+│   ├───presentation/
+│   │   ├───controllers/
+│   │   │   ├───account/
+│   │   │   ├───animals/
+│   │   │   └───batch/
+│   │   ├───errors/
+│   │   │   ├───access-denied-error.ts
+│   │   │   ├───body-is-not-array-error.ts
+│   │   │   ├─── ...
+│   │   │   └───param-in-use-error.ts
+│   │   ├───helpers/
+│   │   │   └───http-helpers.ts
+│   │   ├───middlewares/
+│   │   │   ├───auth-middleware.spec.ts
+│   │   │   └───auth-middleware.ts
+│   │   └───protocols/
+│   │       ├───controller.ts
+│   │       ├───http.ts
+│   │       ├───index.ts
+│   │       ├───middleware.ts
+│   │       └───validation.ts
+```
+
+### Validation
+Uma camada dedicada à validação de dados. Aqui, são realizadas validações específicas antes de os dados atingirem as camadas mais internas. Isso ajuda a garantir a integridade dos dados antes que eles alcancem a camada de regras de negócio.
+
+```
+│   └───validation/
+│       ├───protocols/
+│       │   └───email-validator.ts
+│       └───validators/
+│           ├───compare-fields-validation.spec.ts
+│           ├───compare-fields-validation.ts
+│           ├───email-validation.spec.ts
+│           ├───email-validation.ts
+│           ├─── ...
+│           ├───validation-composite.spec.ts
+│           └───validation-composite.ts
+```
+
+### Main
+A camada mais externa, onde a aplicação é inicializada. Aqui, ocorre a configuração do servidor, a definição de middlewares, a configuração de rotas e a instância do banco de dados. A Main serve como ponto de entrada e coordena a inicialização de todos os componentes necessários para a execução da aplicação.
+
+```
+│   ├───main/
+│   │   ├───adapters/
+│   │   ├───config/
+│   │   ├───docs/
+│   │   ├───factories/
+│   │   ├───middlewares/
+```
+
+## Documentação da API
+
+## Testes
+Há testes extensivos que asseguram o funcionamento das partes unitárias e de sua integração. Você pode rodar todos os testes com o seguinte comando:
+
+```bash
+yarn test
+```
+
+O resultado deve ser algo parecido com isso:
+
+![Captura de Tela (18)](https://github.com/gustavohernandes11/rancho-api/assets/66632840/834fb373-4d49-41dc-a364-0d98b2aede98)
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
