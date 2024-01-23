@@ -151,7 +151,33 @@ A camada mais externa, onde a aplicação é inicializada. Aqui, ocorre a config
 │   │   ├───middlewares/
 ```
 
-## Documentação da API
+## Documentação simplificada da API
+A documentação do projeto foi criada usando Swagger e pode ser explorada na rota "/docs". Uma versão simplificada das possíveis rotas está abaixo:
+
+### Rotas de autenticação
+
+- Login: **POST** `/api/login`
+- Signup: **POST** `/api/signup`
+
+### Rotas de animais
+
+- Carregar animal: **GET** `/animals/:animalId`
+- Modificar animal: **PUT** `/animals/:animalId`
+- Deletar animal: **DELETE** `/animals/:animalId`
+- Adicionar Animal: **POST** `/animals`
+- Atualizar Múltiplos Animais: **PUT** `/animals`
+- Listar Animais: **GET** `/animals`
+
+### Rotas de lotes
+
+- Obter Informações do Lote: **GET** `/batches/:batchId/info`
+- Listar Animais no Lote: **GET** `/batches/:batchId`
+- Atualizar Informações do Lote: **PUT** `/batches/:batchId`
+- Deletar Lote: **DELETE** `/batches/:batchId`
+- Adicionar Lote: **POST** `/batches`
+- Listar Lotes: **GET** `/batches`
+
+
 
 ## Testes
 Há testes extensivos que asseguram o funcionamento das partes unitárias e de sua integração. Você pode rodar todos os testes com o seguinte comando:
