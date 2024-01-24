@@ -1,6 +1,6 @@
 # Rancho API
 
-Rancho é uma aplicação backend criada para ajudar criadores de gado a gerenciar seus animais.
+Rancho API é uma aplicação backend criada para ajudar criadores de gado a gerenciar seus animais.
 
 ## Instalação local
 1. Clone este repositório:
