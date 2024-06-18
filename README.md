@@ -48,7 +48,7 @@ Rancho API é uma aplicação backend criada para ajudar criadores de gado a ger
   - Swagger (Ferramenta de documentação)
 
 ## Arquitetura do projeto
-O projeto, apesar de simples, possui uma arquitetura bem estruturada e segue os princípíos da "Clean Architecture". Suas partes são desacopladas e não dependem de um framework específico. Há 6 camadas, as camadas mais externas não tem conhecimento das camadas mais externas, e portanto não são dependentes.
+O projeto, apesar de simples, possui uma arquitetura bem estruturada e segue os princípíos da "Clean Architecture". Suas partes são desacopladas e não dependem de um framework específico. Há 6 camadas, as camadas mais externas não tem conhecimento das camadas mais internas, e portanto não são dependentes.
 ### Domain
 A camada mais interna, conhecida como o "núcleo" da aplicação. Aqui, residem os modelos que representam os conceitos centrais da aplicação e os casos de uso, que definem as regras de negócio fundamentais. Esta camada é independente de frameworks externos e serve como a base que orienta toda a lógica de negócio.
 
